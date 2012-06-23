@@ -1,7 +1,7 @@
 this['JST'] = this['JST'] || {};
 
 this['JST']['app/templates/decorate.html'] = function(data) { return function (obj,_) {
-var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<div id="stage"></div>\n');}return __p.join('');
+var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<div class="row-fluid">\n  <div class="span3">\n    <div class="row-fluid">\n      <canvas id="logo" width="217" height="55"></canvas>\n    </div>\n    <div class="row-fluid">\n      <span>Pimp your block:</span>\n    </div>\n    <div class="row-fluid">\n      <span>1. Upload an Image or paste a link from google maps:</span>\n    </div>\n    <div class="row-fluid">\n      <input></input>\n      <input></input>\n      <button id="upload">submit</button>\n    </div>\n    <div class="row-fluid">\n      <span>2. Drag & drop some Civic Bling</span>\n    </div>\n  </div> <!-- /span3 -->\n  <div class="span9">\n    <!-- stage holds blockee picture view -->  \n    <div id="stage"></div>\n  </div> <!-- /span9 -->\n</div> <!-- /row -->\n');}return __p.join('');
 }(data, _)};
 
 this['JST']['app/templates/example.html'] = function(data) { return function (obj,_) {

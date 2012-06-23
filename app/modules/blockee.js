@@ -4,10 +4,11 @@ define([
 
   // Third-party libraries.
   "backbone",
-  "kinetic"
+  "kinetic",
+  "googlylogo"
 ],
 
-function(app, Backbone, Kinetic) {
+function(app, Backbone, Kinetic, Googlylogo) {
 
   var stage = null;
   var layer = null;
@@ -22,7 +23,7 @@ function(app, Backbone, Kinetic) {
     setBling: function(blocks) {
 
       var x = 20;
-      var y = 100;
+      var y = 480;
 
       self.blings = [];
       
@@ -30,13 +31,14 @@ function(app, Backbone, Kinetic) {
         var block = blocks[i];
         x = (block.hasOwnProperty("x")) ? block.x : 20;
         y = (block.hasOwnProperty("y")) ? block.y : 100;
+        fill = (block.hasOwnProperty("fill")) ? block.fill : "blue";
 
         self.bling = new Blockee.Bling({
             x: x,
             y: y,
             width: 100,
             height: 100,
-            fill: "blue"
+            fill: fill 
         });
 
         self.blings.push(self.bling);
@@ -66,6 +68,7 @@ function(app, Backbone, Kinetic) {
       // Set the template contents
       this.$el.html(tmpl());
 
+      Googlylogo.drawLogo();
       this.initializeStage();
 
       // XXX: testing adding a bling
@@ -82,10 +85,10 @@ function(app, Backbone, Kinetic) {
      */
     initializeStage: function() {
 
-      var viewportWidth = $(window).width();
-      var viewportHeight = $(window).height();
+      var viewportWidth = $('#stage').width();
+      var viewportHeight = 600;
 
-      // blockee has a single stage
+      // blockee has a single stage (for now, there could easily be multiple)
       this.stage = new Kinetic.Stage({
         container: "stage",
         width: viewportWidth,
@@ -96,6 +99,70 @@ function(app, Backbone, Kinetic) {
       this.layer = new Kinetic.Layer();
       this.stage.add(this.layer);
 
+      var layer = this.layer;
+      var stage = this.stage;
+
+      // load the preview, help, and help icon-buttons
+      // XXX: this is a little ugly! reactor!
+      var buttonIcons = ["/assets/img/preview.png",
+                         "/assets/img/help.png",
+                         "/assets/img/trash.png"];
+      var preview = new Image();
+      preview.onload = function() {
+        var image = new Kinetic.Image({
+          x: 630,
+          y: 0,
+          image: preview,
+          width: 42,
+          height: 29 
+        });
+        layer.add(image);
+        stage.draw();
+      };
+      preview.src = buttonIcons[0];
+      var help = new Image();
+      help.onload = function() {
+        var image = new Kinetic.Image({
+          x: 635,
+          y: 70,
+          image: help,
+          width: 33,
+          height: 38 
+        });
+        layer.add(image);
+        stage.draw();
+      };
+      help.src = buttonIcons[1];
+      var trash = new Image();
+      trash.onload = function() {
+        var image = new Kinetic.Image({
+          x: 630,
+          y: 400,
+          image: trash,
+          width: 44,
+          height: 49 
+        });
+        layer.add(image);
+        stage.draw();
+      };
+      trash.src = buttonIcons[2];
+
+      // XXX: add an image for testing / mockup - REMOVE THIS
+      var imageObj = new Image();
+      imageObj.onload = function() {
+        var image = new Kinetic.Image({
+          x: 10,
+          y: 0,
+          image: imageObj,
+          width: 600,
+          height: 450 
+        });
+        layer.add(image);
+        image.moveToBottom();
+        stage.draw();
+      };
+      imageObj.src = "/assets/img/storek_test.jpg";
+      //imageObj.src = "http://www.html5canvastutorials.com/demos/assets/yoda.jpg";
       // draw the stage in its initial state
       this.stage.draw();
     }
@@ -151,6 +218,7 @@ function(app, Backbone, Kinetic) {
       
       // when group is moved update model attributes 
       group.on("dragmove", function() {
+        group.moveToTop();
         that.set("x", this.getX());
         that.set("y", this.getY());
         var blockState = '/blocks/[{"x":' + that.get("x") +

@@ -12,7 +12,8 @@ require.config({
     jquery: "../assets/js/libs/jquery",
     lodash: "../assets/js/libs/lodash",
     backbone: "../assets/js/libs/backbone",
-    kinetic: "../assets/js/libs/kinetic"
+    kinetic: "../assets/js/libs/kinetic",
+    googlylogo: "../assets/js/libs/googlylogo"
   },
 
   shim: {
@@ -22,6 +23,9 @@ require.config({
     },
     kinetic: {
       exports: "Kinetic"
+    },
+    googlylogo: {
+      exports: "Googlylogo"
     }
   }
 });
