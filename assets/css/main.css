@@ -1,0 +1,25 @@
+/* 
+ * Monkey patch CSS
+ * Blockee's CSS is mostly handled by bootstrap
+ * Additions / overides are handled here
+ */
+
+#main {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 24px;
+  font-weight: normal;
+  line-height: 110%;
+  border-style: solid;
+  border-width: 1px;
+  padding: 20px;
+  margin: 20px;
+}
+.row-fluid {
+  margin-bottom: 20px;
+}
+input {
+  margin-bottom: 10px;
+}
+button {
+  margin-bottom: 20px;
+}
