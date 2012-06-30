@@ -19857,6 +19857,25 @@ define("googlylogo", (function (global) {
     }
 }(this)));
 
+
+var ImageLoader = function() {};
+
+ImageLoader.prototype = {
+
+  loadImageGroups: function() {
+    $.getJSON("http://localhost:8080/assets/img/image_groups/index.json", function(data) {
+        console.log("got data");
+    });
+  }
+
+}
+;
+define("imageloader", (function (global) {
+    return function () {
+        return global.ImageLoader;
+    }
+}(this)));
+
 define('modules/blockee',[
   // Global application context.
   "app",
@@ -19864,10 +19883,11 @@ define('modules/blockee',[
   // Third-party libraries.
   "backbone",
   "kinetic",
-  "googlylogo"
+  "googlylogo",
+  "imageloader"
 ],
 
-function(app, Backbone, Kinetic, Googlylogo) {
+function(app, Backbone, Kinetic, Googlylogo, ImageLoader) {
 
   var stage = null;
   var layer = null;
@@ -20076,7 +20096,7 @@ function(app, Backbone, Kinetic, Googlylogo) {
       ////
       
       // when group is moved update model attributes 
-      group.on("dragmove", function() {
+      group.on("dragend", function() {
         group.moveToTop();
         that.set("x", this.getX());
         that.set("y", this.getY());
@@ -20090,7 +20110,6 @@ function(app, Backbone, Kinetic, Googlylogo) {
           //var blockState = '/blocks/[{"x":' + that.get("x") +
           //                          ',"y":' + that.get("y") + "}]";
         }
-        console.log(blockState);
         app.router.navigate(blockState);
       });
 
@@ -20099,12 +20118,13 @@ function(app, Backbone, Kinetic, Googlylogo) {
 
   });
 
-  /*
-   * All of the Bling available in Blockee
-   */
-  Blockee.BlingCollection = Backbone.Model.extend({
-    model: Blockee.Bling
+  Blockee.ImageGroup = Backbone.Model.extend();
+  var ImageGroups = Backbone.Collection.extend({
+      url: '/assets/img/image_groups/index.json',
+      model: ImageGroup 
   });
+  var imageGroups = new ImageGroups();
+  imageGroups.fetch();
 
   return Blockee;
 });
@@ -20120,7 +20140,9 @@ require([
   "modules/blockee"
 ],
 
-function(app, $, Backbone, Example, Blockee) {
+function(app, $, Backbone, Blockee) {
+  
+  var decorate = new Blockee.Views.Decorate();
 
   // Defining the application router, you can attach sub routers here.
   var Router = Backbone.Router.extend({
@@ -20130,30 +20152,21 @@ function(app, $, Backbone, Example, Blockee) {
     },
 
     index: function() {
-             
-      var decorate = new Blockee.Views.Decorate();
       decorate.setBling({});
-
-      // Attach to the DOM
       decorate.$el.appendTo("#main");
-
-      // Render decorate view 
       decorate.render();
     },
 
     /*
-     * Parse block objects from URL and use with decorate view 
+     * Parse block objects and use to render view
      */
     blocks: function(blocks) { 
-              
       var blocksObject = $.parseJSON(unescape(blocks));
-      var decorate = new Blockee.Views.Decorate();
-      
+
       decorate.setBling(blocksObject);
       decorate.$el.appendTo("#main");
       decorate.render();
     }
-
   });
 
   // Treat the jQuery ready function as the entry point to the application.
@@ -20209,7 +20222,8 @@ require.config({
     lodash: "../assets/js/libs/lodash",
     backbone: "../assets/js/libs/backbone",
     kinetic: "../assets/js/libs/kinetic",
-    googlylogo: "../assets/js/libs/googlylogo"
+    googlylogo: "../assets/js/libs/googlylogo",
+    imageloader: "../assets/js/libs/imageloader"
   },
 
   shim: {
@@ -20222,6 +20236,9 @@ require.config({
     },
     googlylogo: {
       exports: "Googlylogo"
+    },
+    imageloader: {
+      exports: "ImageLoader"
     }
   }
 });

@@ -13,7 +13,8 @@ require.config({
     lodash: "../assets/js/libs/lodash",
     backbone: "../assets/js/libs/backbone",
     kinetic: "../assets/js/libs/kinetic",
-    googlylogo: "../assets/js/libs/googlylogo"
+    googlylogo: "../assets/js/libs/googlylogo",
+    models: "../assets/js/libs/bootstrapModels"
   },
 
   shim: {
@@ -26,6 +27,9 @@ require.config({
     },
     googlylogo: {
       exports: "Googlylogo"
+    },
+    models: {
+      exports: "Models"
     }
   }
 });

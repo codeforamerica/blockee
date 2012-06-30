@@ -5,35 +5,42 @@ define([
   // Third-party libraries.
   "backbone",
   "kinetic",
-  "googlylogo"
+  "googlylogo",
+  "models"
 ],
 
-function(app, Backbone, Kinetic, Googlylogo) {
+function(app, Backbone, Kinetic, Googlylogo, Models) {
 
-  var stage = null;
-  var layer = null;
-  var bling = null;
-  var blings = null;
   var Blockee = app.module();
 
+  // kinetic.js elements required for rendering bling models on canvas
+  var stage = null;
+  var layer = null;
+
+  // a set of bling to load when the app starts
+  var bootstrapModels = Models; 
+
+  // the decorate view
   Blockee.Views.Decorate = Backbone.View.extend({
     template: "app/templates/decorate",
-    
-    // XXX: testing adding a bling
+   
+    /*
+     * Load any bling objects defined in URL
+     */ 
     setBling: function(blocks) {
 
-      var x = 20;
-      var y = 480;
-
-      self.blings = [];
-      
       for (var i=0; i<blocks.length; i++) { 
         var block = blocks[i];
-        x = (block.hasOwnProperty("x")) ? block.x : 20;
-        y = (block.hasOwnProperty("y")) ? block.y : 100;
-        fill = (block.hasOwnProperty("fill")) ? block.fill : "blue";
 
-        self.bling = new Blockee.Bling({
+        var x = (block.hasOwnProperty("x")) ? block.x : 20;
+        var y = (block.hasOwnProperty("y")) ? block.y : 100;
+
+        // XXX: this should go away after images are used instead of colors
+        var fill = (block.hasOwnProperty("fill")) ? block.fill : "blue";
+
+        // the id of the of the bling should be stored in the url so we can look it
+        // up in the bootstrap loaded collection here, then just update the x,y,width,height,fill 
+        var bling = new Blockee.Bling({
             x: x,
             y: y,
             width: 100,
@@ -41,22 +48,14 @@ function(app, Backbone, Kinetic, Googlylogo) {
             fill: fill 
         });
 
-        self.blings.push(self.bling);
+        // if multiple objects of the same type are to be supported, will need
+        // to COPY original object from collection and then add to a 
+        // "display collection". the display collection is everything that is
+        // on the main scene
+
+        //self.blings.push(self.bling);
       }
 
-      if (self.blings.length === 0) {
-
-        self.bling = new Blockee.Bling({
-            x: x,
-            y: y,
-            width: 100,
-            height: 100,
-            fill: "blue"
-        });
-
-        self.blings.push(self.bling);
-
-      }
 
     },
 
@@ -72,10 +71,18 @@ function(app, Backbone, Kinetic, Googlylogo) {
       this.initializeStage();
 
       // XXX: testing adding a bling
-      for (var i=0; i<self.blings.length; i++) {
-        var bling = self.blings[i];
-        this.layer.add(bling.render());
-      }
+      //for (var i=0; i<self.blings.length; i++) {
+      //  var bling = self.blings[i];
+      //  this.layer.add(bling.render());
+      //}
+      
+      var that = this; 
+     
+      blingCollection.each(function(bling) {
+        console.log(bling)
+        that.layer.add(bling.render());
+      });
+
       this.stage.draw();
 
     },
@@ -194,6 +201,7 @@ function(app, Backbone, Kinetic, Googlylogo) {
       that = this;       
 
       // XXX: this needs to be an "animated image view"
+      // can use new Bling object image collection to construct it
       var rectangle = new Kinetic.Rect({
         x: 0,
         y: 0,
@@ -217,21 +225,20 @@ function(app, Backbone, Kinetic, Googlylogo) {
       ////
       
       // when group is moved update model attributes 
-      group.on("dragmove", function() {
+      group.on("dragend", function() {
         group.moveToTop();
+        
         that.set("x", this.getX());
         that.set("y", this.getY());
+        
+        // XXX: This only updates clicked block, need to forward 
+        // this to an object that can construct a comprehensive
+        // "scene state" that includes not just this object
+        // but all other objects so that the full scene can 
+        // be re-rendered when a user shares a URL 
         var blockState = '/blocks/[{"x":' + that.get("x") +
                                   ',"y":' + that.get("y") + "}]";
 
-        // should emit event here so that some sort of routeman can 
-        // deal with updating the url, this is a hack
-        for (var i=0; i<self.blings.length; i++) {
-          console.log(self.blings[i]);
-          //var blockState = '/blocks/[{"x":' + that.get("x") +
-          //                          ',"y":' + that.get("y") + "}]";
-        }
-        console.log(blockState);
         app.router.navigate(blockState);
       });
 
@@ -240,12 +247,14 @@ function(app, Backbone, Kinetic, Googlylogo) {
 
   });
 
-  /*
-   * All of the Bling available in Blockee
-   */
-  Blockee.BlingCollection = Backbone.Model.extend({
-    model: Blockee.Bling
+  var Blings = Backbone.Collection.extend({
+      model: Blockee.Bling
   });
+
+  var blingCollection = new Blings();
+
+  // load the initial bling models
+  blingCollection.reset(bootstrapModels);
 
   return Blockee;
 });

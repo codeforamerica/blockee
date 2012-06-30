@@ -10,6 +10,8 @@ require([
 ],
 
 function(app, $, Backbone, Blockee) {
+  
+  var decorate = new Blockee.Views.Decorate();
 
   // Defining the application router, you can attach sub routers here.
   var Router = Backbone.Router.extend({
@@ -19,14 +21,8 @@ function(app, $, Backbone, Blockee) {
     },
 
     index: function() {
-             
-      var decorate = new Blockee.Views.Decorate();
-      decorate.setBling({});
-
-      // Attach to the DOM
+      //decorate.setBling({});
       decorate.$el.appendTo("#main");
-
-      // Render 
       decorate.render();
     },
 
@@ -34,19 +30,12 @@ function(app, $, Backbone, Blockee) {
      * Parse block objects and use to render view
      */
     blocks: function(blocks) { 
-
       var blocksObject = $.parseJSON(unescape(blocks));
-      var decorate = new Blockee.Views.Decorate();
-      
+
       decorate.setBling(blocksObject);
-
-      // Attach the tutorial to the DOM
       decorate.$el.appendTo("#main");
-
-      // Render the tutorial.
       decorate.render();
     }
-
   });
 
   // Treat the jQuery ready function as the entry point to the application.
