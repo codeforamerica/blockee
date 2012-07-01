@@ -216,10 +216,10 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
      */
     render: function() {
 
+      // capture the Bling model as "that"
       var that = this;
 
       var createGroup = function() {
-        console.log();
         // XXX: this needs to be an "animated image view"
         // can use new Bling object image collection to construct it
         var rectangle = new Kinetic.Rect({
@@ -247,15 +247,15 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
       var group = createGroup();
 
       ////
-      // events
+      // drag events
       ////
       
       // when group is moved update model attributes 
       group.on("dragend", function() {
         //self.group.moveToTop();
         
-        //self.set("x", this.getX());
-        //self.set("y", this.getY());
+        that.set("x", this.getX());
+        that.set("y", this.getY());
         
         // XXX: This only updates clicked block, need to forward 
         // this to an object that can construct a comprehensive
@@ -266,31 +266,22 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
                                   ',"y":' + that.get("y") + "}]";
         app.router.navigate(blockState);
         console.log(that);
-        //self.group.off("dragstart");
+        this.off("dragstart");
       });
 
-      var handleDragStart = function() {
-        console.log(that);
-        clone = that.clone();
-        //clone.group = self.createGroup();
-        clone.id = that.id + cloneId;
-        //clone.group.on("dragstart", handleDragStart);
-        //clone.group.on("dragend", function() {
-        //  console.log(this)
-        //});
-        vent.trigger("clone", clone);
-      }
-
       group.on("dragstart", function() {
-        // create a new bling in place and copy this one to activeBlings col
-        handleDragStart();
+        clone = that.clone();
+        // XXX: need to build id generator
+        clone.id = that.id + cloneId;
+        vent.trigger("clone", clone);
       });
 
       return group;
     }
 
   });
-
+  
+  // XXX: need to build id generator
   var cloneId = 1;
 
   var Blings = Backbone.Collection.extend({
