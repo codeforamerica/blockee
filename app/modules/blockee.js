@@ -12,10 +12,10 @@ define([
 function(app, Backbone, Kinetic, Googlylogo, Models) {
 
   var Blockee = app.module();
-
   // kinetic.js elements required for rendering bling models on canvas
   var stage = null;
   var layer = null;
+  var vent = _.extend({}, Backbone.Events);
 
   // a set of bling to load when the app starts
   var bootstrapModels = Models; 
@@ -23,6 +23,23 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
   // the decorate view
   Blockee.Views.Decorate = Backbone.View.extend({
     template: "app/templates/decorate",
+
+    initialize: function(options) {
+      // bind this (Decorate view) to all evented calls of addBling* method
+      _.bindAll(this, "addBlingToCollection");
+      // bind "clone" events to addBling* method
+      // when bling objects clone themselves, they fire the clone event
+      vent.bind("clone", this.addBlingToCollection);
+      // a collection of blings
+      this.blingCollection = new Blings();
+      // load the initial bling models
+      this.blingCollection.reset(bootstrapModels);
+      this.blingCollection.on("add", function(bling) {
+        console.log("add");
+        console.log(bling);
+      });
+      self = this;
+    },
    
     /*
      * Load any bling objects defined in URL
@@ -55,12 +72,21 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
 
         //self.blings.push(self.bling);
       }
+    },
 
+    addBlingToLayer: function(bling) {
+      this.layer.add(bling.render());
+    },
 
+    addBlingToCollection: function(bling) {
+      console.log(bling.cid);
+      console.log("adding bling to collection");
+      this.blingCollection.add(bling);
+      console.log(this.blingCollection);
+      this.addBlingToLayer(clone);
     },
 
     render: function(done) {
-
       // Fetch the template
       var tmpl = app.fetchTemplate(this.template);
       
@@ -70,21 +96,13 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
       Googlylogo.drawLogo();
       this.initializeStage();
 
-      // XXX: testing adding a bling
-      //for (var i=0; i<self.blings.length; i++) {
-      //  var bling = self.blings[i];
-      //  this.layer.add(bling.render());
-      //}
-      
-      var that = this; 
-     
-      blingCollection.each(function(bling) {
-        console.log(bling)
-        that.layer.add(bling.render());
+      var self = this; 
+       
+      this.blingCollection.each(function(bling) {
+        self.addBlingToLayer(bling);
       });
 
       this.stage.draw();
-
     },
 
     /*
@@ -198,27 +216,35 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
      */
     render: function() {
 
-      that = this;       
+      var that = this;
 
-      // XXX: this needs to be an "animated image view"
-      // can use new Bling object image collection to construct it
-      var rectangle = new Kinetic.Rect({
-        x: 0,
-        y: 0,
-        width: this.get("width"),
-        height: this.get("height"),
-        fill: this.get("fill"),
-        stroke: "black",
-        strokeWidth: 4
-      });
+      var createGroup = function() {
+        console.log();
+        // XXX: this needs to be an "animated image view"
+        // can use new Bling object image collection to construct it
+        var rectangle = new Kinetic.Rect({
+          x: 0,
+          y: 0,
+          width: that.get("width"),
+          height: that.get("height"),
+          fill: that.get("fill"),
+          stroke: "black",
+          strokeWidth: 4
+        });
 
-      // create Kinetic group
-      var group = new Kinetic.Group({
-        x: this.get("x"),
-        y: this.get("y"),
-        draggable: true
-      });
-      group.add(rectangle);
+        // create Kinetic group
+        var group = new Kinetic.Group({
+          x: that.get("x"),
+          y: that.get("y"),
+          draggable: true
+        });
+
+        group.add(rectangle);
+
+        return group;
+      }
+
+      var group = createGroup();
 
       ////
       // events
@@ -226,10 +252,10 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
       
       // when group is moved update model attributes 
       group.on("dragend", function() {
-        group.moveToTop();
+        //self.group.moveToTop();
         
-        that.set("x", this.getX());
-        that.set("y", this.getY());
+        //self.set("x", this.getX());
+        //self.set("y", this.getY());
         
         // XXX: This only updates clicked block, need to forward 
         // this to an object that can construct a comprehensive
@@ -238,8 +264,26 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
         // be re-rendered when a user shares a URL 
         var blockState = '/blocks/[{"x":' + that.get("x") +
                                   ',"y":' + that.get("y") + "}]";
-
         app.router.navigate(blockState);
+        console.log(that);
+        //self.group.off("dragstart");
+      });
+
+      var handleDragStart = function() {
+        console.log(that);
+        clone = that.clone();
+        //clone.group = self.createGroup();
+        clone.id = that.id + cloneId;
+        //clone.group.on("dragstart", handleDragStart);
+        //clone.group.on("dragend", function() {
+        //  console.log(this)
+        //});
+        vent.trigger("clone", clone);
+      }
+
+      group.on("dragstart", function() {
+        // create a new bling in place and copy this one to activeBlings col
+        handleDragStart();
       });
 
       return group;
@@ -247,14 +291,11 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
 
   });
 
+  var cloneId = 1;
+
   var Blings = Backbone.Collection.extend({
       model: Blockee.Bling
   });
-
-  var blingCollection = new Blings();
-
-  // load the initial bling models
-  blingCollection.reset(bootstrapModels);
 
   return Blockee;
 });
