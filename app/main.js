@@ -21,7 +21,6 @@ function(app, $, Backbone, Blockee) {
     },
 
     index: function() {
-      //decorate.setBling({});
       decorate.$el.appendTo("#main");
       decorate.render();
     },
