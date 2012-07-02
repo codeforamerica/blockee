@@ -232,41 +232,82 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
       // XXX: this is a little ugly! reactor!
       var buttonIcons = ["/assets/img/preview.png",
                          "/assets/img/help.png",
-                         "/assets/img/trash.png"];
+                         "/assets/img/trash.png",
+                     "/assets/img/help_over.png",
+                 "/assets/img/preview_over.png",
+             "/assets/img/trash_over.png"]
+                     ;
       var preview = new Image();
+      var preview_over = new Image();
+      preview_over.src = buttonIcons[4];
       preview.onload = function() {
         var image = new Kinetic.Image({
           x: 630,
           y: 0,
           image: preview,
-          width: 42,
-          height: 29 
+          width: 41,
+          height: 27 
+          });
+        image.on("mouseover", function(){
+          console.log("for help!");
+          image.setImage( preview_over);
+          //image.drawImage();
+        });
+        image.on("mouseout", function(){
+          console.log("no longer show help special icon");
+          image.setImage(preview);
+          //image.drawImage();
+            
         });
         layer.add(image);
         stage.draw();
       };
       preview.src = buttonIcons[0];
       var help = new Image();
+      var help_over = new Image();
+      help_over.src = buttonIcons[3];
       help.onload = function() {
         var image = new Kinetic.Image({
           x: 635,
           y: 70,
           image: help,
-          width: 33,
-          height: 38 
+          width: 16,
+          height: 32 
         });
+        image.on("mouseover", function(){
+          console.log("for help!");
+          image.setImage(help_over);
+          //image.drawImage();
+        });
+        image.on("mouseout", function(){
+          console.log("no longer show help special icon");
+          image.setImage(help);
+          //image.drawImage();
+        });        
         layer.add(image);
         stage.draw();
       };
       help.src = buttonIcons[1];
       var trash = new Image();
+      var trash_over = new Image();
+      trash_over.src = buttonIcons[5];
       trash.onload = function() {
         var image = new Kinetic.Image({
           x: 630,
-          y: 400,
+          y: 394,
           image: trash,
-          width: 44,
-          height: 49 
+          width: 40,
+          height: 56 
+           });
+        image.on("mouseover", function(){
+          console.log("for help!");
+          image.setImage(trash_over);
+          //image.drawImage();
+        });
+        image.on("mouseout", function(){
+          console.log("no longer show help special icon");
+          image.setImage(trash);
+          //image.drawImage();
         });
         layer.add(image);
         stage.draw();
