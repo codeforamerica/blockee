@@ -29,11 +29,12 @@ function(app, $, Backbone, Blockee) {
      * Parse block objects and use to render view
      */
     blocks: function(blocks) { 
+      var raw = unescape(blocks);
       var blocksObject = $.parseJSON(unescape(blocks));
 
-      decorate.setBling(blocksObject);
       decorate.$el.appendTo("#main");
-      decorate.render();
+      //decorate.setBling(blocksObject);
+      decorate.render(blocksObject);
     }
   });
 
