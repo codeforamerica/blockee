@@ -98,6 +98,12 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
         }
       });
 
+      var handleImageLoad = function() {
+          if (++loadedImages >= imagesToLoad) {
+            console.log("image loading complete");
+            callback(images);
+          }
+      };
       // load all images from path and callback when nothing left to load
       for (var idx in imageSources) {
         images[idx] = [];
@@ -105,12 +111,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
         for (var i=0; i<collection.length; i++) {
           console.log(collection[i]);
           images[idx][i] = new Image();
-          images[idx][i].onload = function() {
-            if (++loadedImages >= imagesToLoad) {
-              console.log("image loading complete");
-              callback(images);
-            }
-          }
+          images[idx][i].onload = handleImageLoad; 
           images[idx][i].src = imageSources[idx][i];
         }
       }
@@ -271,7 +272,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
         }
 
         return group;
-      }
+      };
 
       var group = createGroup(this);
 
