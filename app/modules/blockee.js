@@ -281,7 +281,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
         });
         image.on("mouseover", function(){
           console.log("for help!");
-          image.setImage(help_over);
+          image.setImage(help);
           //image.drawImage();
         });
         image.on("mouseout", function(){
