@@ -10,6 +10,11 @@ define([
 ],
 
 function(app, Backbone, Kinetic, Googlylogo, Models) {
+    
+   var s = document.createElement("script");
+   s.src = "/assets/js/libs/bootstrap-modal.js";
+   document.body.appendChild(s);
+    
   var Blockee = app.module();
   var vent = _.extend({}, Backbone.Events);
   var stage = null;
@@ -282,11 +287,19 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
         image.on("mouseout", function(){
           console.log("no longer show help special icon");
           image.setImage(help);
-          //image.drawImage();
-        });        
+        
+        });
+           
+          image.on("click", function(){
+          console.log("modal!");
+          $("#myModal").modal();
+      
+        });   
+        
         layer.add(image);
         stage.draw();
       };
+      
       help.src = buttonIcons[1];
       var trash = new Image();
       var trash_over = new Image();
@@ -309,6 +322,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
           image.setImage(trash);
           //image.drawImage();
         });
+        
+        
+        
         layer.add(image);
         stage.draw();
       };
