@@ -268,39 +268,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
         stage.draw();
       };
       preview.src = buttonIcons[0];
-      var help = new Image();
-      var help_over = new Image();
-      help_over.src = buttonIcons[3];
-      help.onload = function() {
-        var image = new Kinetic.Image({
-          x: 635,
-          y: 70,
-          image: help,
-          width: 16,
-          height: 32 
-        });
-        image.on("mouseover", function(){
-          console.log("for help!");
-          image.setImage(help);
-          //image.drawImage();
-        });
-        image.on("mouseout", function(){
-          console.log("no longer show help special icon");
-          image.setImage(help);
-        
-        });
-           
-          image.on("click", function(){
-          console.log("modal!");
-          $("#myModal").modal();
       
-        });   
-        
-        layer.add(image);
-        stage.draw();
-      };
-      
-      help.src = buttonIcons[1];
       var trash = new Image();
       var trash_over = new Image();
       trash_over.src = buttonIcons[5];
