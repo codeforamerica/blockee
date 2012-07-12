@@ -254,14 +254,16 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
           height: 27 
           });
         image.on("mouseover", function(){
-          console.log("for help!");
           image.setImage( preview_over);
-          //image.drawImage();
+          $("#stage").css({ cursor: "pointer" });
+          
+         
         });
         image.on("mouseout", function(){
-          console.log("no longer show help special icon");
+    
           image.setImage(preview);
-          //image.drawImage();
+           $("#stage").css({ cursor: "default" });
+       
             
         });
         layer.add(image);
@@ -281,14 +283,15 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
           height: 56 
            });
         image.on("mouseover", function(){
-          console.log("for help!");
           image.setImage(trash_over);
-          //image.drawImage();
+          $("#stage").css({ cursor: "pointer" });
+          
+         
         });
         image.on("mouseout", function(){
-          console.log("no longer show help special icon");
           image.setImage(trash);
-          //image.drawImage();
+          $("#stage").css({ cursor: "default" });
+       
         });
         
         
