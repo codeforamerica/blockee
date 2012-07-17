@@ -10,9 +10,10 @@
   font-weight: normal;
   line-height: 110%;
   border-style: solid;
-  border-width: 1px;
+  border-width: 0px;
   padding: 20px;
-  margin: 20px;
+  
+ /* margin: 20px;*/
 }
 .row-fluid {
   margin-bottom: 20px;
