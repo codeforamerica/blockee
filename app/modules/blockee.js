@@ -6,16 +6,12 @@ define([
   "backbone",
   "kinetic",
   "googlylogo",
-  "models"
+  "models",
+  "googlystreetview"
 ],
 
-function(app, Backbone, Kinetic, Googlylogo, Models) {
+function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
   
-  // XXX: fix this - import with config.js!
-  var s = document.createElement("script");
-  s.src = "/assets/js/libs/bootstrap-modal.js";
-  document.body.appendChild(s);
-    
   var Blockee = app.module();
   var vent = _.extend({}, Backbone.Events);
   var stage = null;
@@ -69,9 +65,24 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
     return group;
   };
 
+  /*
+   * DOM Event Handlers
+   */
+  function handleStreetViewClick(e) {
+    GooglyStreetView.load();
+  }
+
   // the decorate view
   Blockee.Views.Decorate = Backbone.View.extend({
     template: "app/templates/decorate",
+    
+    events: {
+      "click #street-view": handleStreetViewClick 
+    },
+
+    testFunc: function() {
+      console.log("test");
+    },
 
     initialize: function(options) {
       // event binding with "this" object bound to event methods
@@ -80,6 +91,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
       _.bindAll(this, "initializeStage");
       vent.bind("clone", this.addBlingToCollection);
       vent.bind("move", this.updateUrl);
+      vent.bind("icon-hover", this.handleIconHover);
 
       this.previewBlings = [];
       
@@ -109,8 +121,15 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
       // Set the template contents
       this.$el.html(tmpl());
 
+      var googleImagePickerTmpl = app.fetchTemplate("app/templates/_google-image-picker-modal");
+      $(this.el).append(googleImagePickerTmpl);
+
       return this;
     },
+
+    //_handleStreetViewClick: function() {
+    //  console.log("worked");
+    //},
 
     loadContent: function(previewBlocks) {
       // load images that are used for bling objects
@@ -138,6 +157,15 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
       blockState = blockState.substring(0, blockState.length-1) + "]"; 
       app.router.navigate("", {replace: true});
       app.router.navigate(blockState);
+    },
+
+    /*
+     * Handles mouseover blockee icon.
+     */
+    handleIconHover: function(options) {
+      var image = options.target;
+      image.setImage(options.replaceImg);
+      $("#stage").css({cursor: options.cursor});
     },
    
     /*
@@ -250,8 +278,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
              "/assets/img/trash_over.png"]
                      ;
       var preview = new Image();
-      var preview_over = new Image();
-      preview_over.src = buttonIcons[4];
+      var previewOver = new Image();
+      previewOver.src = buttonIcons[4];
       preview.onload = function() {
         var image = new Kinetic.Image({
           x: 630,
@@ -260,18 +288,21 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
           width: 41,
           height: 27 
           });
-        image.on("mouseover", function(){
-          image.setImage( preview_over);
-          $("#stage").css({ cursor: "pointer" });
-          
-         
+        image.on("mouseover", function() {
+          var options = {
+            "target": this,
+            "replaceImg": previewOver,
+            "cursor": "pointer"
+          };
+          vent.trigger("icon-hover", options);
         });
         image.on("mouseout", function(){
-    
-          image.setImage(preview);
-           $("#stage").css({ cursor: "default" });
-       
-            
+          var options = {
+            "target": this,
+            "replaceImg": preview,
+            "cursor": "default"
+          };
+          vent.trigger("icon-hover", options);
         });
         layer.add(image);
         stage.draw();
@@ -279,8 +310,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
       preview.src = buttonIcons[0];
       
       var trash = new Image();
-      var trash_over = new Image();
-      trash_over.src = buttonIcons[5];
+      var trashOver = new Image();
+      trashOver.src = buttonIcons[5];
       trash.onload = function() {
         var image = new Kinetic.Image({
           x: 630,
@@ -290,18 +321,21 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
           height: 56 
            });
         image.on("mouseover", function(){
-          image.setImage(trash_over);
-          $("#stage").css({ cursor: "pointer" });
-          
-         
+          var options = {
+            "target": this,
+            "replaceImg": trashOver,
+            "cursor": "pointer"
+          };
+          vent.trigger("icon-hover", options);
         });
         image.on("mouseout", function(){
-          image.setImage(trash);
-          $("#stage").css({ cursor: "default" });
-       
+          var options = {
+            "target": this,
+            "replaceImg": trash,
+            "cursor": "default"
+          };
+          vent.trigger("icon-hover", options);
         });
-        
-        
         
         layer.add(image);
         stage.draw();
@@ -309,20 +343,20 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
       trash.src = buttonIcons[2];
 
       // XXX: add an image for testing / mockup - REMOVE THIS
-      var imageObj = new Image();
-      imageObj.onload = function() {
-        var image = new Kinetic.Image({
-          x: 10,
-          y: 0,
-          image: imageObj,
-          width: 600,
-          height: 450 
-        });
-        layer.add(image);
-        image.moveToBottom();
-        stage.draw();
-      };
-      imageObj.src = "/assets/img/storek_test.jpg";
+      //var imageObj = new Image();
+      //imageObj.onload = function() {
+      //  var image = new Kinetic.Image({
+      //    x: 10,
+      //    y: 0,
+      //    image: imageObj,
+      //    width: 600,
+      //    height: 450 
+      //  });
+      //  layer.add(image);
+      //  image.moveToBottom();
+      //  stage.draw();
+      //};
+      //imageObj.src = "/assets/img/storek_test.jpg";
 
       // if we have bling to preview from the url, display it
       if (previewBlocks) {
