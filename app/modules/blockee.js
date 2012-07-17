@@ -16,6 +16,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
   var vent = _.extend({}, Backbone.Events);
   var stage = null;
   var layer = null;
+  var stubRect = null;
   var images = {};
 
   // a set of bling models to load when the app starts (bootstrap pattern)
@@ -69,7 +70,17 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
    * DOM Event Handlers
    */
   function handleStreetViewClick(e) {
-    GooglyStreetView.load();
+    GooglyStreetView.load(vent);
+  }
+
+  function removeElement(url) {
+    layer.remove(stubRect);
+    
+    // XXX: ugh...
+    console.log(url);
+    // Need to capture url (looks like this) and save in url and then update parsing logic to 
+    // parse out url and use it to draw the background (for preview / share mode)
+    //http://maps.googleapis.com/maps/api/streetview?size=600x435&location=37.775668,%20-122.41400599999997&sensor=false&heading=65.74225504259579&pitch=10&fov=90
   }
 
   // the decorate view
@@ -92,6 +103,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
       vent.bind("clone", this.addBlingToCollection);
       vent.bind("move", this.updateUrl);
       vent.bind("icon-hover", this.handleIconHover);
+      vent.bind("remove-element", removeElement);
 
       this.previewBlings = [];
       
@@ -126,10 +138,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
 
       return this;
     },
-
-    //_handleStreetViewClick: function() {
-    //  console.log("worked");
-    //},
 
     loadContent: function(previewBlocks) {
       // load images that are used for bling objects
@@ -342,21 +350,13 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
       };
       trash.src = buttonIcons[2];
 
-      // XXX: add an image for testing / mockup - REMOVE THIS
-      //var imageObj = new Image();
-      //imageObj.onload = function() {
-      //  var image = new Kinetic.Image({
-      //    x: 10,
-      //    y: 0,
-      //    image: imageObj,
-      //    width: 600,
-      //    height: 450 
-      //  });
-      //  layer.add(image);
-      //  image.moveToBottom();
-      //  stage.draw();
-      //};
-      //imageObj.src = "/assets/img/storek_test.jpg";
+      // before user applies image, we show only gray box
+      stubRect = new Kinetic.Rect({"width": 600, 
+        "height": 450, 
+          "fill": "gray",
+             "x": 0,
+             "y": 0});
+      layer.add(stubRect);
 
       // if we have bling to preview from the url, display it
       if (previewBlocks) {

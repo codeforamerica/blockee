@@ -1,4 +1,5 @@
 var map, geocoder;
+var vent;
 
 /*
  * Handle keypress events in Google form.
@@ -37,6 +38,7 @@ function viewAddress() {
  * Capture Image and inject into canvas.
  */
 function captureSV() {
+  vent.trigger("remove-element");
   var lat = map.getStreetView().getPosition().lat();
   var lng = map.getStreetView().getPosition().lng();
   var positionDetails = "";
@@ -57,13 +59,16 @@ function captureSV() {
                             .background = "url('" + SVurl + "')";
   $(".kineticjs-content")[0].style
                             .backgroundRepeat = "no-repeat";
+
+  vent.trigger("remove-element", SVurl);
 }
 
 /*
  * Manages interactions with Google StreetView API.
  */
 var GooglyStreetView = {
-  load: function() {
+  load: function(v) {
+    vent = v;
     var aModal = $("#svModal");
     $("#svModal").modal('toggle'); 
 

@@ -66,3 +66,7 @@
 #main .clues {
   color: #FE57A1;
 }
+
+#svModal img {
+  max-width: none;
+}
