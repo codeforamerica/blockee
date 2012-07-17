@@ -21,8 +21,9 @@ function(app, $, Backbone, Blockee) {
     },
 
     index: function() {
-      decorate.$el.appendTo("#main");
-      decorate.render();
+      var decorate = new Blockee.Views.Decorate();
+      this.showView(decorate);
+      decorate.loadContent();
     },
 
     /*
@@ -32,9 +33,20 @@ function(app, $, Backbone, Blockee) {
       var raw = unescape(blocks);
       var blocksObject = $.parseJSON(unescape(blocks));
 
-      decorate.$el.appendTo("#main");
-      //decorate.setBling(blocksObject);
-      decorate.render(blocksObject);
+      var decorate = new Blockee.Views.Decorate();
+      this.showView(decorate);
+      decorate.loadContent(blocksObject);
+    },
+
+    /*
+     * Utility for handling the display (and closing) of views
+     */
+    showView: function(view) {
+      if (this.currentView) {
+        this.currentView.close();
+      }
+      this.currentView = view;
+      this.currentView.$el.appendTo("#main");
     }
   });
 
@@ -48,6 +60,15 @@ function(app, $, Backbone, Blockee) {
 
     // Trigger the initial route and enable HTML5 History API support
     Backbone.history.start({ pushState: true });
+
+    // extend Backbone View object to include close/cleanup function  
+    Backbone.View.prototype.close = function() {
+      this.remove();
+      this.unbind();
+      if (this.onClose) {
+        this.onClose();
+      }
+    };
   });
 
   // All navigation that is relative should be passed through the navigate
@@ -71,5 +92,4 @@ function(app, $, Backbone, Blockee) {
       Backbone.history.navigate(href, true);
     }
   });
-
 });

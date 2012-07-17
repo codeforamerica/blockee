@@ -10,10 +10,11 @@ define([
 ],
 
 function(app, Backbone, Kinetic, Googlylogo, Models) {
-    
-   var s = document.createElement("script");
-   s.src = "/assets/js/libs/bootstrap-modal.js";
-   document.body.appendChild(s);
+  
+  // XXX: fix this - import with config.js!
+  var s = document.createElement("script");
+  s.src = "/assets/js/libs/bootstrap-modal.js";
+  document.body.appendChild(s);
     
   var Blockee = app.module();
   var vent = _.extend({}, Backbone.Events);
@@ -94,6 +95,32 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
       });
 
       self = this;
+
+      this.render();
+    },
+
+    /*
+     * Backbone render implementation
+     */
+    render: function(previewBlocks) {
+      // Fetch the template
+      var tmpl = app.fetchTemplate(this.template);
+      
+      // Set the template contents
+      this.$el.html(tmpl());
+
+      return this;
+    },
+
+    loadContent: function(previewBlocks) {
+      // load images that are used for bling objects
+      // when done, callback to initializeStage method with
+      // any blocks passed in the URL for preview to finish
+      // rendering
+      this.loadImages(this.initializeStage, previewBlocks);
+
+      // draw the googly eyed logo
+      Googlylogo.drawLogo();
     },
 
     /*
@@ -189,26 +216,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models) {
           images[idx][i].src = imageSources[idx][i];
         }
       }
-    },
-
-    /*
-     * Backbone render implementation
-     */
-    render: function(previewBlocks) {
-      // Fetch the template
-      var tmpl = app.fetchTemplate(this.template);
-      
-      // Set the template contents
-      this.$el.html(tmpl());
-
-      // draw the googly eyed logo
-      Googlylogo.drawLogo();
-
-      // load images that are used for bling objects
-      // when done, callback to initializeStage method with
-      // any blocks passed in the URL for preview to finish
-      // rendering
-      this.loadImages(this.initializeStage, previewBlocks);
     },
 
     /*
