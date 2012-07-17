@@ -11,9 +11,11 @@ require.config({
     // Libraries
     jquery: "../assets/js/libs/jquery",
     lodash: "../assets/js/libs/lodash",
+    bootstrap: "../assets/js/libs/bootstrap",
     backbone: "../assets/js/libs/backbone",
     kinetic: "../assets/js/libs/kinetic",
     googlylogo: "../assets/js/libs/googlylogo",
+    googlystreetview: "../assets/js/libs/streetview",
     models: "../assets/js/libs/bootstrapModels"
   },
 
@@ -27,6 +29,10 @@ require.config({
     },
     googlylogo: {
       exports: "Googlylogo"
+    },
+    googlystreetview: {
+      deps: ["jquery", "bootstrap"],
+      exports: "GooglyStreetView"
     },
     models: {
       exports: "Models"

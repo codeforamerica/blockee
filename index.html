@@ -8,7 +8,7 @@
   <!-- Application styles -->
   <link rel="stylesheet" href="/assets/css/bootstrap.css">
   <link rel="stylesheet" href="/assets/css/main.css">
-<link href='http://fonts.googleapis.com/css?family=Rokkitt:400,700' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Rokkitt:400,700' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
@@ -16,21 +16,21 @@
   <div role="main" id="main" class="container"></div>
   <!-- Application source -->
   <script data-main="/app/config" src="/assets/js/libs/require.js"></script>
- 
-  
-<div class="modal hide" id="myModal" style="bottom:50%;top:none;">
-<div class="modal-header">
-<button type="button" class="close" data-dismiss="modal">x</button>
-<h3>Help!</h3>
- </div>
-<div class="modal-body">
-<p>Something helpful here</p>
-</div>
-<div class="modal-footer">
-<a href="#" class="btn" data-dismiss="modal">Close</a>
-</div>
- </div>
-  
-  
+  <!-- Google Streetview API -->
+  <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+  <!-- XXX: what is this modal for? if required, it should be loaded as a template! -->
+  <div class="modal hide" id="myModal" style="bottom:50%;top:none;">
+    <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">x</button>
+    <h3>Help!</h3>
+     </div>
+    <div class="modal-body">
+    <p>Something helpful here</p>
+    </div>
+    <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Close</a>
+    </div>
+  </div>
 </body>
 </html>
