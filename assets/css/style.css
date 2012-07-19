@@ -1,3 +1,7 @@
+#svModal img {
+    max-width: none ;
+}
+
 #main {
   margin: 0px;
   font-size: 14px;
