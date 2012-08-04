@@ -1,0 +1,12 @@
+<div class="modal hide" id="svModal" style="top:50%;width:590px;">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">x</button>
+    <h3>Capture an image using Google Street View</h3>
+  </div>
+  <input id="placesearch" class="x-large" placeholder="155 9th St, SF" onkeypress="checkForEnter(event)"/>
+  <a class="btn" style="vertical-align:top;" onclick="viewAddress()">Search</a>
+  <div id="modal-map" class="modal-body" style="height:360px;width:560px;"></div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal" onclick="captureSV()">Capture</a>
+  </div>
+</div>

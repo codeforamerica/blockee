@@ -135,6 +135,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
 
       var googleImagePickerTmpl = app.fetchTemplate("app/templates/_google-image-picker-modal");
       $(this.el).append(googleImagePickerTmpl);
+      
 
       return this;
     },
