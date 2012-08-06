@@ -13,24 +13,23 @@
 
 <body>
   <!-- Main container -->
-  <div role="main" id="main" class="container"></div>
+  <div role="main" id="main" class="container visible-tablet"></div>
   <!-- Application source -->
   <script data-main="/app/config" src="/assets/js/libs/require.js"></script>
   <!-- Google Streetview API -->
   <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
-
-  <!-- XXX: what is this modal for? if required, it should be loaded as a template! -->
-  <div class="modal hide" id="myModal" style="bottom:50%;top:none;">
-    <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal">x</button>
-    <h3>Help!</h3>
-     </div>
-    <div class="modal-body">
-    <p>Something helpful here</p>
-    </div>
-    <div class="modal-footer">
-    <a href="#" class="btn" data-dismiss="modal">Close</a>
-    </div>
+  
+  
+  <div role="mainmobile" id="mainmobile" class="container-fluid visible-phone">
+    <p><img src="assets/img/mobile/blocklogo.png" width="231" height="48"></p>
+    <p>Sorry, this site needs to be viewed on a larger screen. </p>
+    <p>But what is Blockee?</p>
+    <p>Have you ever wondered what the street you live on would look like with a bike lane? How about a playground or a community garden instead of that parking lot? Did you then wonder what it would look like if all of those things sparkled?</p>
+    <p>To ponder these questions and more please vist us via another device.</p>
+    <p>Thanks,</p>
+<p><img src="assets/img/mobile/blockeesig.png" width="285" height="163"></p>
   </div>
+  
+  
 </body>
 </html>

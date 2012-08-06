@@ -15,6 +15,18 @@
   
  /* margin: 20px;*/
 }
+
+#mainmobile {
+  font-family: 'Rokkitt', Times, serif;
+  font-size: 21px;
+  font-weight: normal;
+  line-height: 110%;
+  border-style: solid;
+  border-width: 0px;
+  padding: 20px;
+  
+ /* margin: 20px;*/
+}
 .row-fluid {
   margin-bottom: 20px;
 }
