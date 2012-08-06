@@ -42,5 +42,33 @@ var Models = [
       "stopsign/stopsign22.png",
       "stopsign/stopsign23.png"
     ]
-  }
+  },
+  {
+    "id": "stopsign2", 
+    "x": 0, 
+    "y": 0, 
+    "width": 40, 
+    "height": 100,
+    "image": "stopsign", 
+    "images": [
+      "stopsign/stopsign20.png",
+      "stopsign/stopsign21.png",
+      "stopsign/stopsign22.png",
+      "stopsign/stopsign23.png"
+    ]
+  },
+  {
+    "id": "stopsign3", 
+    "x": 0, 
+    "y": 0, 
+    "width": 40, 
+    "height": 100,
+    "image": "stopsign", 
+    "images": [
+      "stopsign/stopsign20.png",
+      "stopsign/stopsign21.png",
+      "stopsign/stopsign22.png",
+      "stopsign/stopsign23.png"
+    ]
+  },
 ]

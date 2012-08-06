@@ -86,7 +86,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
   // the decorate view
   Blockee.Views.Decorate = Backbone.View.extend({
     template: "app/templates/decorate",
-    
+     
     events: {
       "click #street-view": handleStreetViewClick 
     },
@@ -225,21 +225,21 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
 
       // map all image paths for each image type
       this.blingCollection.each(function(bling) {
-        imageSources[bling.get("image")] = [];
+        imageSources[bling.get("id")] = [];
         var sources = bling.get("images");
         for (var idx in sources) {
           imagesToLoad++;
-          imageSources[bling.get("image")].push("/assets/img/image_groups/" + sources[idx]);
+          imageSources[bling.get("id")].push("/assets/img/image_groups/" + sources[idx]);
         }
       });
 
       // count all loaded images and callback to the initStage
       // method when everything is complete to render the view
       var handleImageLoad = function() {
-          if (++loadedImages >= imagesToLoad) {
-            console.log("image loading complete");
-            initializeStage(previewBlocks);
-          }
+        if (++loadedImages === imagesToLoad) {
+          console.log("image loading complete");
+          initializeStage(previewBlocks);
+        }
       };
 
       // load all images from path and callback when nothing left to load
