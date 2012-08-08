@@ -30,6 +30,22 @@ var Models = [
     ]
   },
   {
+    "id": "bench", 
+    "x": 0, 
+    "y": 0, 
+    "width": 120, 
+    "height": 80,
+    "image": "bench", 
+    "images": [
+      "bench/bench0.png",
+      "bench/bench1.png",
+      "bench/bench2.png",
+      "bench/bench3.png",
+      "bench/bench4.png",
+      "bench/bench5.png"
+    ]
+  },
+  {
     "id": "stopsign", 
     "x": 0, 
     "y": 0, 
@@ -42,33 +58,34 @@ var Models = [
       "stopsign/stopsign22.png",
       "stopsign/stopsign23.png"
     ]
-  },
-  {
-    "id": "stopsign2", 
-    "x": 0, 
-    "y": 0, 
-    "width": 40, 
-    "height": 100,
-    "image": "stopsign", 
-    "images": [
-      "stopsign/stopsign20.png",
-      "stopsign/stopsign21.png",
-      "stopsign/stopsign22.png",
-      "stopsign/stopsign23.png"
-    ]
-  },
-  {
-    "id": "stopsign3", 
-    "x": 0, 
-    "y": 0, 
-    "width": 40, 
-    "height": 100,
-    "image": "stopsign", 
-    "images": [
-      "stopsign/stopsign20.png",
-      "stopsign/stopsign21.png",
-      "stopsign/stopsign22.png",
-      "stopsign/stopsign23.png"
-    ]
-  },
+  }
+
+  // {
+  //   "id": "stopsign2", 
+  //   "x": 0, 
+  //   "y": 0, 
+  //   "width": 40, 
+  //   "height": 100,
+  //   "image": "stopsign", 
+  //   "images": [
+  //     "stopsign/stopsign20.png",
+  //     "stopsign/stopsign21.png",
+  //     "stopsign/stopsign22.png",
+  //     "stopsign/stopsign23.png"
+  //   ]
+  // },
+  // {
+  //   "id": "stopsign3", 
+  //   "x": 0, 
+  //   "y": 0, 
+  //   "width": 40, 
+  //   "height": 100,
+  //   "image": "stopsign", 
+  //   "images": [
+  //     "stopsign/stopsign20.png",
+  //     "stopsign/stopsign21.png",
+  //     "stopsign/stopsign22.png",
+  //     "stopsign/stopsign23.png"
+  //   ]
+  // },
 ]
