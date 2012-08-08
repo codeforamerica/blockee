@@ -7,10 +7,11 @@ define([
   "kinetic",
   "googlylogo",
   "models",
-  "googlystreetview"
+  "googlystreetview",
+  "sharefeature"
 ],
 
-function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
+function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeature) {
   
   var Blockee = app.module();
   var vent = _.extend({}, Backbone.Events);
@@ -73,6 +74,10 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
     GooglyStreetView.load(vent);
   }
 
+  function handleShareClick(e) {
+    ShareFeature.show();
+  }
+
   function removeElement(url) {
     layer.remove(stubRect);
     
@@ -88,7 +93,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
     template: "app/templates/decorate",
     
     events: {
-      "click #street-view": handleStreetViewClick 
+      "click #street-view": handleStreetViewClick,
+      "click #share-button": handleShareClick
     },
 
     testFunc: function() {
@@ -166,6 +172,11 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
       blockState = blockState.substring(0, blockState.length-1) + "]"; 
       app.router.navigate("", {replace: true});
       app.router.navigate(blockState);
+      /*
+     * Handles share button hide/show.
+     */
+       $("#shares").css({ display: "none" });
+      $("#share-button").css({ display: "block" });
     },
 
     /*
