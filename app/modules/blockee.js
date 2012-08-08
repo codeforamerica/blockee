@@ -644,7 +644,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   // http://javascript.about.com/od/problemsolving/a/modulobug.htm
   Number.prototype.mod = function(n) {
     return ((this%n)+n)%n;
-  }
+  };
 
   return Blockee;
 });
