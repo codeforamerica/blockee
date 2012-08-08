@@ -1,6 +1,7 @@
 *.swp
 .DS_Store
 node_modules
+assets/img/bling/output/
 /dist
 *~
 *.swo

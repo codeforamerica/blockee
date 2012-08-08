@@ -15,10 +15,21 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   
   var Blockee = app.module();
   var vent = _.extend({}, Backbone.Events);
-  var stage = null;
-  var layer = null;
-  var stubRect = null;
-  var images = {};
+
+  var stage = null,
+      layer = null,
+      blingBoxLayer = null,
+      stubRect = null,
+      images = {};
+
+  // application configuration
+  // XXX: this probably should be in a config file
+  var BACKWARDS = -1,
+      FORWARDS = 1,
+      MAX_BLINGS_IN_BOX = 3;
+
+  // keep track of which "page" we are on in the bling box
+  var blingBoxCursor;
 
   // a set of bling models to load when the app starts (bootstrap pattern)
   var bootstrapModels = Models; 
@@ -91,14 +102,10 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   // the decorate view
   Blockee.Views.Decorate = Backbone.View.extend({
     template: "app/templates/decorate",
-    
+     
     events: {
       "click #street-view": handleStreetViewClick,
       "click #share-button": handleShareClick
-    },
-
-    testFunc: function() {
-      console.log("test");
     },
 
     initialize: function(options) {
@@ -116,13 +123,23 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       // a collection of blings
       this.blingCollection = new Blings();
 
+      // collection of blings in bling box
+      this.blingBoxCollection = new Blings();
+
+      // collection of blings in bling box
+      this.displayedBlingCollection = new Blings();
+
       // load the initial bling models
       this.blingCollection.reset(bootstrapModels);
+      // initialize blingBoxCollection to first N models
+      this.blingBoxCollection.models = 
+        _.first(this.blingCollection.models, MAX_BLINGS_IN_BOX);
+
+      // majick! (not really, this sets us up for reverse bling box paging)
+      blingBoxCursor = this.blingBoxCollection.length + 2;
 
       // XXX: Can use this later to perform some action whenever user drops bling
-      this.blingCollection.on("add", function(bling) {
-        console.log(bling);
-      });
+      this.blingCollection.on("add", function(bling) {});
 
       self = this;
 
@@ -160,12 +177,16 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     /*
      * Handles "move" event and updates URL to relect user's scene.
      */
-    updateUrl: function() {
+    updateUrl: function(bling) {
+
+      this.addBlingToDisplayedBlingCollection(bling);
+
       var blockState = "/blocks/[";
-      this.blingCollection.each(function(bling) {
+      this.displayedBlingCollection.each(function(bling) {
         if (bling.get("onStage")) {
           blockState = blockState.concat('{"x":' + bling.get("x") +    
                                          ',"y":' + bling.get("y") +
+                                         ',"id":"' + bling.id + '"' +
                                          ',"image":"' + bling.get("image") + '"},');
         }
       });
@@ -193,9 +214,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
      */ 
     loadPreviewBling: function(blocks) {
 
-      console.log("loaded with blocks");
-      console.log(blocks);
-
       for (var i=0; i<blocks.length; i++) { 
         var block = blocks[i];
         var x = (block.hasOwnProperty("x")) ? block.x : 20;
@@ -212,18 +230,26 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     },
 
     /*
-     * Utility for loading bling to canvas layer
-     */
-    addBlingToLayer: function(bling) {
-      layer.add(bling.render());
-    },
-
-    /*
      * Utility for loading bling in collection and adding to canvas layer
      */
-    addBlingToCollection: function(bling) {
-      this.blingCollection.add(bling);
-      this.addBlingToLayer(bling);
+    addBlingToCollection: function(bling) {    
+      blingBoxLayer.add(bling.render());
+    },
+
+    addBlingToDisplayedBlingCollection: function(bling) {   
+
+      // clone the bling from the blingbox and add to 
+      // displyed blings collection      
+      displayBling = bling.clone();      
+      displayBling.id = bling.id;
+      displayBling.set("x", bling.get("x"));
+      displayBling.set("y", bling.get("y"));
+      displayBling.set("onStage", true);   
+
+      // this really just "updates in place" if the bling was
+      // already displayed
+      this.displayedBlingCollection.remove(displayBling); 
+      this.displayedBlingCollection.add(displayBling); 
     },
 
     /*
@@ -237,21 +263,21 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
       // map all image paths for each image type
       this.blingCollection.each(function(bling) {
-        imageSources[bling.get("image")] = [];
+        imageSources[bling.get("id")] = [];
         var sources = bling.get("images");
         for (var idx in sources) {
           imagesToLoad++;
-          imageSources[bling.get("image")].push("/assets/img/image_groups/" + sources[idx]);
+          imageSources[bling.get("id")].push("/assets/img/image_groups/" + sources[idx]);
         }
       });
 
       // count all loaded images and callback to the initStage
       // method when everything is complete to render the view
       var handleImageLoad = function() {
-          if (++loadedImages >= imagesToLoad) {
-            console.log("image loading complete");
-            initializeStage(previewBlocks);
-          }
+        if (++loadedImages === imagesToLoad) {
+          console.log("image loading complete");
+          initializeStage(previewBlocks);
+        }
       };
 
       // load all images from path and callback when nothing left to load
@@ -271,32 +297,34 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
      */
     initializeStage: function(previewBlocks) {
 
-      console.log("starting init stage");
-      console.log(previewBlocks);
-
       var viewportWidth = $('#stage').width();
       var viewportHeight = 600;
 
-      // blockee has a single stage (for now, there could easily be multiple)
+      // blockee has a single stage
       stage = new Kinetic.Stage({
         container: "stage",
         width: viewportWidth,
         height: viewportHeight 
       });
 
-      // and a single view
+      // main layer
       layer = new Kinetic.Layer();
       stage.add(layer);
+
+      // second layer for blingBox
+      blingBoxLayer = new Kinetic.Layer();
+      stage.add(blingBoxLayer);
 
       // load the preview, help, and help icon-buttons
       // XXX: this is a little ugly! reactor!
       var buttonIcons = ["/assets/img/preview.png",
                          "/assets/img/help.png",
                          "/assets/img/trash.png",
-                     "/assets/img/help_over.png",
-                 "/assets/img/preview_over.png",
-             "/assets/img/trash_over.png"]
-                     ;
+                         "/assets/img/help_over.png",
+                         "/assets/img/preview_over.png",
+                         "/assets/img/trash_over.png"];
+
+      // preview button                   
       var preview = new Image();
       var previewOver = new Image();
       previewOver.src = buttonIcons[4];
@@ -329,6 +357,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       };
       preview.src = buttonIcons[0];
       
+      // trash button
       var trash = new Image();
       var trashOver = new Image();
       trashOver.src = buttonIcons[5];
@@ -362,7 +391,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       };
       trash.src = buttonIcons[2];
 
-      // before user applies image, we show only gray box
+      // before user applies image, we show only gray box on stage
       stubRect = new Kinetic.Rect({"width": 600, 
         "height": 450, 
           "fill": "gray",
@@ -375,22 +404,152 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         this.loadPreviewBling(previewBlocks);
       }
 
-      // XXX: Need "bling box" with scrollbar, arrows. until then,
-      // just loading horizontally along the bottom under the stage
-      var xPos = 10;
-      self.blingCollection.each(function(bling) {
-        bling.set("x", xPos);
-        bling.set("y", 480);
-        self.addBlingToLayer(bling);
-        xPos += 150;
+      // bling box paging buttons
+      var leftButton = new Kinetic.Rect({
+        x: 0,
+        y: 500,      
+        width: 31,
+        height: 46,            
+        fill: "gray",
+        strokeWidth: 0
       });
+      var lineTop = new Kinetic.Line({
+        points: [20, 509, 8, 525],
+        stroke: "white",
+        strokeWidth: 2,
+        lineCap: "round",
+        lineJoin: "round"
+      });
+      var lineBottom = new Kinetic.Line({
+        points: [8, 525, 20, 540],
+        stroke: "white",
+        strokeWidth: 2,
+        lineCap: "round",
+        lineJoin: "round"
+      });      
+      layer.add(leftButton);
+      layer.add(lineTop);
+      layer.add(lineBottom);  
+      var rightButton = new Kinetic.Rect({
+        x: 570,
+        y: 500,      
+        width: 31,
+        height: 46,            
+        fill: "gray",
+        strokeWidth: 0
+      });
+      var lineTopRight = new Kinetic.Line({
+        points: [580, 509, 592, 525],
+        stroke: "white",
+        strokeWidth: 2,
+        lineCap: "round",
+        lineJoin: "round"
+      });
+      var lineBottomRight = new Kinetic.Line({
+        points: [592, 525, 580, 540],
+        stroke: "white",
+        strokeWidth: 2,
+        lineCap: "round",
+        lineJoin: "round"
+      });      
+      layer.add(rightButton);
+      layer.add(lineTopRight);
+      layer.add(lineBottomRight);
+      
+      // paging button click event logic
+      leftButton.on("click", function(frame) {
+
+        // Load the blings that will slide in from left or right and clear existing ones.
+        updateBlingBoxCache(FORWARDS);
+
+        blingBoxLayer.transitionTo({
+          x: -1500,
+          duration: 1.0,
+          easing: 'ease-in-out',
+          callback: function() {
+            blingBoxLayer.removeChildren();
+            blingBoxLayer.setX(0);              
+            loadBlings(BACKWARDS);
+          }
+        });        
+      });
+      rightButton.on("click", function(frame) {
+
+        // Load the blings that will slide in from left or right and clear existing ones.
+        updateBlingBoxCache(BACKWARDS);
+
+        blingBoxLayer.transitionTo({
+          x: 1500,
+          duration: 1.0,
+          easing: 'ease-in-out',
+          callback: function() {
+            blingBoxLayer.removeChildren();
+            blingBoxLayer.setX(0);
+            loadBlings(FORWARDS); // reverse slide in order
+          }
+        });      
+      });
+
+      // load blings, they fly in from the right
+      loadBlings(BACKWARDS);
 
       // draw the stage in its initial state
       stage.draw();
-
-      console.log("done init stage");
     }
   });
+
+  /*
+   * Load the blings that will slide in from left or right.
+   */
+  var count = 0;
+  function updateBlingBoxCache(direction) {
+
+    blingBoxCursor += (3 * direction);
+    //var cursor = (blingBoxCursor % self.blingCollection.models.length);
+    var cursor = (blingBoxCursor.mod(self.blingCollection.models.length));
+    console.log(cursor);
+    cursor = cursor - cursor % 3; 
+    console.log(cursor);
+
+    var cursorMax = Math.min(cursor+3, self.blingCollection.models.length);
+
+    self.blingBoxCollection.models = [];
+    for (var i=cursor; i<cursorMax; i++) {
+        self.blingBoxCollection.models.push(self.blingCollection.models[i]);
+    }
+
+  }
+
+  function loadBlings(direction) {   
+
+    // they fly in from the right or left after having been
+    // drawn offscreen
+
+    var inverseDirection = direction * -1;
+
+    // opp of stage width and direction
+    var xLocation = (stage.getSize().width + (50 * direction) + 
+      (150 * inverseDirection)) * 
+      inverseDirection;
+ 
+    // draw them offscreen
+    self.blingBoxCollection.each(function(bling) {
+      bling.set("x", xLocation);
+      bling.set("y", 480);
+      blingBoxLayer.add(bling.render());
+      xLocation += 150;
+    });   
+
+    blingBoxLayer.moveToBottom();
+ 
+    // fly them in
+    blingBoxLayer.transitionTo({          
+      x: stage.getSize().width * direction,
+      duration: 1.0,
+      easing: 'ease-in-out'
+    });
+
+  }
 
   /*
    * Bling object represents a civic item that can be 
@@ -413,23 +572,25 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
      * attributes of this Bling model to be drawn on stage.
      */
     render: function() {
-      // capture the Bling model as "that"
+      
       var that = this;
 
+      // a model has an group that can be rendered on screen
+      // a group holds the images that make the bling animation
       var group = createGroup(this);
 
       ////
-      // define drag event behaviors
+      // define drag and drop event behaviors
       ////
       
       // when group is moved update model attributes 
       group.on("dragend", function() {
         that.set("x", this.getX());
         that.set("y", this.getY());
-        that.set("onStage", true);
-        vent.trigger("move", clone);
+        // view should respond (update url) to handle moved bling
+        vent.trigger("move", that);
         // don't clone clones
-        this.off("dragstart");
+        this.off("dragstart");                      
       });
 
       // when group is touched, move it to top and redraw stage
@@ -438,17 +599,32 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         stage.draw();
       });
 
-      // when group is dragged, create a clone to leave where the group used to be
-      // this creates the effect of being able to use multiple copies of the same bling
-      // and keeps the blings on the bottom of the screen available to be used over
-      // and over.
+      // when group is dragged, create a clone to leave where 
+      // the group used to be this creates the effect of being 
+      // able to use multiple copies of the same bling and keeps 
+      // the blings on the bottom of the screen available 
+      // to be used over and over.
       group.on("dragstart", function() {
+
+        // should be on top of everything else 
+        // (all other rendered objects)
+        this.moveTo(layer);
+
+        // clone it (see description above)
         clone = that.clone();
         clone.group = createGroup(clone);
         // XXX: need to build id generator
-        clone.id = that.id + cloneId;
-        this.moveToTop();
+        clone.id = clone.id + cloneId++;
+        clone.cid = clone.id;
+
+        // tell the system to render and manage clone
         vent.trigger("clone", clone);
+
+        // the id for each bling that is going to be used
+        // on screen must be unique, this ensrures that
+        // XXX: need to build proper id generator
+        that.id = that.id + cloneId++;
+
         stage.draw();
       });
 
@@ -462,6 +638,13 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   var Blings = Backbone.Collection.extend({
       model: Blockee.Bling
   });
+
+  // XXX: really? is the best solution?
+  // javascript don't do mod
+  // http://javascript.about.com/od/problemsolving/a/modulobug.htm
+  Number.prototype.mod = function(n) {
+    return ((this%n)+n)%n;
+  }
 
   return Blockee;
 });
