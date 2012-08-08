@@ -16,11 +16,10 @@ def iter_frames(im):
     except EOFError:
         pass
 
-file_name = 'bench'
+file_name = 'bikerack'
 file_ext = 'gif'        
 
-im = Image.open('%s.%s' % (file_name, file_ext))
-#transparency = im.info['transparency']        
+im = Image.open('%s.%s' % (file_name, file_ext))      
 
 for i, frame in enumerate(iter_frames(im)):
     frame.save('output/%s%d.png' % (file_name, i), **frame.info)    

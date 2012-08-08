@@ -27,6 +27,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
       FORWARDS = 1,
       MAX_BLINGS_IN_BOX = 3;
 
+  // keep track of which "page" we are on in the bling box
+  var blingBoxCursor;
+
   // a set of bling models to load when the app starts (bootstrap pattern)
   var bootstrapModels = Models; 
 
@@ -122,8 +125,12 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
 
       // load the initial bling models
       this.blingCollection.reset(bootstrapModels);
-      // initialize blingBoxCollection to intial loaded models
-      this.blingBoxCollection.reset(bootstrapModels);
+      // initialize blingBoxCollection to first N models
+      this.blingBoxCollection.models = 
+        _.first(this.blingCollection.models, MAX_BLINGS_IN_BOX);
+
+      // majick! (not really, this sets us up for reverse bling box paging)
+      blingBoxCursor = this.blingBoxCollection.length + 2;
 
       // XXX: Can use this later to perform some action whenever user drops bling
       this.blingCollection.on("add", function(bling) {});
@@ -195,7 +202,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
      */ 
     loadPreviewBling: function(blocks) {
 
-      for (var i=0; i<MAX_BLINGS_IN_BOX; i++) { 
+      for (var i=0; i<blocks.length; i++) { 
         var block = blocks[i];
         var x = (block.hasOwnProperty("x")) ? block.x : 20;
         var y = (block.hasOwnProperty("y")) ? block.y : 100;
@@ -439,6 +446,10 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
       
       // paging button click event logic
       leftButton.on("click", function(frame) {
+
+        // Load the blings that will slide in from left or right and clear existing ones.
+        updateBlingBoxCache(FORWARDS);
+
         blingBoxLayer.transitionTo({
           x: -1500,
           duration: 1.0,
@@ -451,6 +462,10 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
         });        
       });
       rightButton.on("click", function(frame) {
+
+        // Load the blings that will slide in from left or right and clear existing ones.
+        updateBlingBoxCache(BACKWARDS);
+
         blingBoxLayer.transitionTo({
           x: 1500,
           duration: 1.0,
@@ -471,7 +486,29 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
     }
   });
 
-  function loadBlings(direction) {    
+  /*
+   * Load the blings that will slide in from left or right.
+   */
+  var count = 0;
+  function updateBlingBoxCache(direction) {
+
+    blingBoxCursor += (3 * direction);
+    //var cursor = (blingBoxCursor % self.blingCollection.models.length);
+    var cursor = (blingBoxCursor.mod(self.blingCollection.models.length));
+    console.log(cursor);
+    cursor = cursor - cursor % 3; 
+    console.log(cursor);
+
+    var cursorMax = Math.min(cursor+3, self.blingCollection.models.length);
+
+    self.blingBoxCollection.models = [];
+    for (var i=cursor; i<cursorMax; i++) {
+        self.blingBoxCollection.models.push(self.blingCollection.models[i]);
+    }
+
+  }
+
+  function loadBlings(direction) {   
 
     // they fly in from the right or left after having been
     // drawn offscreen
@@ -589,6 +626,13 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView) {
   var Blings = Backbone.Collection.extend({
       model: Blockee.Bling
   });
+
+  // XXX: really? is the best solution?
+  // javascript don't do mod
+  // http://javascript.about.com/od/problemsolving/a/modulobug.htm
+  Number.prototype.mod = function(n) {
+    return ((this%n)+n)%n;
+  }
 
   return Blockee;
 });
