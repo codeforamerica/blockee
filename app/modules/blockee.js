@@ -31,6 +31,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   // keep track of which "page" we are on in the bling box
   var blingBoxCursor;
 
+  var blockState,
+      googleStreetsUrl;
+
   // a set of bling models to load when the app starts (bootstrap pattern)
   var bootstrapModels = Models; 
 
@@ -91,12 +94,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
   function removeElement(url) {
     layer.remove(stubRect);
-    
-    // XXX: ugh...
-    console.log(url);
-    // Need to capture url (looks like this) and save in url and then update parsing logic to 
-    // parse out url and use it to draw the background (for preview / share mode)
-    //http://maps.googleapis.com/maps/api/streetview?size=600x435&location=37.775668,%20-122.41400599999997&sensor=false&heading=65.74225504259579&pitch=10&fov=90
+    googleStreetsUrl = url.replace("http://", "");   
+    console.log(googleStreetsUrl);
   }
 
   // the decorate view
@@ -163,15 +162,21 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       return this;
     },
 
-    loadContent: function(previewBlocks) {
+    loadContent: function(previewBlocks, imageUrl) {
       // load images that are used for bling objects
       // when done, callback to initializeStage method with
       // any blocks passed in the URL for preview to finish
       // rendering
-      this.loadImages(this.initializeStage, previewBlocks);
+      this.loadImages(this.initializeStage, previewBlocks, imageUrl);
 
       // draw the googly eyed logo
       Googlylogo.drawLogo();
+    },
+
+    pushUrl: function() {
+      app.router.navigate("", {replace: true});
+      blockState = "?blocks=" + escape(blockState) + "&url=" + encodeURIComponent(googleStreetsUrl);
+      app.router.navigate(blockState);
     },
 
     /*
@@ -181,7 +186,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
       this.addBlingToDisplayedBlingCollection(bling);
 
-      var blockState = "/blocks/[";
+      blockState = "  [";
       this.displayedBlingCollection.each(function(bling) {
         if (bling.get("onStage")) {
           blockState = blockState.concat('{"x":' + bling.get("x") +    
@@ -191,12 +196,12 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         }
       });
       blockState = blockState.substring(0, blockState.length-1) + "]"; 
-      app.router.navigate("", {replace: true});
-      app.router.navigate(blockState);
+      this.pushUrl();
+
       /*
-     * Handles share button hide/show.
-     */
-       $("#shares").css({ display: "none" });
+       * Handles share button hide/show.
+       */
+      $("#shares").css({ display: "none" });
       $("#share-button").css({ display: "block" });
     },
 
@@ -256,7 +261,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
      * Handle loading png images files from disk that are used
      * in the canvas scene
      */
-    loadImages: function(initializeStage, previewBlocks) {
+    loadImages: function(initializeStage, previewBlocks, imageUrl) {
       var imageSources = {};
       var loadedImages = 0;
       var imagesToLoad = 0;
@@ -276,7 +281,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       var handleImageLoad = function() {
         if (++loadedImages === imagesToLoad) {
           console.log("image loading complete");
-          initializeStage(previewBlocks);
+          initializeStage(previewBlocks, imageUrl);
         }
       };
 
@@ -295,7 +300,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     /*
      * Setup the Kinetic Stage object 
      */
-    initializeStage: function(previewBlocks) {
+    initializeStage: function(previewBlocks, imageUrl) {
 
       var viewportWidth = $('#stage').width();
       var viewportHeight = 600;
@@ -402,6 +407,14 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       // if we have bling to preview from the url, display it
       if (previewBlocks) {
         this.loadPreviewBling(previewBlocks);
+
+        // show image url
+        $(".kineticjs-content")[0].style
+                            .background = "url('" + imageUrl + "')";
+        $(".kineticjs-content")[0].style
+                            .backgroundRepeat = "no-repeat";      
+
+        vent.trigger("remove-element", imageUrl);                                                  
       }
 
       // bling box paging buttons

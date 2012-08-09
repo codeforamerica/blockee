@@ -17,7 +17,7 @@ function(app, $, Backbone, Blockee) {
   var Router = Backbone.Router.extend({
     routes: {
       "": "index",
-      "blocks/:blocks": "blocks"
+      "?blocks=:blocks&url=:url": "blocks"
     },
 
     index: function() {
@@ -29,13 +29,14 @@ function(app, $, Backbone, Blockee) {
     /*
      * Parse block objects and use to render view
      */
-    blocks: function(blocks) { 
+    blocks: function(blocks, url) { 
       var raw = unescape(blocks);
-      var blocksObject = $.parseJSON(unescape(blocks));
+      var blocksObject = $.parseJSON(raw);    
+      var googleStreetViewUrl = "http://" + decodeURIComponent(url);
 
       var decorate = new Blockee.Views.Decorate();
       this.showView(decorate);
-      decorate.loadContent(blocksObject);
+      decorate.loadContent(blocksObject, googleStreetViewUrl);
     },
 
     /*
