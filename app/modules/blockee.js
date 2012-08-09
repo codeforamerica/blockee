@@ -175,7 +175,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
     pushUrl: function() {
       app.router.navigate("", {replace: true});
-      blockState = "?blocks=" + escape(blockState) + "&url=" + encodeURIComponent(googleStreetsUrl);
+      console.log(googleStreetsUrl.replace("maps.googleapis.com/maps/api/streetview?", ""));
+      blockState = "?blocks=" + blockState + 
+        "+" + encodeURIComponent(googleStreetsUrl.replace("maps.googleapis.com/maps/api/streetview?", ""));
       app.router.navigate(blockState);
     },
 
@@ -186,7 +188,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
       this.addBlingToDisplayedBlingCollection(bling);
 
-      blockState = "  [";
+      blockState = "[";
       this.displayedBlingCollection.each(function(bling) {
         if (bling.get("onStage")) {
           blockState = blockState.concat('{"x":' + bling.get("x") +    
