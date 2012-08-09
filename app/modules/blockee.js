@@ -399,10 +399,14 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       // before user applies image, we show only gray box on stage
       stubRect = new Kinetic.Rect({"width": 600, 
         "height": 450, 
-          "fill": "gray",
+          "fill": "pink",
              "x": 0,
              "y": 0});
+         
+         
       layer.add(stubRect);
+      
+    
 
       // if we have bling to preview from the url, display it
       if (previewBlocks) {
