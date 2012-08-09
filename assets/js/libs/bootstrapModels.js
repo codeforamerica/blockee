@@ -119,6 +119,19 @@ var Models = [
     ]
   },
   {
+    "id": "hopscotch", 
+    "x": 0, 
+    "y": 0, 
+    "width": 176, 
+    "height": 110,
+    "image": "hopscotch", 
+    "images": [
+      "hopscotch/hopscotch01.png",
+      "hopscotch/hopscotch02.png",
+      "hopscotch/hopscotch03.png"
+    ]
+  },
+  {
     "id": "bikerack", 
     "x": 0, 
     "y": 0, 
