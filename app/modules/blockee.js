@@ -8,11 +8,8 @@ define([
   "googlylogo",
   "models",
   "googlystreetview",
-<<<<<<< Updated upstream
-  "sharefeature"
-=======
+  "sharefeature",
   "iframetransport"
->>>>>>> Stashed changes
 ],
 
 function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeature) {
@@ -96,7 +93,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     ShareFeature.show();
   }
 
-  function uploadFile(e) {
+  function handleFormSubmit(e) {
 
   }
 
@@ -112,15 +109,12 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
      
     events: {
       "click #street-view": handleStreetViewClick,
-<<<<<<< Updated upstream
-      "click #share-button": handleShareClick
-=======
-      "submit #upload-form": uploadFile
+      "click #share-button": handleShareClick,
+      "submit #upload-form": handleFormSubmit
     },
 
     testFunc: function() {
       console.log("test");
->>>>>>> Stashed changes
     },
 
     initialize: function(options) {
