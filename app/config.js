@@ -17,6 +17,7 @@ require.config({
     googlylogo: "../assets/js/libs/googlylogo",
     googlystreetview: "../assets/js/libs/streetview",
     sharefeature: "../assets/js/libs/sharefeature",
+    iframetransport: "../assets/js/libs/jquery.iframe-transport",
     models: "../assets/js/libs/bootstrapModels"
   },
 
@@ -38,6 +39,10 @@ require.config({
     sharefeature: {
       deps: ["jquery"],
       exports: "ShareFeature"
+    },
+    iframetransport: {
+      deps: ["jquery"],
+      exports: "IFrameTransport"
     },
     models: {
       exports: "Models"
