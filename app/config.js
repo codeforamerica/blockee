@@ -16,6 +16,7 @@ require.config({
     kinetic: "../assets/js/libs/kinetic",
     googlylogo: "../assets/js/libs/googlylogo",
     googlystreetview: "../assets/js/libs/streetview",
+    sharefeature: "../assets/js/libs/sharefeature",
     models: "../assets/js/libs/bootstrapModels"
   },
 
@@ -33,6 +34,10 @@ require.config({
     googlystreetview: {
       deps: ["jquery", "bootstrap"],
       exports: "GooglyStreetView"
+    },
+    sharefeature: {
+      deps: ["jquery"],
+      exports: "ShareFeature"
     },
     models: {
       exports: "Models"

@@ -38,7 +38,6 @@ function viewAddress() {
  * Capture Image and inject into canvas.
  */
 function captureSV() {
-  vent.trigger("remove-element");
   var lat = map.getStreetView().getPosition().lat();
   var lng = map.getStreetView().getPosition().lng();
   var positionDetails = "";
