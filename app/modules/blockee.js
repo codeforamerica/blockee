@@ -282,8 +282,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       // method when everything is complete to render the view
       var handleImageLoad = function() {
         if (++loadedImages === imagesToLoad) {
-          console.log("image loading complete");
-          initializeStage(previewBlocks, imageUrl);
+          // XXX: should probably show a loading spinner (or something)
+          // and diasallow bling paging until things are loaded
+          console.log("image loading complete");          
         }
       };
 
@@ -297,6 +298,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
           images[idx][i].src = imageSources[idx][i];
         }
       }
+
+      initializeStage(previewBlocks, imageUrl);
     },
 
     /*
