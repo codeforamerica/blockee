@@ -339,8 +339,11 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       blockState = "[";
       this.displayedBlingCollection.each(function(bling) {
         if (bling.get("onStage")) {
+          console.log(bling);
           blockState = blockState.concat('{"x":' + bling.get("x") +    
                                          ',"y":' + bling.get("y") +
+                                         ',"width":' + bling.get("width") +
+                                         ',"height":' + bling.get("height") +
                                          ',"id":"' + bling.id + '"' +
                                          ',"image":"' + bling.get("image") + '"},');
         }
@@ -755,8 +758,17 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       
       // when group is moved update model attributes 
       group.on("dragend", function() {
+
+        // width of group based on it's image
+        var image = this.get(".image")[0];
+
+        console.log(image.getWidth());
+
         that.set("x", this.getX());
         that.set("y", this.getY());
+        that.set("width", image.getWidth());
+        that.set("height", image.getHeight());        
+
         // view should respond (update url) to handle moved bling
         vent.trigger("move", that);
         // don't clone clones
