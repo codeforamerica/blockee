@@ -22,6 +22,19 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       stubRect = null,
       images = {};
 
+  // XXX: rename to trashArea
+  var trash_area;
+
+  var buttonIcons = ["/assets/img/preview.png",
+                   "/assets/img/help.png",
+                   "/assets/img/trash.png",
+                   "/assets/img/help_over.png",
+                   "/assets/img/preview_over.png",
+                   "/assets/img/trash_over.png",
+                   "/assets/img/locked.png",
+                   "/assets/img/unlocked.png",
+                   "/assets/img/rotate.png"];
+
   // application configuration
   // XXX: this probably should be in a config file
   var BACKWARDS = -1,
@@ -37,22 +50,26 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   // a set of bling models to load when the app starts (bootstrap pattern)
   var bootstrapModels = Models; 
 
-  function addResizeAnchors(group) {
+  function addResizeAnchors(bling) {
+
+    var group = bling.group;
 
     function update(group, activeAnchor) {
 
       var topLeft = group.get(".topLeft")[0];
       var topRight = group.get(".topRight")[0];
       var bottomLeft = group.get(".bottomLeft")[0];
-      var bottomRight = group.get(".bottomRight")[0];      
+      var bottomRight = group.get(".bottomRight")[0];
 
-      var resizingImages = group.get(".image");
+      var anchorBox = group.get(".anchorBox")[0];
+      var lock = group.get(".lock")[0];
+      var rotate = group.get(".rotate")[0];   
 
       // update anchor positions
       switch (activeAnchor.getName()) {
         case "topLeft":
-          topRight.attrs.y = activeAnchor.attrs.y;
-          bottomLeft.attrs.x = activeAnchor.attrs.x;
+          topRight.attrs.y = topLeft.attrs.y;
+          bottomLeft.attrs.x = topLeft.attrs.x;
           break;
         case "topRight":
           topLeft.attrs.y = activeAnchor.attrs.y;
@@ -66,22 +83,46 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
           bottomLeft.attrs.y = activeAnchor.attrs.y;
           topRight.attrs.x = activeAnchor.attrs.x;
           break;
-      }
-
-      for (var i=0; i<resizingImages.length; i++) {
-        var image = resizingImages[i];
-        image.setPosition(topLeft.attrs.x, topLeft.attrs.y);
-      }
+      }         
 
       var width = topRight.attrs.x - topLeft.attrs.x;
-      var height = bottomLeft.attrs.y - topLeft.attrs.y;
+      var height = bottomLeft.attrs.y - topLeft.attrs.y;        
 
+      // save to use when updating the bling object's position
+      group.attrs.resizeYAdj = topLeft.attrs.y;
+      group.attrs.resizeXAdj = topLeft.attrs.x; 
+
+      // set the size of each image based on anchor drag
+      var resizingImages = group.get(".image");
       if(width && height) {
         for (var i=0; i<resizingImages.length; i++) {
           var image = resizingImages[i];
-          image.setSize(width, height);
+          image.setSize(width - 10, height - 10);
+
+          // set the position of each image based on anchor drag
+          //image.setPosition(topLeft.attrs.x + 7, topLeft.attrs.y + 7);
+          image.setPosition(topLeft.attrs.x, topLeft.attrs.y);
+
+          // also move and make the anchorBox bigger to fix new image size
+          anchorBox.setSize(width, height);
+          anchorBox.attrs.x = topLeft.attrs.x + 2;
+          anchorBox.attrs.y = topLeft.attrs.y + 2;
+          //image.attrs.offset = {x: anchorBox.getWidth() / 2, y: anchorBox.getHeight() / 2};
+          
+          // re-center rotation
+          //image.setOffset(width / 2 - 60, height / 2 - 60);
+          console.log(image.getOffset());
+
+          //image.setOffset( (bling.get("width")) / 2, (bling.get("height")) / 2 );
+
+          // also move the lock and rotate buttons
+          lock.attrs.x = anchorBox.getX() + anchorBox.getWidth() + 5;
+          lock.attrs.y = anchorBox.getY() + anchorBox.getHeight() - 16;
+          rotate.attrs.x = anchorBox.getX() + anchorBox.getWidth() + 5;
+          rotate.attrs.y = anchorBox.getY() + anchorBox.getHeight() - 35;
         }
       }
+
     }
 
     function addAnchorBehaviors(anchor, group) {
@@ -103,58 +144,83 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       // add hover styling
       anchor.on("mouseover", function() {
         var layer = this.getLayer();
-        document.body.style.cursor = "pointer";
-        this.setStrokeWidth(4);
+        document.body.style.cursor = this.attrs.cursor;
+        this.setStrokeWidth(3);
         layer.draw();
       });
       anchor.on("mouseout", function() {
         var layer = this.getLayer();
         document.body.style.cursor = "default";
-        this.setStrokeWidth(2);
+        this.setStrokeWidth(1);
       });  
     }    
 
+    // used to calculate sizes and location of anchor tools
+    var sampleImage = group.get(".image")[0];
+
     // add the resize and rotate handles and the logic to control them
-    var anchorTopLeft = new Kinetic.Circle({
-      x: 0,
-      y: 0,
-      stroke: "#666",
-      fill: "#ddd",
-      strokeWidth: 2,
-      radius: 8,
+    var anchorTopLeft = new Kinetic.Rect({
+      x: -sampleImage.attrs.offset.x -7,
+      y: -sampleImage.attrs.offset.y -7,
+      width: 4,
+      height: 4,
+      stroke: "pink",
+      fill: "white",
+      strokeWidth: 1,
       name: "topLeft",
-      draggable: true
+      draggable: true,
+      cursor: "nw-resize"
     });
-    var anchorTopRight = new Kinetic.Circle({
-      x: 150,
-      y: 0,
-      stroke: "#666",
-      fill: "#ddd",
-      strokeWidth: 2,
-      radius: 8,
+    var anchorTopRight = new Kinetic.Rect({
+      x: sampleImage.getWidth() + 3 -sampleImage.attrs.offset.x,
+      y: -7 -sampleImage.attrs.offset.y,
+      width: 4,
+      height: 4,
+      stroke: "pink",
+      fill: "white",
+      strokeWidth: 1,
       name: "topRight",
-      draggable: true
+      draggable: true,
+      cursor: "ne-resize"
     });
-    var anchorBottomLeft = new Kinetic.Circle({
-      x: 0,
-      y: 100,
-      stroke: "#666",
-      fill: "#ddd",
-      strokeWidth: 2,
-      radius: 8,
+    var anchorBottomLeft = new Kinetic.Rect({
+      x: -7 -sampleImage.attrs.offset.x,
+      y: sampleImage.getHeight() + 3 -sampleImage.attrs.offset.y,
+      width: 4,
+      height: 4,      
+      stroke: "pink",
+      fill: "white",
+      strokeWidth: 1,      
       name: "bottomLeft",
-      draggable: true
+      draggable: true,
+      cursor: "sw-resize"
     });    
-    var anchorBottomRight = new Kinetic.Circle({
-      x: 150,
-      y: 100,
-      stroke: "#666",
-      fill: "#ddd",
-      strokeWidth: 2,
-      radius: 8,
+    var anchorBottomRight = new Kinetic.Rect({
+      x: sampleImage.getWidth() + 3 -sampleImage.attrs.offset.x,
+      y: sampleImage.getHeight() + 3 -sampleImage.attrs.offset.y,
+      width: 4,
+      height: 4,      
+      stroke: "pink",
+      fill: "white",
+      strokeWidth: 1,
       name: "bottomRight",
-      draggable: true
+      draggable: true,
+      cursor: "se-resize"
     });
+
+    // anchor box
+    console.log(sampleImage.attrs.offset);
+    var anchorBox = new Kinetic.Rect({
+      x:-5 - sampleImage.attrs.offset.x,
+      y:-5 - sampleImage.attrs.offset.y,
+      width: sampleImage.getWidth() + 10,
+      height: sampleImage.getHeight() + 10,
+      stroke: "pink",
+      strokeWidth: 1,
+      draggable: false,
+      name: "anchorBox"
+    });
+    group.add(anchorBox);
 
     addAnchorBehaviors(anchorTopLeft, group);
     addAnchorBehaviors(anchorTopRight, group);
@@ -166,6 +232,73 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     group.add(anchorBottomLeft);
     group.add(anchorBottomRight);
 
+    group.attrs.anchors = [anchorTopLeft, anchorTopRight, anchorBottomLeft, anchorBottomRight];
+    group.attrs.anchorBox = anchorBox;
+    group.attrs.locked = false;
+
+    // add lock and rotate buttons & behaviors
+
+    // create Kinetic group
+    var controlBox = new Kinetic.Group({
+      x: 0,
+      y: 0,
+      draggable: false
+    });
+    layer.add(controlBox);
+
+    var lock = new Image();
+    lock.src = buttonIcons[6];
+    var unlock = new Image();
+    unlock.src = buttonIcons[7];
+    unlock.onload = function() {      
+      var image = new Kinetic.Image({
+        x: anchorBox.getX() + anchorBox.getWidth() + 5,
+        y: anchorBox.getY() + anchorBox.getHeight() - 16,
+        image: unlock,
+        width: 17,
+        height: 17,
+        name: "lock"
+      });
+      image.on("click", function() {              
+        if (group.attrs.locked) {
+          this.setImage(unlock);
+          group.attrs.anchors.forEach(function(anchor) {
+            anchor.show();
+          });
+          group.attrs.anchorBox.show();
+          group.attrs.locked = false;
+          return;
+        }        
+        this.setImage(lock);
+        group.attrs.anchors.forEach(function(anchor) {
+          anchor.hide();
+        });
+        group.attrs.anchorBox.hide();
+        group.attrs.locked = true;
+        layer.draw();
+      });
+      group.add(image);      
+    };
+
+    var rotate = new Image();
+    rotate.src = buttonIcons[8];
+    rotate.onload = function() {   
+      var image = new Kinetic.Image({
+        x: anchorBox.getX() + anchorBox.getWidth() + 5,
+        y: anchorBox.getY() + anchorBox.getHeight() - 35,
+        image: rotate,
+        width: 17,
+        height: 17,
+        name: "rotate"
+      });
+      image.on("click", function() { 
+        controlBox.moveToTop();
+        console.log(group);    
+        group.rotateDeg(20);
+      });
+      group.add(image);    
+      controlBox.moveToTop();
+    };    
   }
 
   /*
@@ -186,7 +319,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     var group = new Kinetic.Group({
       x: bling.get("x"),
       y: bling.get("y"),
-      draggable: draggable
+      draggable: draggable,
+      resizeYAdj: 0,
+      resizeXAdj: 0     
     });    
    
     // add all related images for this bling to its group 
@@ -196,14 +331,13 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         x: 0,
         y: 0,
         image: imageCollection[i],
-        width: bling.get("width"),
-        height: bling.get("height"),
-        name: "image" 
+        name: "image"
+        //offset: {x: bling.get("width") / 2, y: bling.get("height") / 2}
       });
+      image.setWidth(bling.get("width"));
+      image.setHeight(bling.get("height"));
       group.add(image);
-    }
-
-    var keepPlaying = true;
+    }       
     
     // iterate through the images, 
     // XXX: the speed at which they "play" is set to a constant 100
@@ -211,20 +345,25 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     //      be customizable for each group
     group.topImageIndex = 0;
     group.play = function() {
-      if (!keepPlaying) {
-        return;
+
+      if (group.children.length > 0) {
+
+        var child = group.children[group.topImageIndex];
+        
+        // XXX: hackety hack: if it's part of the anchor system, ignore it
+        // and make sure it stays below the handles
+        if (child.attrs.name == "anchorBox") {
+          child.moveToBottom();
+        } else {
+          child.moveToTop();        
+        }
       }
-      group.children[group.topImageIndex].moveToTop();            
-      // XXX: could do group.getLayer and draw it only, instead?
+
       stage.draw();
       group.topImageIndex = 
         (group.topImageIndex+1 < group.getChildren().length) ? ++group.topImageIndex : 0;
     };
     setInterval(group.play, 100);
-
-    group.pause = function() {
-      keepPlaying = false;
-    }
 
     return group;
   };
@@ -243,7 +382,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   function removeElement(url) {
     layer.remove(stubRect);
     googleStreetsUrl = url.replace("http://", "");   
-    console.log(googleStreetsUrl);
   }
 
   // the decorate view
@@ -260,10 +398,12 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       _.bindAll(this, "addBlingToCollection");
       _.bindAll(this, "updateUrl");
       _.bindAll(this, "initializeStage");
+      _.bindAll(this, "removeBling");
       vent.bind("clone", this.addBlingToCollection);
       vent.bind("move", this.updateUrl);
       vent.bind("icon-hover", this.handleIconHover);
       vent.bind("remove-element", removeElement);
+      vent.bind("remove-bling", this.removeBling);
 
       this.previewBlings = [];
       
@@ -284,9 +424,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
       // majick! (not really, this sets us up for reverse bling box paging)
       blingBoxCursor = this.blingBoxCollection.length + 2;
-
-      // XXX: Can use this later to perform some action whenever user drops bling
-      this.blingCollection.on("add", function(bling) {});
 
       self = this;
 
@@ -315,15 +452,62 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       // when done, callback to initializeStage method with
       // any blocks passed in the URL for preview to finish
       // rendering
-      this.loadImages(this.initializeStage, previewBlocks, imageUrl);
+      this.loadImages();
+      this.initializeStage(previewBlocks, imageUrl);
 
       // draw the googly eyed logo
       Googlylogo.drawLogo();
     },
 
+    /*
+     * Handle loading png images files from disk that are used
+     * in the canvas scene
+     */
+    loadImages: function() {
+      var imageSources = {};
+      var loadedImages = 0;
+      var imagesToLoad = 0;
+
+      // map all image paths for each image type
+      this.blingCollection.each(function(bling) {
+        imageSources[bling.get("id")] = [];
+        var sources = bling.get("images");
+        for (var idx in sources) {
+          imagesToLoad++;
+          imageSources[bling.get("id")].push("/assets/img/image_groups/" + sources[idx]);
+        }
+      });
+
+      // count all loaded images and callback to the initStage
+      // method when everything is complete to render the view
+      var handleImageLoad = function() {
+        if (++loadedImages === imagesToLoad) {
+          // XXX: should probably show a loading spinner (or something)
+          // and diasallow bling paging until things are loaded
+          console.log("image loading complete");          
+        }
+      };
+
+      // load all images from path and callback when nothing left to load
+      for (var idx in imageSources) {
+        images[idx] = [];
+        var collection = imageSources[idx];
+        for (var i=0; i<collection.length; i++) {
+          images[idx][i] = new Image();
+          images[idx][i].onload = handleImageLoad; 
+          images[idx][i].src = imageSources[idx][i];
+        }
+      }
+      
+    },    
+
+    removeBling: function(bling) {
+      this.displayedBlingCollection.remove(bling);
+      this.updateUrl();
+    },
+
     pushUrl: function() {
       app.router.navigate("", {replace: true});
-      console.log(googleStreetsUrl.replace("maps.googleapis.com/maps/api/streetview?", ""));
       blockState = "?blocks=" + blockState + 
         "+" + encodeURIComponent(googleStreetsUrl.replace("maps.googleapis.com/maps/api/streetview?", ""));
       app.router.navigate(blockState);
@@ -334,12 +518,13 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
      */
     updateUrl: function(bling) {
 
-      this.addBlingToDisplayedBlingCollection(bling);
+      if (bling) {
+        this.addBlingToDisplayedBlingCollection(bling);
+      }
 
       blockState = "[";
       this.displayedBlingCollection.each(function(bling) {
         if (bling.get("onStage")) {
-          console.log(bling);
           blockState = blockState.concat('{"x":' + bling.get("x") +    
                                          ',"y":' + bling.get("y") +
                                          ',"width":' + bling.get("width") +
@@ -376,9 +561,13 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         var block = blocks[i];
         var x = (block.hasOwnProperty("x")) ? block.x : 20;
         var y = (block.hasOwnProperty("y")) ? block.y : 100;
+        var width = (block.hasOwnProperty("width")) ? block.width : 100;
+        var height = (block.hasOwnProperty("height")) ? block.height : 100;        
         var bling = this.blingCollection.get(block.image).clone();
         bling.set("x", x);
         bling.set("y", y);
+        bling.set("width", width);
+        bling.set("height", height);
 
         var previewGroup = createGroup(bling, {draggable: false});
         this.previewBlings.push(previewGroup);
@@ -411,49 +600,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     },
 
     /*
-     * Handle loading png images files from disk that are used
-     * in the canvas scene
-     */
-    loadImages: function(initializeStage, previewBlocks, imageUrl) {
-      var imageSources = {};
-      var loadedImages = 0;
-      var imagesToLoad = 0;
-
-      // map all image paths for each image type
-      this.blingCollection.each(function(bling) {
-        imageSources[bling.get("id")] = [];
-        var sources = bling.get("images");
-        for (var idx in sources) {
-          imagesToLoad++;
-          imageSources[bling.get("id")].push("/assets/img/image_groups/" + sources[idx]);
-        }
-      });
-
-      // count all loaded images and callback to the initStage
-      // method when everything is complete to render the view
-      var handleImageLoad = function() {
-        if (++loadedImages === imagesToLoad) {
-          // XXX: should probably show a loading spinner (or something)
-          // and diasallow bling paging until things are loaded
-          console.log("image loading complete");          
-        }
-      };
-
-      // load all images from path and callback when nothing left to load
-      for (var idx in imageSources) {
-        images[idx] = [];
-        var collection = imageSources[idx];
-        for (var i=0; i<collection.length; i++) {
-          images[idx][i] = new Image();
-          images[idx][i].onload = handleImageLoad; 
-          images[idx][i].src = imageSources[idx][i];
-        }
-      }
-
-      initializeStage(previewBlocks, imageUrl);
-    },
-
-    /*
      * Setup the Kinetic Stage object 
      */
     initializeStage: function(previewBlocks, imageUrl) {
@@ -476,17 +622,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       blingBoxLayer = new Kinetic.Layer();
       stage.add(blingBoxLayer);
 
-      // load the preview, help, and help icon-buttons
-      // XXX: this is a little ugly! reactor!
-      var buttonIcons = ["/assets/img/preview.png",
-                         "/assets/img/help.png",
-                         "/assets/img/trash.png",
-                         "/assets/img/help_over.png",
-                         "/assets/img/preview_over.png",
-                         "/assets/img/trash_over.png"];
-
       // preview button                   
       var preview = new Image();
+      preview.src = buttonIcons[0];
       var previewOver = new Image();
       previewOver.src = buttonIcons[4];
       preview.onload = function() {
@@ -516,54 +654,62 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         layer.add(image);
         stage.draw();
       };
-      preview.src = buttonIcons[0];
       
       // trash button
       var trash = new Image();
+      trash.src = buttonIcons[2];
       var trashOver = new Image();
       trashOver.src = buttonIcons[5];
       trash.onload = function() {
+    
         var image = new Kinetic.Image({
           x: 630,
           y: 394,
           image: trash,
           width: 40,
           height: 56 
-           });
-        image.on("mouseover", function(){
+        });
+
+        trash_area = image;
+
+        trash_area.open = function(){
+
           var options = {
-            "target": this,
+            "target": trash_area,
             "replaceImg": trashOver,
             "cursor": "pointer"
           };
+
           vent.trigger("icon-hover", options);
-        });
-        image.on("mouseout", function(){
+        };
+
+        trash_area.close = function(){
+
           var options = {
-            "target": this,
+            "target": trash_area,
             "replaceImg": trash,
             "cursor": "default"
           };
+
           vent.trigger("icon-hover", options);
-        });
+        };
+
+        image.on("mouseover", trash_area.open);
+        image.on("mouseout", trash_area.close);
         
         layer.add(image);
         stage.draw();
-      };
-      trash.src = buttonIcons[2];
+
+      };      
 
       // before user applies image, we show only gray box on stage
       stubRect = new Kinetic.Rect({"width": 600, 
         "height": 450, 
           "fill": "pink",
              "x": 0,
-             "y": 0});
-         
-         
+             "y": 0});               
       layer.add(stubRect);
       
-    
-
       // if we have bling to preview from the url, display it
       if (previewBlocks) {
         this.loadPreviewBling(previewBlocks);
@@ -678,11 +824,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   function updateBlingBoxCache(direction) {
 
     blingBoxCursor += (3 * direction);
-    //var cursor = (blingBoxCursor % self.blingCollection.models.length);
     var cursor = (blingBoxCursor.mod(self.blingCollection.models.length));
-    console.log(cursor);
     cursor = cursor - cursor % 3; 
-    console.log(cursor);
 
     var cursorMax = Math.min(cursor+3, self.blingCollection.models.length);
 
@@ -710,6 +853,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       bling.set("x", xLocation);
       bling.set("y", 480);
       blingBoxLayer.add(bling.render());
+      // XXX: should do this dynamically so they space out nicely
       xLocation += 150;
     });   
 
@@ -746,38 +890,81 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
      */
     render: function() {
       
-      var that = this;
+      var self = this;
 
       // a model has an group that can be rendered on screen
       // a group holds the images that make the bling animation
-      var group = createGroup(this);
+      self.group = createGroup(this);
 
       ////
       // define drag and drop event behaviors
       ////
       
       // when group is moved update model attributes 
-      group.on("dragend", function() {
+      self.group.on("dragend", function() {
+
+        var maxwidth = self.group.attrs.anchorBox.getWidth();
+        var maxheight = self.group.attrs.anchorBox.getHeight();
+        
+        var centerX = this.getX() + maxwidth * 0.5;
+        var centerY = this.getY() + maxheight * 0.5;
+
+        // hit test: if bling is over trash, then trash bling
+        if(centerX > trash_area.getX() - 25 && 
+           centerX < trash_area.getX() + trash_area.getWidth() + 25 && 
+           centerY > trash_area.getY() - 25 && 
+           centerY < trash_area.getY() + trash_area.getHeight() + 25) {
+
+          // in trash
+          trash_area.open();
+
+          // cancels bling
+          self.set("onStage", false); 
+
+          // animate the trash behavior
+          self.group.transitionTo({
+            "scale": { x: 0.3, y: 0.3 },
+            "x": trash_area.getX() * 1 + trash_area.getWidth() * 0.5 - 0.15 * maxwidth,
+            "y": trash_area.getY() * 1 + trash_area.getHeight() * 0.5 - 0.15 * maxheight,
+            "duration": 0.2,
+            "callback": function() {
+              // cancels stage object
+              self.group.parent.remove(self.group);
+              setTimeout(trash_area.close, 200);
+            }
+          });
+
+          // removes from displayed blings cache so url update is correct
+          vent.trigger("remove-bling", self);
+
+          // this is a guard clase; if bling is removed, no need to continue with function
+          return;
+        }
+        
+        // if trash not hit then update the bling model based on the view changes
 
         // width of group based on it's image
         var image = this.get(".image")[0];
 
-        console.log(image.getWidth());
 
-        that.set("x", this.getX());
-        that.set("y", this.getY());
-        that.set("width", image.getWidth());
-        that.set("height", image.getHeight());        
+        self.set("x", this.getX() + this.attrs.resizeXAdj);
+        self.set("y", this.getY() + this.attrs.resizeYAdj);
+        //self.set("x", this.getX() );
+        //self.set("y", this.getY() );
 
+
+        self.set("width", image.getWidth());
+        self.set("height", image.getHeight()); 
+              
         // view should respond (update url) to handle moved bling
-        vent.trigger("move", that);
+        vent.trigger("move", self);
+
         // don't clone clones
         this.off("dragstart");     
-    
       });
 
       // when group is touched, move it to top and redraw stage
-      group.on("mousedown touchstart", function() {
+      self.group.on("mousedown touchstart", function() {
         this.moveToTop();
         stage.draw();
       });
@@ -787,14 +974,14 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       // able to use multiple copies of the same bling and keeps 
       // the blings on the bottom of the screen available 
       // to be used over and over.
-      group.on("dragstart", function() {
+      self.group.on("dragstart", function() {
 
         // should be on top of everything else 
         // (all other rendered objects)
         this.moveTo(layer);
 
         // clone it (see description above)
-        clone = that.clone();
+        clone = self.clone();
         clone.group = createGroup(clone);
         // XXX: need to build id generator
         clone.id = clone.id + cloneId++;
@@ -806,14 +993,15 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         // the id for each bling that is going to be used
         // on screen must be unique, this ensrures that
         // XXX: need to build proper id generator
-        that.id = that.id + cloneId++;
+        self.id = self.id + cloneId++;
 
-        addResizeAnchors(this);
+        // send the bling object (and hence) the bling's group to get anchors
+        addResizeAnchors(self);
 
         stage.draw();
       });
 
-      return group;
+      return self.group;
     }
   });
   
