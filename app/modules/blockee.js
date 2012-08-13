@@ -94,7 +94,25 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   }
 
   function handleFormSubmit(e) {
-
+    e.preventDefault();
+    var $form = this.$el.find('form').first();
+    var form = _.first($form);
+    $.ajax(form.action, {
+      iframe: true,
+      type: 'POST',
+      files: $form.find(':file')
+    }).complete(function(data){
+      console.log(data);
+      var r = JSON.parse(data.responseText);
+      if(r.url){
+        var backgroundstyle = $(".kineticjs-content")[0].style;
+        backgroundstyle.background = "url('" + r.url + "')";
+        backgroundstyle.backgroundRepeat = "no-repeat";
+        vent.trigger("remove-element", r.url);
+      } else {
+        alert("SOMETHING WENT WRONG HERE");
+      }
+    });
   }
 
   function removeElement(url) {

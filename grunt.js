@@ -227,6 +227,9 @@ module.exports = function(grunt) {
     var path = require("path");
     var stylus = require("stylus");
     var express = require("express");
+    var formidable = require("formidable");
+    var knox = require("knox");
+    var under = require("underscore");
 
     log.writeln("starting monolithic server");
 
@@ -266,10 +269,38 @@ module.exports = function(grunt) {
     });
 
     // Serve a data
-    site.get("/api/upload-responder", function(req, res) {
-      log.writeln("got an API request")
-      log.writeln(req);
-      res.json({api: "awesome"});
+    site.post("/api/upload", function(req, res) {
+      log.writeln("got an API request");
+
+      var block_bucket = process.env.AWS_BUCKET
+      var form = new formidable.IncomingForm();
+      var client = knox.createClient({
+        key: process.env.AWS_KEY,
+        secret: process.env.AWS_SECRET,
+        bucket: block_bucket
+      });
+      res.set('Content-Type', 'text/html');
+      form.parse(req, function(err, fields, files) {
+        var file = files["file"];
+        if (file && file["size"] > 0) {
+          client.putFile(file["path"], '/uploads/' + file["name"], function(err, aws_res){
+            if(aws_res.statusCode == 200){
+              res.send(
+                '<textarea data-type="application/json">' +
+                '{"url": "https://s3.amazonaws.com/' + block_bucket + '/uploads/' + file["name"] + '", "result": "success"}' +
+                '</textarea>'
+              );
+            } else {
+              console.log(aws_res);
+              res.send(
+                '<textarea data-type="application/json">' +
+                '{"result": "unsuccess"}' +
+                '</textarea>'
+              );
+            }
+          });
+        }
+      });
     });
 
     // Serve a site
