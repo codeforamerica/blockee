@@ -20,7 +20,10 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       layer = null,
       blingBoxLayer = null,
       stubRect = null,
-      images = {};
+      images = {},
+      previewOn = false,
+      streetViewLoaded = false,
+      reminderArrowShowing = false;
 
   // XXX: rename to trashArea
   var trash_area;
@@ -106,20 +109,22 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
           // also move and make the anchorBox bigger to fix new image size
           anchorBox.setSize(width, height);
           anchorBox.attrs.x = topLeft.attrs.x + 2;
-          anchorBox.attrs.y = topLeft.attrs.y + 2;
-          //image.attrs.offset = {x: anchorBox.getWidth() / 2, y: anchorBox.getHeight() / 2};
+          anchorBox.attrs.y = topLeft.attrs.y + 2;          
           
           // re-center rotation
+          // XXX: Updating offset does not seem to work
           //image.setOffset(width / 2 - 60, height / 2 - 60);
-          console.log(image.getOffset());
-
           //image.setOffset( (bling.get("width")) / 2, (bling.get("height")) / 2 );
 
           // also move the lock and rotate buttons
-          lock.attrs.x = anchorBox.getX() + anchorBox.getWidth() + 5;
-          lock.attrs.y = anchorBox.getY() + anchorBox.getHeight() - 16;
-          rotate.attrs.x = anchorBox.getX() + anchorBox.getWidth() + 5;
-          rotate.attrs.y = anchorBox.getY() + anchorBox.getHeight() - 35;
+          // XXX: In current implementation, this'll cause a problem if the 
+          //      images for lock and rotate are not available yet because the lock/rotate
+          //      cannot be drawn
+          // XXX: Commenting for now because version 1 won't use lock and rotate
+          // lock.attrs.x = anchorBox.getX() + anchorBox.getWidth() + 5;
+          // lock.attrs.y = anchorBox.getY() + anchorBox.getHeight() - 16;
+          // rotate.attrs.x = anchorBox.getX() + anchorBox.getWidth() + 5;
+          // rotate.attrs.y = anchorBox.getY() + anchorBox.getHeight() - 35;
         }
       }
 
@@ -209,7 +214,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     });
 
     // anchor box
-    console.log(sampleImage.attrs.offset);
     var anchorBox = new Kinetic.Rect({
       x:-5 - sampleImage.attrs.offset.x,
       y:-5 - sampleImage.attrs.offset.y,
@@ -236,69 +240,60 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     group.attrs.anchorBox = anchorBox;
     group.attrs.locked = false;
 
+    // XXX: Commenting for version 1
     // add lock and rotate buttons & behaviors
+    // var lock = new Image();
+    // lock.src = buttonIcons[6];
+    // var unlock = new Image();
+    // unlock.src = buttonIcons[7];
+    // unlock.onload = function() {      
+    //   var image = new Kinetic.Image({
+    //     x: anchorBox.getX() + anchorBox.getWidth() + 5,
+    //     y: anchorBox.getY() + anchorBox.getHeight() - 16,
+    //     image: unlock,
+    //     width: 17,
+    //     height: 17,
+    //     name: "lock"
+    //   });
+    //   image.on("click", function() {              
+    //     if (group.attrs.locked) {
+    //       this.setImage(unlock);
+    //       group.attrs.anchors.forEach(function(anchor) {
+    //         anchor.show();
+    //       });
+    //       group.attrs.anchorBox.show();
+    //       group.attrs.locked = false;
+    //       return;
+    //     }        
+    //     this.setImage(lock);
+    //     group.attrs.anchors.forEach(function(anchor) {
+    //       anchor.hide();
+    //     });
+    //     group.attrs.anchorBox.hide();
+    //     group.attrs.locked = true;
+    //     layer.draw();
+    //   });
+    //   group.add(image);      
+    // };
 
-    // create Kinetic group
-    var controlBox = new Kinetic.Group({
-      x: 0,
-      y: 0,
-      draggable: false
-    });
-    layer.add(controlBox);
-
-    var lock = new Image();
-    lock.src = buttonIcons[6];
-    var unlock = new Image();
-    unlock.src = buttonIcons[7];
-    unlock.onload = function() {      
-      var image = new Kinetic.Image({
-        x: anchorBox.getX() + anchorBox.getWidth() + 5,
-        y: anchorBox.getY() + anchorBox.getHeight() - 16,
-        image: unlock,
-        width: 17,
-        height: 17,
-        name: "lock"
-      });
-      image.on("click", function() {              
-        if (group.attrs.locked) {
-          this.setImage(unlock);
-          group.attrs.anchors.forEach(function(anchor) {
-            anchor.show();
-          });
-          group.attrs.anchorBox.show();
-          group.attrs.locked = false;
-          return;
-        }        
-        this.setImage(lock);
-        group.attrs.anchors.forEach(function(anchor) {
-          anchor.hide();
-        });
-        group.attrs.anchorBox.hide();
-        group.attrs.locked = true;
-        layer.draw();
-      });
-      group.add(image);      
-    };
-
-    var rotate = new Image();
-    rotate.src = buttonIcons[8];
-    rotate.onload = function() {   
-      var image = new Kinetic.Image({
-        x: anchorBox.getX() + anchorBox.getWidth() + 5,
-        y: anchorBox.getY() + anchorBox.getHeight() - 35,
-        image: rotate,
-        width: 17,
-        height: 17,
-        name: "rotate"
-      });
-      image.on("click", function() { 
-        controlBox.moveToTop();
-        console.log(group);    
-        group.rotateDeg(20);
-      });
-      group.add(image);    
-      controlBox.moveToTop();
-    };    
+    // var rotate = new Image();
+    // rotate.src = buttonIcons[8];
+    // rotate.onload = function() {   
+    //   var image = new Kinetic.Image({
+    //     x: anchorBox.getX() + anchorBox.getWidth() + 5,
+    //     y: anchorBox.getY() + anchorBox.getHeight() - 35,
+    //     image: rotate,
+    //     width: 17,
+    //     height: 17,
+    //     name: "rotate"
+    //   });
+    //   image.on("click", function() { 
+    //     controlBox.moveToTop();
+    //     console.log(group);    
+    //     group.rotateDeg(20);
+    //   });
+    //   group.add(image);    
+    // };    
   }
 
   /*
@@ -308,8 +303,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
    */
   var createGroup = function(bling, options) {
 
-    // yes, you can drag it
+    // no dragging till google street view
     var draggable = true;
+
     if (options) {
       // or maybe not
       draggable = (options.hasOwnProperty("draggable")) ? options.draggable : true;
@@ -382,6 +378,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   function removeElement(url) {
     layer.remove(stubRect);
     googleStreetsUrl = url.replace("http://", "");   
+    streetViewLoaded = true;
   }
 
   // the decorate view
@@ -399,11 +396,13 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       _.bindAll(this, "updateUrl");
       _.bindAll(this, "initializeStage");
       _.bindAll(this, "removeBling");
+      _.bindAll(this, "streetview-reminder");
       vent.bind("clone", this.addBlingToCollection);
       vent.bind("move", this.updateUrl);
       vent.bind("icon-hover", this.handleIconHover);
       vent.bind("remove-element", removeElement);
       vent.bind("remove-bling", this.removeBling);
+      vent.bind("streetview-reminder", this.showStreetViewReminder);
 
       this.previewBlings = [];
       
@@ -524,7 +523,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         this.addBlingToDisplayedBlingCollection(bling);
       }
 
-      blockState = "[";
+      blockState = "";
       this.displayedBlingCollection.each(function(bling) {
         if (bling.get("onStage")) {
           blockState = blockState.concat('{"x":' + bling.get("x") +    
@@ -535,7 +534,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
                                          ',"image":"' + bling.get("image") + '"},');
         }
       });
-      blockState = blockState.substring(0, blockState.length-1) + "]"; 
+      blockState = "[" + blockState.substring(0, blockState.length-1) + "]"; 
       this.pushUrl();
 
       /*
@@ -551,13 +550,19 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     handleIconHover: function(options) {
       var image = options.target;
       image.setImage(options.replaceImg);
-      $("#stage").css({cursor: options.cursor});
+      document.body.style.cursor = options.cursor;
     },
    
     /*
      * Load any bling objects defined in URL
      */ 
     loadPreviewBling: function(blocks) {
+
+      // XXX: Due to bug in Kinetic code, you need to have at
+      // least one child in the layer before you attempt to remove something
+      // this is inserted in case someone attempts to render a shared url 
+      // with 0 blings and the streetview image will still need to get removed
+      layer.add(new Kinetic.Rect({x:0, y:0}));
 
       for (var i=0; i<blocks.length; i++) { 
         var block = blocks[i];
@@ -593,12 +598,74 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       displayBling.id = bling.id;
       displayBling.set("x", bling.get("x"));
       displayBling.set("y", bling.get("y"));
-      displayBling.set("onStage", true);   
+      displayBling.set("onStage", true);
+      displayBling.group = bling.group;   
 
       // this really just "updates in place" if the bling was
       // already displayed
       this.displayedBlingCollection.remove(displayBling); 
       this.displayedBlingCollection.add(displayBling); 
+    },
+
+    cyclePreview: function() {
+      if (previewOn) {
+        previewOn = false;
+        this.displayedBlingCollection.forEach(function(bling) {
+          var group = bling.group;
+          group.attrs.anchors.forEach(function(anchor) {
+            anchor.show();
+          });
+          group.attrs.anchorBox.show();
+        });        
+      } else {
+        previewOn = true;
+        this.displayedBlingCollection.forEach(function(bling) {
+          var group = bling.group;
+          group.attrs.anchors.forEach(function(anchor) {
+            anchor.hide();
+          });
+          group.attrs.anchorBox.hide();
+        });
+      }
+    },
+
+    showStreetViewReminder: function() {
+
+      if (reminderArrowShowing)
+        return;
+
+      var reminderArrowGroup = new Kinetic.Group({
+        "x": 80,
+        "y": 140
+      }); 
+      var reminderArrowBody = new Kinetic.Rect({
+        "x": 19,
+        "y": 0,
+        "width": 50,
+        "height": 16,
+        "fill": "white"
+      });
+      var reminderArrowHead = new Kinetic.Polygon({
+          points: [0, 8, 20, -10, 20, 26],
+          fill: "white"
+      });    
+      reminderArrowGroup.add(reminderArrowBody);
+      reminderArrowGroup.add(reminderArrowHead);
+      layer.add(reminderArrowGroup);      
+      reminderArrowShowing = true;
+
+      reminderArrowGroup.transitionTo({
+        x: 2,
+        duration: 2,
+        easing: 'bounce-ease-out',
+        callback: function() {
+          setTimeout(function() {
+            layer.remove(reminderArrowGroup);
+            reminderArrowShowing = false;
+          }, 2000);          
+        }
+      });
+
     },
 
     preInitStage: function() {
@@ -633,7 +700,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
           image: preview,
           width: 41,
           height: 27 
-          });
+        });
         image.on("mouseover", function() {
           var options = {
             "target": this,
@@ -642,13 +709,16 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
           };
           vent.trigger("icon-hover", options);
         });
-        image.on("mouseout", function(){
+        image.on("mouseout", function() {
           var options = {
             "target": this,
             "replaceImg": preview,
             "cursor": "default"
           };
           vent.trigger("icon-hover", options);
+        });
+        image.on("click", function() {
+          self.cyclePreview();
         });
         layer.add(image);
         stage.draw();
@@ -707,120 +777,13 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
           "fill": "pink",
              "x": 0,
              "y": 0});               
-      layer.add(stubRect);
-
+      layer.add(stubRect);      
     },
 
     /*
      * Setup the Kinetic Stage object 
      */
     initializeStage: function(previewBlocks, imageUrl) {
-
-      // var viewportWidth = $('#stage').width();
-      // var viewportHeight = 600;
-
-      // // blockee has a single stage
-      // stage = new Kinetic.Stage({
-      //   container: "stage",
-      //   width: viewportWidth,
-      //   height: viewportHeight 
-      // });
-
-      // // main layer
-      // layer = new Kinetic.Layer();
-      // stage.add(layer);
-
-      // // second layer for blingBox
-      // blingBoxLayer = new Kinetic.Layer();
-      // stage.add(blingBoxLayer);
-
-      // // preview button                   
-      // var preview = new Image();
-      // preview.src = buttonIcons[0];
-      // var previewOver = new Image();
-      // previewOver.src = buttonIcons[4];
-      // preview.onload = function() {
-      //   var image = new Kinetic.Image({
-      //     x: 630,
-      //     y: 0,
-      //     image: preview,
-      //     width: 41,
-      //     height: 27 
-      //     });
-      //   image.on("mouseover", function() {
-      //     var options = {
-      //       "target": this,
-      //       "replaceImg": previewOver,
-      //       "cursor": "pointer"
-      //     };
-      //     vent.trigger("icon-hover", options);
-      //   });
-      //   image.on("mouseout", function(){
-      //     var options = {
-      //       "target": this,
-      //       "replaceImg": preview,
-      //       "cursor": "default"
-      //     };
-      //     vent.trigger("icon-hover", options);
-      //   });
-      //   layer.add(image);
-      //   stage.draw();
-      // };
-      
-      // // trash button
-      // var trash = new Image();
-      // trash.src = buttonIcons[2];
-      // var trashOver = new Image();
-      // trashOver.src = buttonIcons[5];
-      // trash.onload = function() {
-    
-      //   var image = new Kinetic.Image({
-      //     x: 630,
-      //     y: 394,
-      //     image: trash,
-      //     width: 40,
-      //     height: 56 
-      //   });
-
-      //   trash_area = image;
-
-      //   trash_area.open = function(){
-
-      //     var options = {
-      //       "target": trash_area,
-      //       "replaceImg": trashOver,
-      //       "cursor": "pointer"
-      //     };
-
-      //     vent.trigger("icon-hover", options);
-      //   };
-
-      //   trash_area.close = function(){
-
-      //     var options = {
-      //       "target": trash_area,
-      //       "replaceImg": trash,
-      //       "cursor": "default"
-      //     };
-
-      //     vent.trigger("icon-hover", options);
-      //   };
-
-      //   image.on("mouseover", trash_area.open);
-      //   image.on("mouseout", trash_area.close);
-        
-      //   layer.add(image);
-      //   stage.draw();
-
-      // };      
-
-      // // before user applies image, we show only gray box on stage
-      // stubRect = new Kinetic.Rect({"width": 600, 
-      //   "height": 450, 
-      //     "fill": "pink",
-      //        "x": 0,
-      //        "y": 0});               
-      // layer.add(stubRect);
       
       // if we have bling to preview from the url, display it
       if (previewBlocks) {
@@ -830,7 +793,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         $(".kineticjs-content")[0].style
                             .background = "url('" + imageUrl + "')";
         $(".kineticjs-content")[0].style
-                            .backgroundRepeat = "no-repeat";      
+                            .backgroundRepeat = "no-repeat";
+
+        streetViewLoaded = true;
 
         vent.trigger("remove-element", imageUrl);                                                  
       }
@@ -1018,8 +983,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         var maxwidth = self.group.attrs.anchorBox.getWidth();
         var maxheight = self.group.attrs.anchorBox.getHeight();
         
-        var centerX = this.getX() + maxwidth * 0.5;
-        var centerY = this.getY() + maxheight * 0.5;
+        var centerX = this.getX() + this.attrs.resizeXAdj + maxwidth * 0.5;
+        var centerY = this.getY() + this.attrs.resizeYAdj + maxheight * 0.5;
 
         // hit test: if bling is over trash, then trash bling
         if(centerX > trash_area.getX() - 25 && 
@@ -1058,12 +1023,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         // width of group based on it's image
         var image = this.get(".image")[0];
 
-
         self.set("x", this.getX() + this.attrs.resizeXAdj);
         self.set("y", this.getY() + this.attrs.resizeYAdj);
-        //self.set("x", this.getX() );
-        //self.set("y", this.getY() );
-
 
         self.set("width", image.getWidth());
         self.set("height", image.getHeight()); 
@@ -1079,6 +1040,12 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       self.group.on("mousedown touchstart", function() {
         this.moveToTop();
         stage.draw();
+        if (!streetViewLoaded) {
+          this.setDraggable(false);
+          vent.trigger("streetview-reminder");
+        } else {
+          this.setDraggable(true);
+        }
       });
 
       // when group is dragged, create a clone to leave where 
