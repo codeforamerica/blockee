@@ -451,9 +451,10 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       // load images that are used for bling objects
       // when done, callback to initializeStage method with
       // any blocks passed in the URL for preview to finish
-      // rendering
-      this.initializeStage(previewBlocks, imageUrl);
+      // rendering    
+      this.preInitStage();  
       this.loadImages();
+      this.initializeStage(previewBlocks, imageUrl);
       
 
       // draw the googly eyed logo
@@ -600,10 +601,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       this.displayedBlingCollection.add(displayBling); 
     },
 
-    /*
-     * Setup the Kinetic Stage object 
-     */
-    initializeStage: function(previewBlocks, imageUrl) {
+    preInitStage: function() {
 
       var viewportWidth = $('#stage').width();
       var viewportHeight = 600;
@@ -710,6 +708,119 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
              "x": 0,
              "y": 0});               
       layer.add(stubRect);
+
+    },
+
+    /*
+     * Setup the Kinetic Stage object 
+     */
+    initializeStage: function(previewBlocks, imageUrl) {
+
+      // var viewportWidth = $('#stage').width();
+      // var viewportHeight = 600;
+
+      // // blockee has a single stage
+      // stage = new Kinetic.Stage({
+      //   container: "stage",
+      //   width: viewportWidth,
+      //   height: viewportHeight 
+      // });
+
+      // // main layer
+      // layer = new Kinetic.Layer();
+      // stage.add(layer);
+
+      // // second layer for blingBox
+      // blingBoxLayer = new Kinetic.Layer();
+      // stage.add(blingBoxLayer);
+
+      // // preview button                   
+      // var preview = new Image();
+      // preview.src = buttonIcons[0];
+      // var previewOver = new Image();
+      // previewOver.src = buttonIcons[4];
+      // preview.onload = function() {
+      //   var image = new Kinetic.Image({
+      //     x: 630,
+      //     y: 0,
+      //     image: preview,
+      //     width: 41,
+      //     height: 27 
+      //     });
+      //   image.on("mouseover", function() {
+      //     var options = {
+      //       "target": this,
+      //       "replaceImg": previewOver,
+      //       "cursor": "pointer"
+      //     };
+      //     vent.trigger("icon-hover", options);
+      //   });
+      //   image.on("mouseout", function(){
+      //     var options = {
+      //       "target": this,
+      //       "replaceImg": preview,
+      //       "cursor": "default"
+      //     };
+      //     vent.trigger("icon-hover", options);
+      //   });
+      //   layer.add(image);
+      //   stage.draw();
+      // };
+      
+      // // trash button
+      // var trash = new Image();
+      // trash.src = buttonIcons[2];
+      // var trashOver = new Image();
+      // trashOver.src = buttonIcons[5];
+      // trash.onload = function() {
+    
+      //   var image = new Kinetic.Image({
+      //     x: 630,
+      //     y: 394,
+      //     image: trash,
+      //     width: 40,
+      //     height: 56 
+      //   });
+
+      //   trash_area = image;
+
+      //   trash_area.open = function(){
+
+      //     var options = {
+      //       "target": trash_area,
+      //       "replaceImg": trashOver,
+      //       "cursor": "pointer"
+      //     };
+
+      //     vent.trigger("icon-hover", options);
+      //   };
+
+      //   trash_area.close = function(){
+
+      //     var options = {
+      //       "target": trash_area,
+      //       "replaceImg": trash,
+      //       "cursor": "default"
+      //     };
+
+      //     vent.trigger("icon-hover", options);
+      //   };
+
+      //   image.on("mouseover", trash_area.open);
+      //   image.on("mouseout", trash_area.close);
+        
+      //   layer.add(image);
+      //   stage.draw();
+
+      // };      
+
+      // // before user applies image, we show only gray box on stage
+      // stubRect = new Kinetic.Rect({"width": 600, 
+      //   "height": 450, 
+      //     "fill": "pink",
+      //        "x": 0,
+      //        "y": 0});               
+      // layer.add(stubRect);
       
       // if we have bling to preview from the url, display it
       if (previewBlocks) {
