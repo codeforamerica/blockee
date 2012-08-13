@@ -136,10 +136,12 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         group.setDraggable(false);
         this.moveToTop();
         layer.draw();
+        console.log("mousedown touchstart");
       });
       anchor.on("dragmove", function() {
         update(group, this);
         layer.draw();
+        console.log("dragmove");
       });
       anchor.on("dragend", function() {
         group.setDraggable(true);
@@ -973,12 +975,18 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       // a group holds the images that make the bling animation
       self.group = createGroup(this);
 
+      self.handledStreetViewLoad = false;
+
       ////
       // define drag and drop event behaviors
       ////
       
       // when group is moved update model attributes 
       self.group.on("dragend", function() {
+
+        if (!streetViewLoaded) { 
+          return;
+        }
 
         var maxwidth = self.group.attrs.anchorBox.getWidth();
         var maxheight = self.group.attrs.anchorBox.getHeight();
@@ -1037,15 +1045,25 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       });
 
       // when group is touched, move it to top and redraw stage
-      self.group.on("mousedown touchstart", function() {
+      self.group.on("mousedown touchstart", function(node) {
+
+       console.log(node);
+
         this.moveToTop();
         stage.draw();
-        if (!streetViewLoaded) {
-          this.setDraggable(false);
-          vent.trigger("streetview-reminder");
-        } else {
-          this.setDraggable(true);
+
+        if (!self.handledStreetViewLoad) {
+
+          if (!streetViewLoaded) {
+            this.setDraggable(false);
+            vent.trigger("streetview-reminder");
+          } else {
+            this.setDraggable(true);
+            self.handledStreetViewLoad = true;
+          }
+
         }
+
       });
 
       // when group is dragged, create a clone to leave where 
@@ -1054,6 +1072,10 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       // the blings on the bottom of the screen available 
       // to be used over and over.
       self.group.on("dragstart", function() {
+
+        if (!streetViewLoaded) { 
+          return;
+        }
 
         // should be on top of everything else 
         // (all other rendered objects)
