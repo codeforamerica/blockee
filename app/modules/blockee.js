@@ -100,8 +100,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
           image.setSize(width - 10, height - 10);
 
           // set the position of each image based on anchor drag
-          //image.setPosition(topLeft.attrs.x + 7, topLeft.attrs.y + 7);
-          image.setPosition(topLeft.attrs.x, topLeft.attrs.y);
+          image.setPosition(topLeft.attrs.x + 7, topLeft.attrs.y + 7);
+          //image.setPosition(topLeft.attrs.x, topLeft.attrs.y);
 
           // also move and make the anchorBox bigger to fix new image size
           anchorBox.setSize(width, height);
