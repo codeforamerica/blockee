@@ -452,8 +452,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       // when done, callback to initializeStage method with
       // any blocks passed in the URL for preview to finish
       // rendering
-      this.loadImages();
       this.initializeStage(previewBlocks, imageUrl);
+      this.loadImages();
+      
 
       // draw the googly eyed logo
       Googlylogo.drawLogo();
