@@ -386,12 +386,20 @@ var Models = [
     "image": "bikerack", 
     "images": [
       "bikerack/bikerack01.png",
-      "bikerack/bikerack02.png",
-      "bikerack/bikerack03.png",
-      "bikerack/bikerack04.png",
-      "bikerack/bikerack05.png",
-      "bikerack/bikerack06.png",
-      "bikerack/bikerack07.png"
+      "bikerack/bikerack02.png"
+    ]
+  },
+  {
+    "id": "deadend", 
+    "x": 0, 
+    "y": 0, 
+    "width": 61, 
+    "height": 110,
+    "image": "deadend", 
+    "images": [
+      "deadend/deadend01.png",
+      "deadend/deadend02.png",
+      "deadend/deadend03.png"
     ]
   }
 ]
