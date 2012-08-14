@@ -46,17 +46,16 @@ var Models = [
     ]
   },
   {
-    "id": "wifi", 
+    "id": "deadend", 
     "x": 0, 
     "y": 0, 
-    "width": 150, 
-    "height": 104,
-    "image": "wifi", 
+    "width": 61, 
+    "height": 110,
+    "image": "deadend", 
     "images": [
-      "wifi/wifi01.png",
-      "wifi/wifi02.png",
-      "wifi/wifi03.png",
-      "wifi/wifi04.png"
+      "deadend/deadend01.png",
+      "deadend/deadend02.png",
+      "deadend/deadend03.png"
     ]
   },
   {
@@ -71,6 +70,20 @@ var Models = [
       "stopsign/stopsign02.png",
       "stopsign/stopsign03.png",
       "stopsign/stopsign04.png"
+    ]
+  },
+   {
+    "id": "wifi", 
+    "x": 0, 
+    "y": 0, 
+    "width": 110, 
+    "height": 76,
+    "image": "wifi", 
+    "images": [
+      "wifi/wifi01.png",
+      "wifi/wifi02.png",
+      "wifi/wifi03.png",
+      "wifi/wifi04.png"
     ]
   },
   {
@@ -387,19 +400,6 @@ var Models = [
     "images": [
       "bikerack/bikerack01.png",
       "bikerack/bikerack02.png"
-    ]
-  },
-  {
-    "id": "deadend", 
-    "x": 0, 
-    "y": 0, 
-    "width": 61, 
-    "height": 110,
-    "image": "deadend", 
-    "images": [
-      "deadend/deadend01.png",
-      "deadend/deadend02.png",
-      "deadend/deadend03.png"
     ]
   }
 ]
