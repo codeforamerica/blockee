@@ -357,9 +357,7 @@ var Models = [
       "solar/solar03.png",
       "solar/solar04.png",
       "solar/solar05.png",
-      "solar/solar06.png",
-      "solar/solar07.png",
-      "solar/solar08.png"
+      "solar/solar06.png"
     ]
   },
   {
@@ -376,9 +374,7 @@ var Models = [
       "flowerbox/flowerbox04.png",
       "flowerbox/flowerbox05.png",
       "flowerbox/flowerbox06.png",
-      "flowerbox/flowerbox07.png",
-      "flowerbox/flowerbox08.png",
-      "flowerbox/flowerbox09.png"
+      "flowerbox/flowerbox07.png"
     ]
   },
   {
