@@ -11,7 +11,7 @@ require([
 
 function(app, $, Backbone, Blockee) {
   
-  var decorate = new Blockee.Views.Decorate();
+  //var decorate = new Blockee.Views.Decorate();
 
   // Defining the application router, you can attach sub routers here.
   var Router = Backbone.Router.extend({

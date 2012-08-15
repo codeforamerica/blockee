@@ -99,11 +99,15 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       var resizingImages = group.get(".image");
       if(width && height) {
         for (var i=0; i<resizingImages.length; i++) {
+          
           var image = resizingImages[i];
           image.setSize(width - 10, height - 10);
 
           // set the position of each image based on anchor drag
           image.setPosition(topLeft.attrs.x + 7, topLeft.attrs.y + 7);
+
+
+
           //image.setPosition(topLeft.attrs.x, topLeft.attrs.y);
 
           // also move and make the anchorBox bigger to fix new image size
@@ -341,27 +345,31 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     // XXX: the speed at which they "play" is set to a constant 100
     //      now for all groups, this could be different and, could
     //      be customizable for each group
-    group.topImageIndex = 0;
+    group.topImageIndex = 0;   
+    var previousImage;     
+    var interval = 500;     
     group.play = function() {
 
       if (group.children.length > 0) {
 
         var child = group.children[group.topImageIndex];
-        
-        // XXX: hackety hack: if it's part of the anchor system, ignore it
-        // and make sure it stays below the handles
-        if (child.attrs.name == "anchorBox") {
-          child.moveToBottom();
-        } else {
-          child.moveToTop();        
-        }
-      }
 
-      stage.draw();
-      group.topImageIndex = 
-        (group.topImageIndex+1 < group.getChildren().length) ? ++group.topImageIndex : 0;
-    };
-    setInterval(group.play, 100);
+        if ("image" == child.attrs.name) {
+          if (previousImage) {
+            previousImage.hide();
+          }
+          child.show();
+          previousImage = child;
+        } 
+        stage.draw();
+
+        group.topImageIndex = 
+          //(group.topImageIndex+1 < group.getChildren().length) ? ++group.topImageIndex : 0;
+          (group.topImageIndex+1 < imageCollection.length) ? ++group.topImageIndex : 0;
+      }            
+    };    
+
+    setInterval(group.play, interval);
 
     return group;
   };
@@ -422,6 +430,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       // initialize blingBoxCollection to first N models
       this.blingBoxCollection.models = 
         _.first(this.blingCollection.models, MAX_BLINGS_IN_BOX);
+
+      console.log(this.blingBoxCollection.models);
 
       // majick! (not really, this sets us up for reverse bling box paging)
       blingBoxCursor = this.blingBoxCollection.length + 2;
@@ -588,25 +598,40 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     /*
      * Utility for loading bling in collection and adding to canvas layer
      */
-    addBlingToCollection: function(bling) {    
-      blingBoxLayer.add(bling.render());
+    addBlingToCollection: function(blingNew, blingOld) {    
+      blingBoxLayer.add(blingNew.render());
+
+      // update main bling collection (replace existing bling with this one)
+      // this ensures that the reference to the original bling is removed
+      // so that when blings are reloaded in case of a slide left or right event
+      // the blings shown in the bling box are "fresh"    
+      var indexOfOld = this.blingCollection.indexOf(blingOld);
+      this.blingCollection.models[indexOfOld] = blingNew;
     },
 
     addBlingToDisplayedBlingCollection: function(bling) {   
 
       // clone the bling from the blingbox and add to 
       // displyed blings collection      
-      displayBling = bling.clone();      
+      var displayBling = bling.clone();      
       displayBling.id = bling.id;
       displayBling.set("x", bling.get("x"));
       displayBling.set("y", bling.get("y"));
       displayBling.set("onStage", true);
-      displayBling.group = bling.group;   
+
+      //displayBling.group = bling.group;   
+      displayBling.group = createGroup(displayBling);      
 
       // this really just "updates in place" if the bling was
       // already displayed
       this.displayedBlingCollection.remove(displayBling); 
       this.displayedBlingCollection.add(displayBling); 
+
+      console.log(bling);
+
+      // this.displayedBlingCollection.remove(bling); 
+      // this.displayedBlingCollection.add(bling); 
+
     },
 
     cyclePreview: function() {
@@ -929,6 +954,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
  
     // draw them offscreen
     self.blingBoxCollection.each(function(bling) {
+
       bling.set("x", xLocation);
       bling.set("y", 480);
       blingBoxLayer.add(bling.render());
@@ -988,9 +1014,13 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
           return;
         }
 
+        //console.log(self.group);
+
+
+        if (self.group.attrs.anchorBox != undefined) {
+
         var maxwidth = self.group.attrs.anchorBox.getWidth();
-        var maxheight = self.group.attrs.anchorBox.getHeight();
-        
+        var maxheight = self.group.attrs.anchorBox.getHeight();        
         var centerX = this.getX() + this.attrs.resizeXAdj + maxwidth * 0.5;
         var centerY = this.getY() + this.attrs.resizeYAdj + maxheight * 0.5;
 
@@ -1025,6 +1055,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
           // this is a guard clase; if bling is removed, no need to continue with function
           return;
         }
+        }
         
         // if trash not hit then update the bling model based on the view changes
 
@@ -1046,8 +1077,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
       // when group is touched, move it to top and redraw stage
       self.group.on("mousedown touchstart", function(node) {
-
-       console.log(node);
 
         this.moveToTop();
         stage.draw();
@@ -1082,14 +1111,17 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         this.moveTo(layer);
 
         // clone it (see description above)
-        clone = self.clone();
+        var clone = self.clone();
         clone.group = createGroup(clone);
         // XXX: need to build id generator
         clone.id = clone.id + cloneId++;
         clone.cid = clone.id;
 
-        // tell the system to render and manage clone
-        vent.trigger("clone", clone);
+        //console.log(clone);
+
+        // tell the system to render and manage clone 
+        // and refresh blingCollection with clone (removing old "self")
+        vent.trigger("clone", clone, self);
 
         // the id for each bling that is going to be used
         // on screen must be unique, this ensrures that
