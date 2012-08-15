@@ -618,8 +618,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       displayBling.set("y", bling.get("y"));
       displayBling.set("onStage", true);
 
-      //displayBling.group = bling.group;   
-      displayBling.group = createGroup(displayBling);      
+      displayBling.group = bling.group;   
+      //displayBling.group = createGroup(displayBling);      
 
       // this really just "updates in place" if the bling was
       // already displayed
