@@ -46,17 +46,16 @@ var Models = [
     ]
   },
   {
-    "id": "wifi", 
+    "id": "deadend", 
     "x": 0, 
     "y": 0, 
-    "width": 150, 
-    "height": 104,
-    "image": "wifi", 
+    "width": 61, 
+    "height": 110,
+    "image": "deadend", 
     "images": [
-      "wifi/wifi01.png",
-      "wifi/wifi02.png",
-      "wifi/wifi03.png",
-      "wifi/wifi04.png"
+      "deadend/deadend01.png",
+      "deadend/deadend02.png",
+      "deadend/deadend03.png"
     ]
   },
   {
@@ -71,6 +70,20 @@ var Models = [
       "stopsign/stopsign02.png",
       "stopsign/stopsign03.png",
       "stopsign/stopsign04.png"
+    ]
+  },
+   {
+    "id": "wifi", 
+    "x": 0, 
+    "y": 0, 
+    "width": 110, 
+    "height": 76,
+    "image": "wifi", 
+    "images": [
+      "wifi/wifi01.png",
+      "wifi/wifi02.png",
+      "wifi/wifi03.png",
+      "wifi/wifi04.png"
     ]
   },
   {
@@ -196,7 +209,7 @@ var Models = [
     "id": "lamp", 
     "x": 0, 
     "y": 0, 
-    "width": 43, 
+    "width": 27, 
     "height": 110,
     "image": "lamp", 
     "images": [
@@ -357,9 +370,7 @@ var Models = [
       "solar/solar03.png",
       "solar/solar04.png",
       "solar/solar05.png",
-      "solar/solar06.png",
-      "solar/solar07.png",
-      "solar/solar08.png"
+      "solar/solar06.png"
     ]
   },
   {
@@ -376,9 +387,7 @@ var Models = [
       "flowerbox/flowerbox04.png",
       "flowerbox/flowerbox05.png",
       "flowerbox/flowerbox06.png",
-      "flowerbox/flowerbox07.png",
-      "flowerbox/flowerbox08.png",
-      "flowerbox/flowerbox09.png"
+      "flowerbox/flowerbox07.png"
     ]
   },
   {
@@ -390,12 +399,7 @@ var Models = [
     "image": "bikerack", 
     "images": [
       "bikerack/bikerack01.png",
-      "bikerack/bikerack02.png",
-      "bikerack/bikerack03.png",
-      "bikerack/bikerack04.png",
-      "bikerack/bikerack05.png",
-      "bikerack/bikerack06.png",
-      "bikerack/bikerack07.png"
+      "bikerack/bikerack02.png"
     ]
   }
 ]
