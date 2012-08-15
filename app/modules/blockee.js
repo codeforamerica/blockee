@@ -364,7 +364,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         stage.draw();
 
         group.topImageIndex = 
-          //(group.topImageIndex+1 < group.getChildren().length) ? ++group.topImageIndex : 0;
           (group.topImageIndex+1 < imageCollection.length) ? ++group.topImageIndex : 0;
       }            
     };    
@@ -1017,7 +1016,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         //console.log(self.group);
 
 
-        if (self.group.attrs.anchorBox != undefined) {
+        if (self.group.attrs.anchorBox !== undefined) {
 
         var maxwidth = self.group.attrs.anchorBox.getWidth();
         var maxheight = self.group.attrs.anchorBox.getHeight();        
