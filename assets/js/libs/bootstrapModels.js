@@ -209,7 +209,7 @@ var Models = [
     "id": "lamp", 
     "x": 0, 
     "y": 0, 
-    "width": 43, 
+    "width": 27, 
     "height": 110,
     "image": "lamp", 
     "images": [
