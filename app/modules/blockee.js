@@ -1138,14 +1138,14 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   function updateBlingBoxCache(direction) {
 
     blingBoxCursor += (3 * direction);
-    var cursor = (blingBoxCursor.mod(self.blingCollection.models.length));
+    var cursor = (blingBoxCursor.mod(blingCollection.models.length));
     cursor = cursor - cursor % 3; 
 
-    var cursorMax = Math.min(cursor+3, self.blingCollection.models.length);
+    var cursorMax = Math.min(cursor+3, blingCollection.models.length);
 
-    self.blingBoxCollection.models = [];
+    blingBoxCollection.models = [];
     for (var i=cursor; i<cursorMax; i++) {
-        self.blingBoxCollection.models.push(self.blingCollection.models[i]);
+        blingBoxCollection.models.push(blingCollection.models[i]);
     }
 
   }
