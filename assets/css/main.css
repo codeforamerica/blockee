@@ -16,6 +16,8 @@
  /* margin: 20px;*/
 }
 
+#main h1{padding-top: 10px;}
+
 #main a:hover { 
     color: #ffc0cb; 
 }
