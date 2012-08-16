@@ -17,27 +17,37 @@ function(app, $, Backbone, Blockee) {
   var Router = Backbone.Router.extend({
     routes: {
       "": "index",
-      "?blocks=:blocks+:url": "blocks"
+      "?blocks=:blocks+:url": "blocks",
+      "share?blocks=:blocks+:url": "share"      
     },
 
     index: function() {
       var decorate = new Blockee.Views.Decorate();
       this.showView(decorate);
-      decorate.loadContent();
+      Blockee.loadContent(null, null, decorate, {showBlingBox: true});
+    },
+
+    share: function(blocks, url) {
+      var blocksObject = $.parseJSON(unescape(blocks));    
+      var googleStreetViewUrl = "http://maps.googleapis.com/maps/api/streetview?" + decodeURIComponent(url);
+
+      var share = new Blockee.Views.Share();
+      this.showView(share);
+
+      // in sharing mode for version 1.0, we will only show the actual image
+      Blockee.loadContent(blocksObject, googleStreetViewUrl, share, {showBlingBox: false});
     },
 
     /*
      * Parse block objects and use to render view
      */
     blocks: function(blocks, url) { 
-      //var raw = unescape(blocks);
-      //var raw = decodeURIComponent(blocks);
       var blocksObject = $.parseJSON(unescape(blocks));    
       var googleStreetViewUrl = "http://maps.googleapis.com/maps/api/streetview?" + decodeURIComponent(url);
 
       var decorate = new Blockee.Views.Decorate();
       this.showView(decorate);
-      decorate.loadContent(blocksObject, googleStreetViewUrl);
+      Blockee.loadContent(blocksObject, googleStreetViewUrl, decorate, {showBlingBox: true});
     },
 
     /*

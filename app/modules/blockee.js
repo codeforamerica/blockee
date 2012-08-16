@@ -16,6 +16,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   var Blockee = app.module();
   var vent = _.extend({}, Backbone.Events);
 
+  // global events
+  vent.bind("remove-element", removeElement);
+
   var stage = null,
       layer = null,
       blingBoxLayer = null,
@@ -328,6 +331,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
    
     // add all related images for this bling to its group 
     var imageCollection = images[bling.get("image")];
+    //var imageCollection = bling.get("images");
+
     for (var i=0; i<imageCollection.length; i++) {
       var image = new Kinetic.Image({
         x: 0,
@@ -390,589 +395,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     streetViewLoaded = true;
   }
 
-  // the decorate view
-  Blockee.Views.Decorate = Backbone.View.extend({
-    template: "app/templates/decorate",
-     
-    events: {
-      "click #street-view": handleStreetViewClick,
-      "click #share-button": handleShareClick
-    },
-
-    initialize: function(options) {
-      // event binding with "this" object bound to event methods
-      _.bindAll(this, "addBlingToCollection");
-      _.bindAll(this, "updateUrl");
-      _.bindAll(this, "initializeStage");
-      _.bindAll(this, "removeBling");
-      _.bindAll(this, "streetview-reminder");
-      vent.bind("clone", this.addBlingToCollection);
-      vent.bind("move", this.updateUrl);
-      vent.bind("icon-hover", this.handleIconHover);
-      vent.bind("remove-element", removeElement);
-      vent.bind("remove-bling", this.removeBling);
-      vent.bind("streetview-reminder", this.showStreetViewReminder);
-
-      this.previewBlings = [];
-      
-      // a collection of blings
-      this.blingCollection = new Blings();
-
-      // collection of blings in bling box
-      this.blingBoxCollection = new Blings();
-
-      // collection of blings in bling box
-      this.displayedBlingCollection = new Blings();
-
-      // load the initial bling models
-      this.blingCollection.reset(bootstrapModels);
-      // initialize blingBoxCollection to first N models
-      this.blingBoxCollection.models = 
-        _.first(this.blingCollection.models, MAX_BLINGS_IN_BOX);
-
-      console.log(this.blingBoxCollection.models);
-
-      // majick! (not really, this sets us up for reverse bling box paging)
-      blingBoxCursor = this.blingBoxCollection.length + 2;
-
-      self = this;
-
-      this.render();
-    },
-
-    /*
-     * Backbone render implementation
-     */
-    render: function(previewBlocks) {
-      // Fetch the template
-      var tmpl = app.fetchTemplate(this.template);
-      
-      // Set the template contents
-      this.$el.html(tmpl());
-
-      var googleImagePickerTmpl = app.fetchTemplate("app/templates/_google-image-picker-modal");
-      $(this.el).append(googleImagePickerTmpl);
-      
-
-      return this;
-    },
-
-    loadContent: function(previewBlocks, imageUrl) {
-      // load images that are used for bling objects
-      // when done, callback to initializeStage method with
-      // any blocks passed in the URL for preview to finish
-      // rendering    
-      this.preInitStage();  
-      this.loadImages();
-      this.initializeStage(previewBlocks, imageUrl);
-      
-
-      // draw the googly eyed logo
-      Googlylogo.drawLogo();
-    },
-
-    /*
-     * Handle loading png images files from disk that are used
-     * in the canvas scene
-     */
-    loadImages: function() {
-      var imageSources = {};
-      var loadedImages = 0;
-      var imagesToLoad = 0;
-
-      // map all image paths for each image type
-      this.blingCollection.each(function(bling) {
-        imageSources[bling.get("id")] = [];
-        var sources = bling.get("images");
-        for (var idx in sources) {
-          imagesToLoad++;
-          imageSources[bling.get("id")].push("/assets/img/image_groups/" + sources[idx]);
-        }
-      });
-
-      // count all loaded images and callback to the initStage
-      // method when everything is complete to render the view
-      var handleImageLoad = function() {
-        if (++loadedImages === imagesToLoad) {
-          // XXX: should probably show a loading spinner (or something)
-          // and diasallow bling paging until things are loaded
-          console.log("image loading complete");          
-        }
-      };
-
-      // load all images from path and callback when nothing left to load
-      for (var idx in imageSources) {
-        images[idx] = [];
-        var collection = imageSources[idx];
-        for (var i=0; i<collection.length; i++) {
-          images[idx][i] = new Image();
-          images[idx][i].onload = handleImageLoad; 
-          images[idx][i].src = imageSources[idx][i];
-        }
-      }
-      
-    },    
-
-    removeBling: function(bling) {
-      this.displayedBlingCollection.remove(bling);
-      this.updateUrl();
-    },
-
-    pushUrl: function() {
-      app.router.navigate("", {replace: true});
-      blockState = "?blocks=" + blockState + 
-        "+" + encodeURIComponent(googleStreetsUrl.replace("maps.googleapis.com/maps/api/streetview?", ""));
-      app.router.navigate(blockState);
-    },
-
-    /*
-     * Handles "move" event and updates URL to relect user's scene.
-     */
-    updateUrl: function(bling) {
-
-      if (bling) {
-        this.addBlingToDisplayedBlingCollection(bling);
-      }
-
-      blockState = "";
-      this.displayedBlingCollection.each(function(bling) {
-        if (bling.get("onStage")) {
-          blockState = blockState.concat('{"x":' + bling.get("x") +    
-                                         ',"y":' + bling.get("y") +
-                                         ',"width":' + bling.get("width") +
-                                         ',"height":' + bling.get("height") +
-                                         ',"id":"' + bling.id + '"' +
-                                         ',"image":"' + bling.get("image") + '"},');
-        }
-      });
-      blockState = "[" + blockState.substring(0, blockState.length-1) + "]"; 
-      this.pushUrl();
-
-      /*
-       * Handles share button hide/show.
-       */
-      $("#shares").css({ display: "none" });
-      $("#share-button").css({ display: "block" });
-    },
-
-    /*
-     * Handles mouseover blockee icon.
-     */
-    handleIconHover: function(options) {
-      var image = options.target;
-      image.setImage(options.replaceImg);
-      document.body.style.cursor = options.cursor;
-    },
-   
-    /*
-     * Load any bling objects defined in URL
-     */ 
-    loadPreviewBling: function(blocks) {
-
-      // XXX: Due to bug in Kinetic code, you need to have at
-      // least one child in the layer before you attempt to remove something
-      // this is inserted in case someone attempts to render a shared url 
-      // with 0 blings and the streetview image will still need to get removed
-      layer.add(new Kinetic.Rect({x:0, y:0}));
-
-      for (var i=0; i<blocks.length; i++) { 
-        var block = blocks[i];
-        var x = (block.hasOwnProperty("x")) ? block.x : 20;
-        var y = (block.hasOwnProperty("y")) ? block.y : 100;
-        var width = (block.hasOwnProperty("width")) ? block.width : 100;
-        var height = (block.hasOwnProperty("height")) ? block.height : 100;        
-        var bling = this.blingCollection.get(block.image).clone();
-        bling.set("x", x);
-        bling.set("y", y);
-        bling.set("width", width);
-        bling.set("height", height);
-
-        var previewGroup = createGroup(bling, {draggable: false});
-        this.previewBlings.push(previewGroup);
-        layer.add(previewGroup);
-        stage.draw();
-      }
-    },
-
-    /*
-     * Utility for loading bling in collection and adding to canvas layer
-     */
-    addBlingToCollection: function(blingNew, blingOld) {    
-      blingBoxLayer.add(blingNew.render());
-
-      // update main bling collection (replace existing bling with this one)
-      // this ensures that the reference to the original bling is removed
-      // so that when blings are reloaded in case of a slide left or right event
-      // the blings shown in the bling box are "fresh"    
-      var indexOfOld = this.blingCollection.indexOf(blingOld);
-      this.blingCollection.models[indexOfOld] = blingNew;
-    },
-
-    addBlingToDisplayedBlingCollection: function(bling) {   
-
-      // clone the bling from the blingbox and add to 
-      // displyed blings collection      
-      var displayBling = bling.clone();      
-      displayBling.id = bling.id;
-      displayBling.set("x", bling.get("x"));
-      displayBling.set("y", bling.get("y"));
-      displayBling.set("onStage", true);
-
-      displayBling.group = bling.group;   
-      //displayBling.group = createGroup(displayBling);      
-
-      // this really just "updates in place" if the bling was
-      // already displayed
-      this.displayedBlingCollection.remove(displayBling); 
-      this.displayedBlingCollection.add(displayBling); 
-
-      console.log(bling);
-
-      // this.displayedBlingCollection.remove(bling); 
-      // this.displayedBlingCollection.add(bling); 
-
-    },
-
-    cyclePreview: function() {
-      if (previewOn) {
-        previewOn = false;
-        this.displayedBlingCollection.forEach(function(bling) {
-          var group = bling.group;
-          group.attrs.anchors.forEach(function(anchor) {
-            anchor.show();
-          });
-          group.attrs.anchorBox.show();
-        });        
-      } else {
-        previewOn = true;
-        this.displayedBlingCollection.forEach(function(bling) {
-          var group = bling.group;
-          group.attrs.anchors.forEach(function(anchor) {
-            anchor.hide();
-          });
-          group.attrs.anchorBox.hide();
-        });
-      }
-    },
-
-    showStreetViewReminder: function() {
-
-      if (reminderArrowShowing)
-        return;
-
-      var reminderArrowGroup = new Kinetic.Group({
-        "x": 80,
-        "y": 140
-      }); 
-      var reminderArrowBody = new Kinetic.Rect({
-        "x": 19,
-        "y": 0,
-        "width": 50,
-        "height": 16,
-        "fill": "white"
-      });
-      var reminderArrowHead = new Kinetic.Polygon({
-          points: [0, 8, 20, -10, 20, 26],
-          fill: "white"
-      });    
-      reminderArrowGroup.add(reminderArrowBody);
-      reminderArrowGroup.add(reminderArrowHead);
-      layer.add(reminderArrowGroup);      
-      reminderArrowShowing = true;
-
-      reminderArrowGroup.transitionTo({
-        x: 2,
-        duration: 2,
-        easing: 'bounce-ease-out',
-        callback: function() {
-          setTimeout(function() {
-            layer.remove(reminderArrowGroup);
-            reminderArrowShowing = false;
-          }, 2000);          
-        }
-      });
-
-    },
-
-    preInitStage: function() {
-
-      var viewportWidth = $('#stage').width();
-      var viewportHeight = 600;
-
-      // blockee has a single stage
-      stage = new Kinetic.Stage({
-        container: "stage",
-        width: viewportWidth,
-        height: viewportHeight 
-      });
-
-      // main layer
-      layer = new Kinetic.Layer();
-      stage.add(layer);
-
-      // second layer for blingBox
-      blingBoxLayer = new Kinetic.Layer();
-      stage.add(blingBoxLayer);
-
-      // preview button                   
-      var preview = new Image();
-      preview.src = buttonIcons[0];
-      var previewOver = new Image();
-      previewOver.src = buttonIcons[4];
-      preview.onload = function() {
-        var image = new Kinetic.Image({
-          x: 630,
-          y: 0,
-          image: preview,
-          width: 41,
-          height: 27 
-        });
-        image.on("mouseover", function() {
-          var options = {
-            "target": this,
-            "replaceImg": previewOver,
-            "cursor": "pointer"
-          };
-          vent.trigger("icon-hover", options);
-        });
-        image.on("mouseout", function() {
-          var options = {
-            "target": this,
-            "replaceImg": preview,
-            "cursor": "default"
-          };
-          vent.trigger("icon-hover", options);
-        });
-        image.on("click", function() {
-          self.cyclePreview();
-        });
-        layer.add(image);
-        stage.draw();
-      };
-      
-      // trash button
-      var trash = new Image();
-      trash.src = buttonIcons[2];
-      var trashOver = new Image();
-      trashOver.src = buttonIcons[5];
-      trash.onload = function() {
-    
-        var image = new Kinetic.Image({
-          x: 630,
-          y: 394,
-          image: trash,
-          width: 40,
-          height: 56 
-        });
-
-        trash_area = image;
-
-        trash_area.open = function(){
-
-          var options = {
-            "target": trash_area,
-            "replaceImg": trashOver,
-            "cursor": "pointer"
-          };
-
-          vent.trigger("icon-hover", options);
-        };
-
-        trash_area.close = function(){
-
-          var options = {
-            "target": trash_area,
-            "replaceImg": trash,
-            "cursor": "default"
-          };
-
-          vent.trigger("icon-hover", options);
-        };
-
-        image.on("mouseover", trash_area.open);
-        image.on("mouseout", trash_area.close);
-        
-        layer.add(image);
-        stage.draw();
-
-      };      
-
-      // before user applies image, we show only gray box on stage
-      stubRect = new Kinetic.Rect({"width": 600, 
-        "height": 450, 
-          "fill": "pink",
-             "x": 0,
-             "y": 0});               
-      layer.add(stubRect);      
-    },
-
-    /*
-     * Setup the Kinetic Stage object 
-     */
-    initializeStage: function(previewBlocks, imageUrl) {
-      
-      // if we have bling to preview from the url, display it
-      if (previewBlocks) {
-        this.loadPreviewBling(previewBlocks);
-
-        // show image url
-        $(".kineticjs-content")[0].style
-                            .background = "url('" + imageUrl + "')";
-        $(".kineticjs-content")[0].style
-                            .backgroundRepeat = "no-repeat";
-
-        streetViewLoaded = true;
-
-        vent.trigger("remove-element", imageUrl);                                                  
-      }
-
-      // bling box paging buttons
-      var leftButton = new Kinetic.Rect({
-        x: 0,
-        y: 500,      
-        width: 31,
-        height: 46,            
-        fill: "gray",
-        strokeWidth: 0
-      });
-      var lineTop = new Kinetic.Line({
-        points: [20, 509, 8, 525],
-        stroke: "white",
-        strokeWidth: 2,
-        lineCap: "round",
-        lineJoin: "round"
-      });
-      var lineBottom = new Kinetic.Line({
-        points: [8, 525, 20, 540],
-        stroke: "white",
-        strokeWidth: 2,
-        lineCap: "round",
-        lineJoin: "round"
-      });      
-      layer.add(leftButton);
-      layer.add(lineTop);
-      layer.add(lineBottom);  
-      var rightButton = new Kinetic.Rect({
-        x: 570,
-        y: 500,      
-        width: 31,
-        height: 46,            
-        fill: "gray",
-        strokeWidth: 0
-      });
-      var lineTopRight = new Kinetic.Line({
-        points: [580, 509, 592, 525],
-        stroke: "white",
-        strokeWidth: 2,
-        lineCap: "round",
-        lineJoin: "round"
-      });
-      var lineBottomRight = new Kinetic.Line({
-        points: [592, 525, 580, 540],
-        stroke: "white",
-        strokeWidth: 2,
-        lineCap: "round",
-        lineJoin: "round"
-      });      
-      layer.add(rightButton);
-      layer.add(lineTopRight);
-      layer.add(lineBottomRight);
-      
-      // paging button click event logic
-      leftButton.on("click", function(frame) {
-
-        // Load the blings that will slide in from left or right and clear existing ones.
-        updateBlingBoxCache(FORWARDS);
-
-        blingBoxLayer.transitionTo({
-          x: -2000,
-          duration: 1.0,
-          easing: 'ease-in-out',
-          callback: function() {
-            blingBoxLayer.removeChildren();
-            blingBoxLayer.setX(0);              
-            loadBlings(BACKWARDS);
-          }
-        });        
-      });
-      rightButton.on("click", function(frame) {
-
-        // Load the blings that will slide in from left or right and clear existing ones.
-        updateBlingBoxCache(BACKWARDS);
-
-        blingBoxLayer.transitionTo({
-          x: 2000,
-          duration: 1.0,
-          easing: 'ease-in-out',
-          callback: function() {
-            blingBoxLayer.removeChildren();
-            blingBoxLayer.setX(0);
-            loadBlings(FORWARDS); // reverse slide in order
-          }
-        });      
-      });
-
-      // load blings, they fly in from the right
-      loadBlings(BACKWARDS);
-
-      // draw the stage in its initial state
-      stage.draw();
-    }
-  });
-
-  /*
-   * Load the blings that will slide in from left or right.
-   */
-  var count = 0;
-  function updateBlingBoxCache(direction) {
-
-    blingBoxCursor += (3 * direction);
-    var cursor = (blingBoxCursor.mod(self.blingCollection.models.length));
-    cursor = cursor - cursor % 3; 
-
-    var cursorMax = Math.min(cursor+3, self.blingCollection.models.length);
-
-    self.blingBoxCollection.models = [];
-    for (var i=cursor; i<cursorMax; i++) {
-        self.blingBoxCollection.models.push(self.blingCollection.models[i]);
-    }
-
-  }
-
-  function loadBlings(direction) {   
-
-    // they fly in from the right or left after having been
-    // drawn offscreen
-
-    var inverseDirection = direction * -1;
-
-    // opp of stage width and direction
-    var xLocation = (stage.getSize().width + (50 * direction) + 
-      (150 * inverseDirection)) * 
-      inverseDirection;
- 
-    // draw them offscreen
-    self.blingBoxCollection.each(function(bling) {
-
-      bling.set("x", xLocation);
-      bling.set("y", 480);
-      blingBoxLayer.add(bling.render());
-      // XXX: should do this dynamically so they space out nicely
-      xLocation += 150;
-    });   
-
-    blingBoxLayer.moveToBottom();
- 
-    // fly them in
-    blingBoxLayer.transitionTo({          
-      x: stage.getSize().width * direction,
-      duration: 1.0,
-      easing: 'ease-in-out'
-    });
-
-  }
-
-  /*
+ /*
    * Bling object represents a civic item that can be 
    * placed and manipulated on the main stage.
    */
@@ -1135,14 +558,799 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
       return self.group;
     }
-  });
-  
-  // XXX: need to build id generator
-  var cloneId = 1;
+  });  
 
   var Blings = Backbone.Collection.extend({
       model: Blockee.Bling
+  });  
+
+  var previewBlings = [];
+  var blingCollection = new Blings();
+  // collection of blings in bling box
+  var blingBoxCollection = new Blings();
+  // collection of blings in bling box
+  var displayedBlingCollection = new Blings();
+
+  // load the initial bling models
+  blingCollection.reset(bootstrapModels);
+  // initialize blingBoxCollection to first N models
+  blingBoxCollection.models = 
+    _.first(blingCollection.models, MAX_BLINGS_IN_BOX);
+  // majick! (not really, this sets us up for reverse bling box paging)
+  var blingBoxCursor = blingBoxCollection.length + 2;
+
+  Blockee.loadContent = function(previewBlocks, imageUrl, view, options) {
+    // load images that are used for bling objects
+    // when done, callback to initializeStage method with
+    // any blocks passed in the URL for preview to finish
+    // rendering    
+    this.preInitStage(options);  
+    this.loadImages();
+    this.initializeStage(previewBlocks, imageUrl, options);
+    
+    // draw the googly eyed logo
+    Googlylogo.drawLogo();
+  }
+
+  Blockee.preInitStage = function(options) {
+
+    var viewportWidth = $('#stage').width();
+    var viewportHeight = 600;
+
+    // blockee has a single stage
+    stage = new Kinetic.Stage({
+      container: "stage",
+      width: viewportWidth,
+      height: viewportHeight 
+    });
+
+    // main layer
+    layer = new Kinetic.Layer();
+    stage.add(layer);
+
+    // second layer for blingBox
+    blingBoxLayer = new Kinetic.Layer();
+    stage.add(blingBoxLayer);
+
+    if (!options.showBlingBox) {
+      // short circuit here; we don't need to draw anything else
+      stage.draw();
+      return;
+    }    
+
+    // preview button                   
+    var preview = new Image();
+    preview.src = buttonIcons[0];
+    var previewOver = new Image();
+    previewOver.src = buttonIcons[4];
+    preview.onload = function() {
+      var image = new Kinetic.Image({
+        x: 630,
+        y: 0,
+        image: preview,
+        width: 41,
+        height: 27 
+      });
+      image.on("mouseover", function() {
+        var options = {
+          "target": this,
+          "replaceImg": previewOver,
+          "cursor": "pointer"
+        };
+        vent.trigger("icon-hover", options);
+      });
+      image.on("mouseout", function() {
+        var options = {
+          "target": this,
+          "replaceImg": preview,
+          "cursor": "default"
+        };
+        vent.trigger("icon-hover", options);
+      });
+      image.on("click", function() {
+        self.cyclePreview();
+      });
+      layer.add(image);
+      stage.draw();
+    };
+    
+    // trash button
+    var trash = new Image();
+    trash.src = buttonIcons[2];
+    var trashOver = new Image();
+    trashOver.src = buttonIcons[5];
+    trash.onload = function() {
+  
+      var image = new Kinetic.Image({
+        x: 630,
+        y: 394,
+        image: trash,
+        width: 40,
+        height: 56 
+      });
+
+      trash_area = image;
+
+      trash_area.open = function(){
+
+        var options = {
+          "target": trash_area,
+          "replaceImg": trashOver,
+          "cursor": "pointer"
+        };
+
+        vent.trigger("icon-hover", options);
+      };
+
+      trash_area.close = function(){
+
+        var options = {
+          "target": trash_area,
+          "replaceImg": trash,
+          "cursor": "default"
+        };
+
+        vent.trigger("icon-hover", options);
+      };
+
+      image.on("mouseover", trash_area.open);
+      image.on("mouseout", trash_area.close);
+      
+      layer.add(image);
+      stage.draw();
+
+    };      
+
+    // before user applies image, we show only gray box on stage
+    stubRect = new Kinetic.Rect({"width": 600, 
+      "height": 450 , 
+        "fill": "pink",
+           "x": 0,
+           "y": 0});               
+    layer.add(stubRect);      
+  }  
+
+  /*
+   * Load any bling objects defined in URL
+   */ 
+  Blockee.loadPreviewBling = function(blocks) {
+
+    // XXX: Due to bug in Kinetic code, you need to have at
+    // least one child in the layer before you attempt to remove something
+    // this is inserted in case someone attempts to render a shared url 
+    // with 0 blings and the streetview image will still need to get removed
+    layer.add(new Kinetic.Rect({x:0, y:0}));
+
+    for (var i=0; i<blocks.length; i++) { 
+      var block = blocks[i];
+      var x = (block.hasOwnProperty("x")) ? block.x : 20;
+      var y = (block.hasOwnProperty("y")) ? block.y : 100;
+      var width = (block.hasOwnProperty("width")) ? block.width : 100;
+      var height = (block.hasOwnProperty("height")) ? block.height : 100;        
+      var bling = blingCollection.get(block.image).clone();
+      bling.set("x", x);
+      bling.set("y", y);
+      bling.set("width", width);
+      bling.set("height", height);
+
+      var previewGroup = createGroup(bling, {draggable: false});
+      previewBlings.push(previewGroup);
+      layer.add(previewGroup);
+      stage.draw();
+    }
+  }
+
+  /*
+   * Setup the Kinetic Stage object 
+   */
+  Blockee.initializeStage = function(previewBlocks, imageUrl, options) {
+      
+    // if we have bling to preview from the url, display it
+    if (previewBlocks) {
+      this.loadPreviewBling(previewBlocks);
+
+      // show image url
+      $(".kineticjs-content")[0].style
+                          .background = "url('" + imageUrl + "')";
+      $(".kineticjs-content")[0].style
+                          .backgroundRepeat = "no-repeat";
+
+      streetViewLoaded = true;
+
+      vent.trigger("remove-element", imageUrl);                                                  
+    }
+
+    if (!options.showBlingBox) {
+      // short circuit here; we don't need to draw anything else
+      stage.draw();
+      return;
+    }
+
+    // bling box paging buttons
+    var leftButton = new Kinetic.Rect({
+      x: 0,
+      y: 500,      
+      width: 31,
+      height: 46,            
+      fill: "gray",
+      strokeWidth: 0
+    });
+    var lineTop = new Kinetic.Line({
+      points: [20, 509, 8, 525],
+      stroke: "white",
+      strokeWidth: 2,
+      lineCap: "round",
+      lineJoin: "round"
+    });
+    var lineBottom = new Kinetic.Line({
+      points: [8, 525, 20, 540],
+      stroke: "white",
+      strokeWidth: 2,
+      lineCap: "round",
+      lineJoin: "round"
+    });      
+    layer.add(leftButton);
+    layer.add(lineTop);
+    layer.add(lineBottom);  
+    var rightButton = new Kinetic.Rect({
+      x: 570,
+      y: 500,      
+      width: 31,
+      height: 46,            
+      fill: "gray",
+      strokeWidth: 0
+    });
+    var lineTopRight = new Kinetic.Line({
+      points: [580, 509, 592, 525],
+      stroke: "white",
+      strokeWidth: 2,
+      lineCap: "round",
+      lineJoin: "round"
+    });
+    var lineBottomRight = new Kinetic.Line({
+      points: [592, 525, 580, 540],
+      stroke: "white",
+      strokeWidth: 2,
+      lineCap: "round",
+      lineJoin: "round"
+    });      
+
+    layer.add(rightButton);
+    layer.add(lineTopRight);
+    layer.add(lineBottomRight);
+    
+    // paging button click event logic
+    leftButton.on("click", function(frame) {
+
+      // Load the blings that will slide in from left or right and clear existing ones.
+      updateBlingBoxCache(FORWARDS);
+
+      blingBoxLayer.transitionTo({
+        x: -2000,
+        duration: 1.0,
+        easing: 'ease-in-out',
+        callback: function() {
+          blingBoxLayer.removeChildren();
+          blingBoxLayer.setX(0);              
+          loadBlings(BACKWARDS);
+        }
+      });        
+    });
+    rightButton.on("click", function(frame) {
+
+      // Load the blings that will slide in from left or right and clear existing ones.
+      updateBlingBoxCache(BACKWARDS);
+
+      blingBoxLayer.transitionTo({
+        x: 2000,
+        duration: 1.0,
+        easing: 'ease-in-out',
+        callback: function() {
+          blingBoxLayer.removeChildren();
+          blingBoxLayer.setX(0);
+          loadBlings(FORWARDS); // reverse slide in order
+        }
+      });      
+    });
+
+    // load blings, they fly in from the right
+    loadBlings(BACKWARDS);
+
+    // draw the stage in its initial state
+    stage.draw();
+  }  
+
+  /*
+   * Handle loading png images files from disk that are used
+   * in the canvas scene
+   */
+  Blockee.loadImages = function() {
+
+    var imageSources = {};
+    var loadedImages = 0;
+    var imagesToLoad = 0;
+
+    // map all image paths for each image type
+    blingCollection.each(function(bling) {
+      imageSources[bling.get("id")] = [];
+      var sources = bling.get("images");
+      for (var idx in sources) {
+        imagesToLoad++;
+        imageSources[bling.get("id")].push("/assets/img/image_groups/" + sources[idx]);
+      }
+    });
+
+    // count all loaded images and callback to the initStage
+    // method when everything is complete to render the view
+    var handleImageLoad = function() {
+      if (++loadedImages === imagesToLoad) {
+        // XXX: should probably show a loading spinner (or something)
+        // and diasallow bling paging until things are loaded
+        console.log("image loading complete");          
+      }
+    };
+
+    // load all images from path and callback when nothing left to load
+    for (var idx in imageSources) {
+      images[idx] = [];
+      var collection = imageSources[idx];
+      for (var i=0; i<collection.length; i++) {
+        images[idx][i] = new Image();
+        images[idx][i].onload = handleImageLoad; 
+        images[idx][i].src = imageSources[idx][i];
+      }
+    }      
+  }  
+
+  Blockee.Views.Share = Backbone.View.extend({
+    template: "app/templates/decoratereshare",
+
+    events: {},
+
+    initialize: function(options) {
+      this.render();
+    },
+
+    /*
+     * Backbone render implementation
+     */
+    render: function(previewBlocks) {
+      // Fetch the template
+      var tmpl = app.fetchTemplate(this.template);
+      
+      // Set the template contents
+      this.$el.html(tmpl());
+      
+      return this;
+    }
+
   });
+
+  // the decorate view
+  Blockee.Views.Decorate = Backbone.View.extend({
+    template: "app/templates/decorate",
+     
+    events: {
+      "click #street-view": handleStreetViewClick,
+      "click #share-button": handleShareClick
+    },
+
+    initialize: function(options) {
+      // event binding with "this" object bound to event methods
+      _.bindAll(this, "addBlingToCollection");
+      _.bindAll(this, "updateUrl");
+      _.bindAll(this, "initializeStage");
+      _.bindAll(this, "removeBling");
+      _.bindAll(this, "streetview-reminder");
+      vent.bind("clone", this.addBlingToCollection);
+      vent.bind("move", this.updateUrl);
+      vent.bind("icon-hover", this.handleIconHover);      
+      vent.bind("remove-bling", this.removeBling);
+      vent.bind("streetview-reminder", this.showStreetViewReminder);
+
+      // // load the initial bling models
+      // this.blingCollection.reset(bootstrapModels);
+      // // initialize blingBoxCollection to first N models
+      // this.blingBoxCollection.models = 
+      //   _.first(this.blingCollection.models, MAX_BLINGS_IN_BOX);
+
+      // console.log(this.blingBoxCollection.models);
+
+      // // majick! (not really, this sets us up for reverse bling box paging)
+      // blingBoxCursor = this.blingBoxCollection.length + 2;
+
+      self = this;
+
+      this.render();
+    },
+
+    /*
+     * Backbone render implementation
+     */
+    render: function(previewBlocks) {
+      // Fetch the template
+      var tmpl = app.fetchTemplate(this.template);
+      
+      // Set the template contents
+      this.$el.html(tmpl());
+
+      var googleImagePickerTmpl = app.fetchTemplate("app/templates/_google-image-picker-modal");
+      $(this.el).append(googleImagePickerTmpl);
+      
+      return this;
+    },
+
+    removeBling: function(bling) {
+      displayedBlingCollection.remove(bling);
+      this.updateUrl();
+    },
+
+    pushUrl: function() {
+      app.router.navigate("", {replace: true});
+      blockState = "share?blocks=" + blockState + 
+        "+" + encodeURIComponent(googleStreetsUrl.replace("maps.googleapis.com/maps/api/streetview?", ""));
+      app.router.navigate(blockState);
+    },
+
+    /*
+     * Handles "move" event and updates URL to relect user's scene.
+     */
+    updateUrl: function(bling) {
+
+      if (bling) {
+        this.addBlingToDisplayedBlingCollection(bling);
+      }
+
+      blockState = "";
+      displayedBlingCollection.each(function(bling) {
+        if (bling.get("onStage")) {
+          blockState = blockState.concat('{"x":' + bling.get("x") +    
+                                         ',"y":' + bling.get("y") +
+                                         ',"width":' + bling.get("width") +
+                                         ',"height":' + bling.get("height") +
+                                         ',"id":"' + bling.id + '"' +
+                                         ',"image":"' + bling.get("image") + '"},');
+        }
+      });
+      blockState = "[" + blockState.substring(0, blockState.length-1) + "]"; 
+      this.pushUrl();
+
+      /*
+       * Handles share button hide/show.
+       */
+      $("#shares").css({ display: "none" });
+      $("#share-button").css({ display: "block" });
+    },
+
+    /*
+     * Handles mouseover blockee icon.
+     */
+    handleIconHover: function(options) {
+      var image = options.target;
+      image.setImage(options.replaceImg);
+      document.body.style.cursor = options.cursor;
+    },
+   
+    /*
+     * Utility for loading bling in collection and adding to canvas layer
+     */
+    addBlingToCollection: function(blingNew, blingOld) {    
+      blingBoxLayer.add(blingNew.render());
+
+      // update main bling collection (replace existing bling with this one)
+      // this ensures that the reference to the original bling is removed
+      // so that when blings are reloaded in case of a slide left or right event
+      // the blings shown in the bling box are "fresh"    
+      var indexOfOld = blingCollection.indexOf(blingOld);
+      blingCollection.models[indexOfOld] = blingNew;
+    },
+
+    addBlingToDisplayedBlingCollection: function(bling) {   
+
+      // clone the bling from the blingbox and add to 
+      // displyed blings collection      
+      var displayBling = bling.clone();      
+      displayBling.id = bling.id;
+      displayBling.set("x", bling.get("x"));
+      displayBling.set("y", bling.get("y"));
+      displayBling.set("onStage", true);
+
+      displayBling.group = bling.group;   
+      //displayBling.group = createGroup(displayBling);      
+
+      // this really just "updates in place" if the bling was
+      // already displayed
+      displayedBlingCollection.remove(displayBling); 
+      displayedBlingCollection.add(displayBling); 
+
+      console.log(bling);
+
+      // this.displayedBlingCollection.remove(bling); 
+      // this.displayedBlingCollection.add(bling); 
+
+    },
+
+    cyclePreview: function() {
+      if (previewOn) {
+        previewOn = false;
+        this.displayedBlingCollection.forEach(function(bling) {
+          var group = bling.group;
+          group.attrs.anchors.forEach(function(anchor) {
+            anchor.show();
+          });
+          group.attrs.anchorBox.show();
+        });        
+      } else {
+        previewOn = true;
+        this.displayedBlingCollection.forEach(function(bling) {
+          var group = bling.group;
+          group.attrs.anchors.forEach(function(anchor) {
+            anchor.hide();
+          });
+          group.attrs.anchorBox.hide();
+        });
+      }
+    },
+
+    showStreetViewReminder: function() {
+
+      if (reminderArrowShowing)
+        return;
+
+      var reminderArrowGroup = new Kinetic.Group({
+        "x": 80,
+        "y": 140
+      }); 
+      var reminderArrowBody = new Kinetic.Rect({
+        "x": 19,
+        "y": 0,
+        "width": 50,
+        "height": 16,
+        "fill": "white"
+      });
+      var reminderArrowHead = new Kinetic.Polygon({
+          points: [0, 8, 20, -10, 20, 26],
+          fill: "white"
+      });    
+      reminderArrowGroup.add(reminderArrowBody);
+      reminderArrowGroup.add(reminderArrowHead);
+      layer.add(reminderArrowGroup);      
+      reminderArrowShowing = true;
+
+      reminderArrowGroup.transitionTo({
+        x: 2,
+        duration: 2,
+        easing: 'bounce-ease-out',
+        callback: function() {
+          setTimeout(function() {
+            layer.remove(reminderArrowGroup);
+            reminderArrowShowing = false;
+          }, 2000);          
+        }
+      });
+
+    }
+  });
+
+  /*
+   * Load the blings that will slide in from left or right.
+   */
+  var count = 0;
+  function updateBlingBoxCache(direction) {
+
+    blingBoxCursor += (3 * direction);
+    var cursor = (blingBoxCursor.mod(self.blingCollection.models.length));
+    cursor = cursor - cursor % 3; 
+
+    var cursorMax = Math.min(cursor+3, self.blingCollection.models.length);
+
+    self.blingBoxCollection.models = [];
+    for (var i=cursor; i<cursorMax; i++) {
+        self.blingBoxCollection.models.push(self.blingCollection.models[i]);
+    }
+
+  }
+
+  function loadBlings(direction) {   
+
+    // they fly in from the right or left after having been
+    // drawn offscreen
+
+    var inverseDirection = direction * -1;
+
+    // opp of stage width and direction
+    var xLocation = (stage.getSize().width + (50 * direction) + 
+      (150 * inverseDirection)) * 
+      inverseDirection;
+ 
+    // draw them offscreen
+    blingBoxCollection.each(function(bling) {
+
+      bling.set("x", xLocation);
+      bling.set("y", 480);
+      blingBoxLayer.add(bling.render());
+      // XXX: should do this dynamically so they space out nicely
+      xLocation += 150;
+    });   
+
+    blingBoxLayer.moveToBottom();
+ 
+    // fly them in
+    blingBoxLayer.transitionTo({          
+      x: stage.getSize().width * direction,
+      duration: 1.0,
+      easing: 'ease-in-out'
+    });
+
+  }
+
+  // /*
+  //  * Bling object represents a civic item that can be 
+  //  * placed and manipulated on the main stage.
+  //  */
+  // Blockee.Bling = Backbone.Model.extend({
+
+  //   // default properties
+  //   defaults: {
+  //     "x": 0,
+  //     "y": 0,
+  //     "width": 0,
+  //     "height": 0,
+  //     "onStage": false,
+  //     "image": ""
+  //   },
+
+  //   /*
+  //    * Return a Kinetic group object that represents the
+  //    * attributes of this Bling model to be drawn on stage.
+  //    */
+  //   render: function() {
+      
+  //     var self = this;
+
+  //     // a model has an group that can be rendered on screen
+  //     // a group holds the images that make the bling animation
+  //     self.group = createGroup(this);
+
+  //     self.handledStreetViewLoad = false;
+
+  //     ////
+  //     // define drag and drop event behaviors
+  //     ////
+      
+  //     // when group is moved update model attributes 
+  //     self.group.on("dragend", function() {
+
+  //       if (!streetViewLoaded) { 
+  //         return;
+  //       }
+
+  //       //console.log(self.group);
+
+
+  //       if (self.group.attrs.anchorBox !== undefined) {
+
+  //       var maxwidth = self.group.attrs.anchorBox.getWidth();
+  //       var maxheight = self.group.attrs.anchorBox.getHeight();        
+  //       var centerX = this.getX() + this.attrs.resizeXAdj + maxwidth * 0.5;
+  //       var centerY = this.getY() + this.attrs.resizeYAdj + maxheight * 0.5;
+
+  //       // hit test: if bling is over trash, then trash bling
+  //       if(centerX > trash_area.getX() - 25 && 
+  //          centerX < trash_area.getX() + trash_area.getWidth() + 25 && 
+  //          centerY > trash_area.getY() - 25 && 
+  //          centerY < trash_area.getY() + trash_area.getHeight() + 25) {
+
+  //         // in trash
+  //         trash_area.open();
+
+  //         // cancels bling
+  //         self.set("onStage", false); 
+
+  //         // animate the trash behavior
+  //         self.group.transitionTo({
+  //           "scale": { x: 0.3, y: 0.3 },
+  //           "x": trash_area.getX() * 1 + trash_area.getWidth() * 0.5 - 0.15 * maxwidth,
+  //           "y": trash_area.getY() * 1 + trash_area.getHeight() * 0.5 - 0.15 * maxheight,
+  //           "duration": 0.2,
+  //           "callback": function() {
+  //             // cancels stage object
+  //             self.group.parent.remove(self.group);
+  //             setTimeout(trash_area.close, 200);
+  //           }
+  //         });
+
+  //         // removes from displayed blings cache so url update is correct
+  //         vent.trigger("remove-bling", self);
+
+  //         // this is a guard clase; if bling is removed, no need to continue with function
+  //         return;
+  //       }
+  //       }
+        
+  //       // if trash not hit then update the bling model based on the view changes
+
+  //       // width of group based on it's image
+  //       var image = this.get(".image")[0];
+
+  //       self.set("x", this.getX() + this.attrs.resizeXAdj);
+  //       self.set("y", this.getY() + this.attrs.resizeYAdj);
+
+  //       self.set("width", image.getWidth());
+  //       self.set("height", image.getHeight()); 
+              
+  //       // view should respond (update url) to handle moved bling
+  //       vent.trigger("move", self);
+
+  //       // don't clone clones
+  //       this.off("dragstart");     
+  //     });
+
+  //     // when group is touched, move it to top and redraw stage
+  //     self.group.on("mousedown touchstart", function(node) {
+
+  //       this.moveToTop();
+  //       stage.draw();
+
+  //       if (!self.handledStreetViewLoad) {
+
+  //         if (!streetViewLoaded) {
+  //           this.setDraggable(false);
+  //           vent.trigger("streetview-reminder");
+  //         } else {
+  //           this.setDraggable(true);
+  //           self.handledStreetViewLoad = true;
+  //         }
+
+  //       }
+
+  //     });
+
+  //     // when group is dragged, create a clone to leave where 
+  //     // the group used to be this creates the effect of being 
+  //     // able to use multiple copies of the same bling and keeps 
+  //     // the blings on the bottom of the screen available 
+  //     // to be used over and over.
+  //     self.group.on("dragstart", function() {
+
+  //       if (!streetViewLoaded) { 
+  //         return;
+  //       }
+
+  //       // should be on top of everything else 
+  //       // (all other rendered objects)
+  //       this.moveTo(layer);
+
+  //       // clone it (see description above)
+  //       var clone = self.clone();
+  //       clone.group = createGroup(clone);
+  //       // XXX: need to build id generator
+  //       clone.id = clone.id + cloneId++;
+  //       clone.cid = clone.id;
+
+  //       //console.log(clone);
+
+  //       // tell the system to render and manage clone 
+  //       // and refresh blingCollection with clone (removing old "self")
+  //       vent.trigger("clone", clone, self);
+
+  //       // the id for each bling that is going to be used
+  //       // on screen must be unique, this ensrures that
+  //       // XXX: need to build proper id generator
+  //       self.id = self.id + cloneId++;
+
+  //       // send the bling object (and hence) the bling's group to get anchors
+  //       addResizeAnchors(self);
+
+  //       stage.draw();
+  //     });
+
+  //     return self.group;
+  //   }
+  // });
+  
+  // XXX: need to build id generator
+  var cloneId = 1;
 
   // XXX: really? is the best solution?
   // javascript don't do mod
