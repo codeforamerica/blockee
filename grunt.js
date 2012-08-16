@@ -279,6 +279,7 @@ module.exports = function(grunt) {
         secret: process.env.AWS_SECRET,
         bucket: block_bucket
       });
+
       res.set('Content-Type', 'text/html');
       form.parse(req, function(err, fields, files) {
         var file = files["file"];

@@ -17,7 +17,7 @@ function(app, $, Backbone, Blockee) {
   var Router = Backbone.Router.extend({
     routes: {
       "": "index",
-      "?blocks=:blocks+:url": "blocks"
+      "?blocks=:blocks+bkg=:bkg_type+:url": "blocks"
     },
 
     index: function() {
@@ -29,15 +29,22 @@ function(app, $, Backbone, Blockee) {
     /*
      * Parse block objects and use to render view
      */
-    blocks: function(blocks, url) { 
+    blocks: function(blocks, bkg_type, url) { 
+      console.log(bkg_type);
       //var raw = unescape(blocks);
       //var raw = decodeURIComponent(blocks);
       var blocksObject = $.parseJSON(unescape(blocks));    
-      var googleStreetViewUrl = "http://maps.googleapis.com/maps/api/streetview?" + decodeURIComponent(url);
+      var backgroundURL;
+
+      if(bkg_type == "image"){
+        backgroundURL = "https://s3.amazonaws.com/blockee-dev/uploads/" + decodeURIComponent(url) 
+      } else {
+        backgroundURL = "http://maps.googleapis.com/maps/api/streetview?" + decodeURIComponent(url);
+      }
 
       var decorate = new Blockee.Views.Decorate();
       this.showView(decorate);
-      decorate.loadContent(blocksObject, googleStreetViewUrl);
+      decorate.loadContent(blocksObject, backgroundURL);
     },
 
     /*

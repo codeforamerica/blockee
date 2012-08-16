@@ -49,6 +49,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   var blingBoxCursor;
 
   var blockState,
+      backgroundType,
       googleStreetsUrl;
 
   // a set of bling models to load when the app starts (bootstrap pattern)
@@ -393,6 +394,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         var backgroundstyle = $(".kineticjs-content")[0].style;
         backgroundstyle.background = "url('" + r.url + "')";
         backgroundstyle.backgroundRepeat = "no-repeat";
+        backgroundType = "image"
         vent.trigger("remove-element", r.url);
       } else {
         alert("SOMETHING WENT WRONG HERE");
@@ -539,8 +541,15 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
     pushUrl: function() {
       app.router.navigate("", {replace: true});
-      blockState = "?blocks=" + blockState + 
-        "+" + encodeURIComponent(googleStreetsUrl.replace("maps.googleapis.com/maps/api/streetview?", ""));
+
+      var encodedImageURL;
+      if(backgroundType == "image"){
+        encodedImageURL = "+bkg=image+" + encodeURIComponent(googleStreetsUrl.replace("https://s3.amazonaws.com/blockee-dev/uploads/", ""));
+      } else {
+        encodedImageURL = "+bkg=google+" + encodeURIComponent(googleStreetsUrl.replace("maps.googleapis.com/maps/api/streetview?", ""));
+      }
+
+      blockState = "?blocks=" + blockState + encodedImageURL;
       app.router.navigate(blockState);
     },
 
