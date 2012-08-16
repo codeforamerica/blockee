@@ -47,9 +47,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       FORWARDS = 1,
       MAX_BLINGS_IN_BOX = 3;
 
-  // keep track of which "page" we are on in the bling box
-  var blingBoxCursor;
-
   var blockState,
       googleStreetsUrl;
 
@@ -577,6 +574,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   blingBoxCollection.models = 
     _.first(blingCollection.models, MAX_BLINGS_IN_BOX);
   // majick! (not really, this sets us up for reverse bling box paging)
+
+  // keep track of which "page" we are on in the bling box
   var blingBoxCursor = blingBoxCollection.length + 2;
 
   Blockee.loadContent = function(previewBlocks, imageUrl, view, options) {
@@ -590,7 +589,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     
     // draw the googly eyed logo
     Googlylogo.drawLogo();
-  }
+  };
 
   Blockee.preInitStage = function(options) {
 
@@ -708,7 +707,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
            "x": 0,
            "y": 0});               
     layer.add(stubRect);      
-  }  
+  };
 
   /*
    * Load any bling objects defined in URL
@@ -738,7 +737,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       layer.add(previewGroup);
       stage.draw();
     }
-  }
+  };
 
   /*
    * Setup the Kinetic Stage object 
@@ -858,7 +857,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
     // draw the stage in its initial state
     stage.draw();
-  }  
+  };
 
   /*
    * Handle loading png images files from disk that are used
@@ -900,7 +899,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         images[idx][i].src = imageSources[idx][i];
       }
     }      
-  }  
+  };
 
   Blockee.Views.Share = Backbone.View.extend({
     template: "app/templates/decoratereshare",
@@ -1073,7 +1072,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     cyclePreview: function() {
       if (previewOn) {
         previewOn = false;
-        this.displayedBlingCollection.forEach(function(bling) {
+        displayedBlingCollection.forEach(function(bling) {
           var group = bling.group;
           group.attrs.anchors.forEach(function(anchor) {
             anchor.show();
@@ -1082,7 +1081,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         });        
       } else {
         previewOn = true;
-        this.displayedBlingCollection.forEach(function(bling) {
+        displayedBlingCollection.forEach(function(bling) {
           var group = bling.group;
           group.attrs.anchors.forEach(function(anchor) {
             anchor.hide();
