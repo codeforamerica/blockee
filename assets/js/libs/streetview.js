@@ -71,10 +71,29 @@ var GooglyStreetView = {
     var aModal = $("#svModal");
     $("#svModal").modal('toggle'); 
 
-    var ll = new google.maps.LatLng( 32.762223,-90.43978 );
+    var locations = [
+      // [ latitude, longitude, zoomlevel ]
+      [37.799951,-122.417822,13], // SF
+      [32.708156,-117.16404,13], // San Diego
+      [40.440186,-80.002441,13], // Pittsburgh
+      [40.771052,-73.969145,13], // NYC
+      [32.079447,-81.084766,13], // Savannah
+      [29.950621,-90.060596,13], // NOLA
+      [29.425974,-98.491445,13], // San Antonio
+      [37.803477,-122.254658,13], // Oakland
+      [38.629734,-90.197674,13], // St Louis
+      [42.366915,-71.091242,14] // Cambridge, MA
+    ];
+    
+    var randomLocation = Math.floor(Math.random() * locations.length);
+    var lat = locations[randomLocation][0];
+    var lng = locations[randomLocation][1];
+    var ll = new google.maps.LatLng( lat, lng );
+    var zval = locations[randomLocation][2];
+
     var mapOptions = {
       center: ll,
-      zoom: 12,
+      zoom: zval,
       mapTypeId: google.maps.MapTypeId.SATELLITE
     };
 

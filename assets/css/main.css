@@ -16,6 +16,14 @@
  /* margin: 20px;*/
 }
 
+#main a:hover { 
+    color: #ffc0cb; 
+}
+#main a { 
+    color: #000;
+    text-decoration: underline;
+}
+
 #mainmobile {
   font-family: 'Rokkitt', Times, serif;
   font-size: 21px;
