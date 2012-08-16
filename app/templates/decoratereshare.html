@@ -11,7 +11,7 @@
     <div class="row-fluid">
       <span>
         Would you like to make this happen?</br>
-        <a href="modaltips">Click here for a few tips.</a>
+        <a href='javascript:$("#tipsModal").modal("toggle");'>Click here for a few tips.</a>
       </span>
     </div>
     <!-- /adding share feature -->
@@ -21,7 +21,7 @@
         <input id="long_url" type="text" value="http://blockee.org"/>
         <br/>      
         <iframe class="twitter-share-iframe" allowtransparency="true" frameborder="0" scrolling="no" src="https://platform.twitter.com/widgets/tweet_button.html?url=http://blockee.org&count=none"></iframe>
-        <iframe class="facebook-share-iframe" src="//facebook.com/plugins/like.php?href=http://blockee.org&send=false&layout=standard&width=450&show_faces=false&action=like&colorscheme=light&font&height=35" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+        <input id="fb-button" type="button" value="Post" class="btn" style="background-color:darkblue;color:white;"/>
       </div>
     </div>
     <!-- /end share feature -->      

@@ -386,6 +386,11 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     ShareFeature.show();
   }
 
+  // pass FB publishing call to ShareFeature library
+  function handleFBPublish(e) {
+    ShareFeature.FBPublish();
+  }  
+
   function removeElement(url) {
     layer.remove(stubRect);
     googleStreetsUrl = url.replace("http://", "");   
@@ -904,7 +909,10 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   Blockee.Views.Share = Backbone.View.extend({
     template: "app/templates/decoratereshare",
 
-    events: {},
+    events: {
+      "click #share-button": handleShareClick,
+      "click #fb-button": handleFBPublish
+    },    
 
     initialize: function(options) {
       this.render();
@@ -919,10 +927,20 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       
       // Set the template contents
       this.$el.html(tmpl());
+
+      var googleImagePickerTmpl = app.fetchTemplate("app/templates/_helpful-tips-modal");
+      $(this.el).append(googleImagePickerTmpl);      
       
       return this;
     }
 
+    // XXX: For now, this is done directly in the _helpful-tips-modal.html link's 
+    //      onclick event, when there is time, the view should capture that click
+    //      and handle it with this method
+    // Blockee.showTipsModal = function() {
+    //     $("#tipsModal").modal('toggle');
+    // }    
+      
   });
 
   // the decorate view
@@ -931,7 +949,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
      
     events: {
       "click #street-view": handleStreetViewClick,
-      "click #share-button": handleShareClick
+      "click #share-button": handleShareClick,
+      "click #fb-button": handleFBPublish
     },
 
     initialize: function(options) {
@@ -946,17 +965,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       vent.bind("icon-hover", this.handleIconHover);      
       vent.bind("remove-bling", this.removeBling);
       vent.bind("streetview-reminder", this.showStreetViewReminder);
-
-      // // load the initial bling models
-      // this.blingCollection.reset(bootstrapModels);
-      // // initialize blingBoxCollection to first N models
-      // this.blingBoxCollection.models = 
-      //   _.first(this.blingCollection.models, MAX_BLINGS_IN_BOX);
-
-      // console.log(this.blingBoxCollection.models);
-
-      // // majick! (not really, this sets us up for reverse bling box paging)
-      // blingBoxCursor = this.blingBoxCollection.length + 2;
 
       self = this;
 
@@ -1182,171 +1190,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     });
 
   }
-
-  // /*
-  //  * Bling object represents a civic item that can be 
-  //  * placed and manipulated on the main stage.
-  //  */
-  // Blockee.Bling = Backbone.Model.extend({
-
-  //   // default properties
-  //   defaults: {
-  //     "x": 0,
-  //     "y": 0,
-  //     "width": 0,
-  //     "height": 0,
-  //     "onStage": false,
-  //     "image": ""
-  //   },
-
-  //   /*
-  //    * Return a Kinetic group object that represents the
-  //    * attributes of this Bling model to be drawn on stage.
-  //    */
-  //   render: function() {
-      
-  //     var self = this;
-
-  //     // a model has an group that can be rendered on screen
-  //     // a group holds the images that make the bling animation
-  //     self.group = createGroup(this);
-
-  //     self.handledStreetViewLoad = false;
-
-  //     ////
-  //     // define drag and drop event behaviors
-  //     ////
-      
-  //     // when group is moved update model attributes 
-  //     self.group.on("dragend", function() {
-
-  //       if (!streetViewLoaded) { 
-  //         return;
-  //       }
-
-  //       //console.log(self.group);
-
-
-  //       if (self.group.attrs.anchorBox !== undefined) {
-
-  //       var maxwidth = self.group.attrs.anchorBox.getWidth();
-  //       var maxheight = self.group.attrs.anchorBox.getHeight();        
-  //       var centerX = this.getX() + this.attrs.resizeXAdj + maxwidth * 0.5;
-  //       var centerY = this.getY() + this.attrs.resizeYAdj + maxheight * 0.5;
-
-  //       // hit test: if bling is over trash, then trash bling
-  //       if(centerX > trash_area.getX() - 25 && 
-  //          centerX < trash_area.getX() + trash_area.getWidth() + 25 && 
-  //          centerY > trash_area.getY() - 25 && 
-  //          centerY < trash_area.getY() + trash_area.getHeight() + 25) {
-
-  //         // in trash
-  //         trash_area.open();
-
-  //         // cancels bling
-  //         self.set("onStage", false); 
-
-  //         // animate the trash behavior
-  //         self.group.transitionTo({
-  //           "scale": { x: 0.3, y: 0.3 },
-  //           "x": trash_area.getX() * 1 + trash_area.getWidth() * 0.5 - 0.15 * maxwidth,
-  //           "y": trash_area.getY() * 1 + trash_area.getHeight() * 0.5 - 0.15 * maxheight,
-  //           "duration": 0.2,
-  //           "callback": function() {
-  //             // cancels stage object
-  //             self.group.parent.remove(self.group);
-  //             setTimeout(trash_area.close, 200);
-  //           }
-  //         });
-
-  //         // removes from displayed blings cache so url update is correct
-  //         vent.trigger("remove-bling", self);
-
-  //         // this is a guard clase; if bling is removed, no need to continue with function
-  //         return;
-  //       }
-  //       }
-        
-  //       // if trash not hit then update the bling model based on the view changes
-
-  //       // width of group based on it's image
-  //       var image = this.get(".image")[0];
-
-  //       self.set("x", this.getX() + this.attrs.resizeXAdj);
-  //       self.set("y", this.getY() + this.attrs.resizeYAdj);
-
-  //       self.set("width", image.getWidth());
-  //       self.set("height", image.getHeight()); 
-              
-  //       // view should respond (update url) to handle moved bling
-  //       vent.trigger("move", self);
-
-  //       // don't clone clones
-  //       this.off("dragstart");     
-  //     });
-
-  //     // when group is touched, move it to top and redraw stage
-  //     self.group.on("mousedown touchstart", function(node) {
-
-  //       this.moveToTop();
-  //       stage.draw();
-
-  //       if (!self.handledStreetViewLoad) {
-
-  //         if (!streetViewLoaded) {
-  //           this.setDraggable(false);
-  //           vent.trigger("streetview-reminder");
-  //         } else {
-  //           this.setDraggable(true);
-  //           self.handledStreetViewLoad = true;
-  //         }
-
-  //       }
-
-  //     });
-
-  //     // when group is dragged, create a clone to leave where 
-  //     // the group used to be this creates the effect of being 
-  //     // able to use multiple copies of the same bling and keeps 
-  //     // the blings on the bottom of the screen available 
-  //     // to be used over and over.
-  //     self.group.on("dragstart", function() {
-
-  //       if (!streetViewLoaded) { 
-  //         return;
-  //       }
-
-  //       // should be on top of everything else 
-  //       // (all other rendered objects)
-  //       this.moveTo(layer);
-
-  //       // clone it (see description above)
-  //       var clone = self.clone();
-  //       clone.group = createGroup(clone);
-  //       // XXX: need to build id generator
-  //       clone.id = clone.id + cloneId++;
-  //       clone.cid = clone.id;
-
-  //       //console.log(clone);
-
-  //       // tell the system to render and manage clone 
-  //       // and refresh blingCollection with clone (removing old "self")
-  //       vent.trigger("clone", clone, self);
-
-  //       // the id for each bling that is going to be used
-  //       // on screen must be unique, this ensrures that
-  //       // XXX: need to build proper id generator
-  //       self.id = self.id + cloneId++;
-
-  //       // send the bling object (and hence) the bling's group to get anchors
-  //       addResizeAnchors(self);
-
-  //       stage.draw();
-  //     });
-
-  //     return self.group;
-  //   }
-  // });
   
   // XXX: need to build id generator
   var cloneId = 1;
