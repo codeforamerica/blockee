@@ -283,12 +283,14 @@ module.exports = function(grunt) {
       res.set('Content-Type', 'text/html');
       form.parse(req, function(err, fields, files) {
         var file = files["file"];
+        var timestamp = new Date() / 1000;
+        var filename = timestamp + file["name"].replace(" ", "");
         if (file && file["size"] > 0) {
-          client.putFile(file["path"], '/uploads/' + file["name"], function(err, aws_res){
+          client.putFile(file["path"], '/uploads/' + filename, function(err, aws_res){
             if(aws_res.statusCode == 200){
               res.send(
                 '<textarea data-type="application/json">' +
-                '{"url": "https://s3.amazonaws.com/' + block_bucket + '/uploads/' + file["name"] + '", "result": "success"}' +
+                '{"url": "https://s3.amazonaws.com/' + block_bucket + '/uploads/' + filename + '", "result": "success"}' +
                 '</textarea>'
               );
             } else {
