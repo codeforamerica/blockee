@@ -55,6 +55,12 @@ button {
    width: 220px;
 }
 
+#shares2 {
+   background-color:#FFF;
+   padding:0px;
+   width: 220px;
+}
+
 .twitter-share-iframe {
     width:57px;
     height:20px;
@@ -85,6 +91,7 @@ button {
     color: #000;
     text-decoration: underline;
 }
+
 
 
 .uibutton { 
