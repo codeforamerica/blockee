@@ -588,9 +588,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     // when done, callback to initializeStage method with
     // any blocks passed in the URL for preview to finish
     // rendering    
-    this.preInitStage(options);  
-    this.loadImages();
-    this.initializeStage(previewBlocks, imageUrl, options);
+    this.preInitStage(options); 
+    this.loadImages(previewBlocks);    
+    this.initializeStage(previewBlocks, imageUrl, options);    
     
     // draw the googly eyed logo
     Googlylogo.drawLogo();
@@ -868,14 +868,28 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
    * Handle loading png images files from disk that are used
    * in the canvas scene
    */
-  Blockee.loadImages = function() {
+  Blockee.loadImages = function(previewBlocks) {
 
     var imageSources = {};
     var loadedImages = 0;
     var imagesToLoad = 0;
 
+    // XXX: if required build list of images that matter
+    previews = [];
+    if (previewBlocks !== null) {
+      for (var block=0; block<previewBlocks.length; block++) {
+        previews.push(previewBlocks[block].image);
+      }
+    }
+
     // map all image paths for each image type
     blingCollection.each(function(bling) {
+
+      // if we have a specific list of images to show, make sure we honor that (see just above)
+      if (previewBlocks !== null && _.include(previews, bling.image)) {
+        return;
+      }
+
       imageSources[bling.get("id")] = [];
       var sources = bling.get("images");
       for (var idx in sources) {
@@ -940,7 +954,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     // Blockee.showTipsModal = function() {
     //     $("#tipsModal").modal('toggle');
     // }    
-      
+
   });
 
   // the decorate view
