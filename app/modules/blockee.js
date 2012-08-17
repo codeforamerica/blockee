@@ -31,6 +31,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   // XXX: rename to trashArea
   var trash_area;
 
+
   var buttonIcons = ["/assets/img/preview.png",
                    "/assets/img/help.png",
                    "/assets/img/trash.png",
