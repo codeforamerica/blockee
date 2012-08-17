@@ -101,7 +101,34 @@ var Models = [
       "playground/playground05.png"
     ]
   },
+    {
+    "id": "geodesic", 
+    "x": 0, 
+    "y": 0, 
+    "width": 149, 
+    "height": 110,
+    "image": "geodesic", 
+    "images": [
+      "geodesic/geodesic01.png",
+      "geodesic/geodesic02.png",
+      "geodesic/geodesic03.png",
+      "geodesic/geodesic04.png"
+    ]
+  },  
   {
+    "id": "hopscotch", 
+    "x": 0, 
+    "y": 0, 
+    "width": 168, 
+    "height": 105,
+    "image": "hopscotch", 
+    "images": [
+      "hopscotch/hopscotch01.png",
+      "hopscotch/hopscotch02.png",
+      "hopscotch/hopscotch03.png"
+    ]
+  },
+   {
     "id": "bird_house", 
     "x": 0, 
     "y": 0, 
@@ -345,19 +372,6 @@ var Models = [
     ]
   },
   {
-    "id": "hopscotch", 
-    "x": 0, 
-    "y": 0, 
-    "width": 176, 
-    "height": 110,
-    "image": "hopscotch", 
-    "images": [
-      "hopscotch/hopscotch01.png",
-      "hopscotch/hopscotch02.png",
-      "hopscotch/hopscotch03.png"
-    ]
-  },
-  {
     "id": "solar", 
     "x": 0, 
     "y": 0, 
@@ -400,6 +414,34 @@ var Models = [
     "images": [
       "bikerack/bikerack01.png",
       "bikerack/bikerack02.png"
+    ]
+  },
+   {
+    "id": "urack", 
+    "x": 0, 
+    "y": 0, 
+    "width": 102, 
+    "height": 110,
+    "image": "urack", 
+    "images": [
+      "urack/urack01.png",
+      "urack/urack02.png",
+      "urack/urack03.png",
+      "urack/urack04.png"
+    ]
+  },
+   {
+    "id": "urackgreen", 
+    "x": 0, 
+    "y": 0, 
+    "width": 111, 
+    "height": 110,
+    "image": "urackgreen", 
+    "images": [
+      "urackgreen/urackgreen01.png",
+      "urackgreen/urackgreen02.png",
+      "urackgreen/urackgreen03.png",
+      "urackgreen/urackgreen04.png"
     ]
   }
 ]
