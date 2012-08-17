@@ -25,8 +25,8 @@ var ShareFeature = {
       link: longUrl,
       picture: 'http://i.imgur.com/BbUJG.png',
       name: 'Blockee',
-      caption: 'Pimp Your Block',
-      description: 'Do it today!.'
+      caption: 'Can we make this happen?',
+      description: ''
     };
 
     var callback = function(response){

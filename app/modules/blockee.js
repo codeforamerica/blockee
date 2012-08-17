@@ -349,7 +349,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     //      be customizable for each group
     group.topImageIndex = 0;   
     var previousImage;     
-    var interval = 500;     
+    var interval = 200;     
     group.play = function() {
 
       if (group.children.length > 0) {
