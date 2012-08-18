@@ -91,7 +91,7 @@ button {
   line-height: 110%;
   border-style: solid;
   border-width: 0px;
-  padding: 20px;}
+  padding-top: 20 px;}
 
 .footer a:hover { 
     color: #ffc0cb; 
@@ -101,6 +101,11 @@ button {
     text-decoration: underline;
 }
 
+.tipsfoot {
+    background: #FFF;
+    position: fixed;
+    bottom: 20px;
+}
 
 
 .uibutton { 

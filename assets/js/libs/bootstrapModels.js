@@ -408,26 +408,26 @@ var Models = [
     "id": "bikerack", 
     "x": 0, 
     "y": 0, 
-    "width": 130, 
+    "width": 155, 
     "height": 110,
     "image": "bikerack", 
     "images": [
       "bikerack/bikerack01.png",
-      "bikerack/bikerack02.png"
+      "bikerack/bikerack02.png",
+      "bikerack/bikerack03.png"
     ]
   },
    {
-    "id": "urack", 
+    "id": "bikeshare", 
     "x": 0, 
     "y": 0, 
-    "width": 102, 
+    "width": 141, 
     "height": 110,
-    "image": "urack", 
+    "image": "bikeshare", 
     "images": [
-      "urack/urack01.png",
-      "urack/urack02.png",
-      "urack/urack03.png",
-      "urack/urack04.png"
+      "bikeshare/bikeshare01.png",
+      "bikeshare/bikeshare02.png",
+      "bikeshare/bikeshare03.png"
     ]
   },
    {
