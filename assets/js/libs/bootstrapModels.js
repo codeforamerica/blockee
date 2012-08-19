@@ -246,6 +246,20 @@ var Models = [
       "lamp/lamp04.png"
     ]
   },
+  {
+    "id": "love", 
+    "x": 0, 
+    "y": 0, 
+    "width": 104, 
+    "height": 110,
+    "image": "love", 
+    "images": [
+      "love/love01.png",
+      "love/love02.png",
+      "love/love03.png",
+      "love/love04.png"
+    ]
+  },
   
   {
     "id": "calderart", 
@@ -258,6 +272,20 @@ var Models = [
       "calderart/calderart01.png",
       "calderart/calderart02.png",
       "calderart/calderart03.png"
+    ]
+  },
+  {
+    "id": "lincoln", 
+    "x": 0, 
+    "y": 0, 
+    "width": 59, 
+    "height": 110,
+    "image": "lincoln", 
+    "images": [
+      "lincoln/lincoln01.png",
+      "lincoln/lincoln02.png",
+      "lincoln/lincoln03.png",
+      "lincoln/lincoln04.png"
     ]
   },
   {
@@ -275,19 +303,6 @@ var Models = [
     ]
   },
   {
-    "id": "planta", 
-    "x": 0, 
-    "y": 0, 
-    "width": 74, 
-    "height": 110,
-    "image": "planta", 
-    "images": [
-      "planta/planta01.png",
-      "planta/planta02.png",
-      "planta/planta03.png"
-    ]
-  },
-  {
     "id": "plantb", 
     "x": 0, 
     "y": 0, 
@@ -299,19 +314,6 @@ var Models = [
       "plantb/plantb02.png",
       "plantb/plantb03.png",
       "plantb/plantb04.png"
-    ]
-  },
-   {
-    "id": "plantc", 
-    "x": 0, 
-    "y": 0, 
-    "width": 62, 
-    "height": 110,
-    "image": "plantc", 
-    "images": [
-      "plantc/plantc01.png",
-      "plantc/plantc02.png",
-      "plantc/plantc03.png"
     ]
   },
    {
