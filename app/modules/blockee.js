@@ -22,6 +22,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   var stage = null,
       layer = null,
       blingBoxLayer = null,
+      blingBoxEdgeLayer = null,
       stubRect = null,
       images = {},
       previewOn = false,
@@ -616,6 +617,12 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     // second layer for blingBox
     blingBoxLayer = new Kinetic.Layer();
     stage.add(blingBoxLayer);
+    
+    // third layer making blingBox have an edge on the right side
+    // also add arrows to keep them above blings
+    blingBoxEdgeLayer = new Kinetic.Layer();
+    stage.add(blingBoxEdgeLayer);
+    
 
     if (!options.showBlingBox) {
       // short circuit here; we don't need to draw anything else
@@ -706,13 +713,21 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
     };      
 
-    // before user applies image, we show only gray box on stage
+    // before user applies image, we show only pink box on stage
     stubRect = new Kinetic.Rect({"width": 600, 
       "height": 450 , 
         "fill": "pink",
            "x": 0,
            "y": 0});               
-    layer.add(stubRect);      
+    layer.add(stubRect);
+    
+     // White box to cover entering paging bling
+    coverRect = new Kinetic.Rect({"width": 600, 
+      "height": 450 , 
+        "fill": "white",
+           "x": 600,
+           "y": 450});               
+    blingBoxEdgeLayer.add(coverRect);
   };
 
   /*
@@ -794,9 +809,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       lineCap: "round",
       lineJoin: "round"
     });      
-    layer.add(leftButton);
-    layer.add(lineTop);
-    layer.add(lineBottom);  
+    blingBoxEdgeLayer.add(leftButton);
+    blingBoxEdgeLayer.add(lineTop);
+    blingBoxEdgeLayer.add(lineBottom);  
     var rightButton = new Kinetic.Rect({
       x: 570,
       y: 500,      
@@ -820,12 +835,12 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       lineJoin: "round"
     });      
 
-    layer.add(rightButton);
-    layer.add(lineTopRight);
-    layer.add(lineBottomRight);
+    blingBoxEdgeLayer.add(rightButton);
+    blingBoxEdgeLayer.add(lineTopRight);
+    blingBoxEdgeLayer.add(lineBottomRight);
     
     // paging button click event logic
-    leftButton.on("click", function(frame) {
+    rightButton.on("click", function(frame) {
 
       // Load the blings that will slide in from left or right and clear existing ones.
       updateBlingBoxCache(FORWARDS);
@@ -841,7 +856,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         }
       });        
     });
-    rightButton.on("click", function(frame) {
+    leftButton.on("click", function(frame) {
 
       // Load the blings that will slide in from left or right and clear existing ones.
       updateBlingBoxCache(BACKWARDS);
