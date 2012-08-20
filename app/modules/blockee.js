@@ -601,7 +601,11 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   Blockee.preInitStage = function(options) {
 
     var viewportWidth = $('#stage').width();
+    // 600 when not share and 450 when share
     var viewportHeight = 600;
+    if (!options.showBlingBox) {
+        viewportHeight = 450;
+    }
 
     // blockee has a single stage
     stage = new Kinetic.Stage({
