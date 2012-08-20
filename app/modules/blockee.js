@@ -950,6 +950,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
     initialize: function(options) {
       this.render();
+      ShareFeature.show();
     },
 
     /*
