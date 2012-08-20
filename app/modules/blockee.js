@@ -850,8 +850,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       updateBlingBoxCache(FORWARDS);
 
       blingBoxLayer.transitionTo({
-        x: -2000,
-        duration: 1.0,
+        x: -1250,
+        duration: 0.5,
         easing: 'ease-in-out',
         callback: function() {
           blingBoxLayer.removeChildren();
@@ -866,8 +866,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       updateBlingBoxCache(BACKWARDS);
 
       blingBoxLayer.transitionTo({
-        x: 2000,
-        duration: 1.0,
+        x: 1250,
+        duration: 0.5,
         easing: 'ease-in-out',
         callback: function() {
           blingBoxLayer.removeChildren();

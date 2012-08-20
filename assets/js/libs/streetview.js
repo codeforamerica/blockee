@@ -82,7 +82,8 @@ var GooglyStreetView = {
       [29.425974,-98.491445,13], // San Antonio
       [37.803477,-122.254658,13], // Oakland
       [38.629734,-90.197674,13], // St Louis
-      [42.366915,-71.091242,14] // Cambridge, MA
+      [42.366915,-71.091242,14], // Cambridge, MA
+      [41.409454,-75.661211,15] // Scranton, PA
     ];
     
     var randomLocation = Math.floor(Math.random() * locations.length);
