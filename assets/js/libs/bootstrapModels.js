@@ -322,19 +322,6 @@ var Models = [
     ]
   },
   {
-    "id": "watch", 
-    "x": 0, 
-    "y": 0, 
-    "width": 30, 
-    "height": 110,
-    "image": "watch", 
-    "images": [
-      "watch/watch01.png",
-      "watch/watch02.png",
-      "watch/watch03.png"
-    ]
-  },
-  {
     "id": "fruitstand", 
     "x": 0, 
     "y": 0, 
@@ -403,6 +390,19 @@ var Models = [
       "urackgreen/urackgreen02.png",
       "urackgreen/urackgreen03.png",
       "urackgreen/urackgreen04.png"
+    ]
+  },
+  {
+    "id": "watch", 
+    "x": 0, 
+    "y": 0, 
+    "width": 30, 
+    "height": 110,
+    "image": "watch", 
+    "images": [
+      "watch/watch01.png",
+      "watch/watch02.png",
+      "watch/watch03.png"
     ]
   },
   {
