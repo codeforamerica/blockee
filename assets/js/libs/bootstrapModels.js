@@ -131,36 +131,6 @@ var Models = [
       "hopscotch/hopscotch03.png"
     ]
   },
-  {
-    "id": "bird_house", 
-    "x": 0, 
-    "y": 0, 
-    "width": 127, 
-    "height": 110,
-    "image": "bird_house", 
-    "images": [
-      "bird_house/bird_house01.png",
-      "bird_house/bird_house02.png",
-      "bird_house/bird_house03.png",
-      "bird_house/bird_house04.png",
-      "bird_house/bird_house05.png"
-    ]
-  },
-  {
-    "id": "treeguard", 
-    "x": 0, 
-    "y": 0, 
-    "width": 89, 
-    "height": 110,
-    "image": "treeguard", 
-    "images": [
-      "treeguard/treeguard01.png",
-      "treeguard/treeguard02.png",
-      "treeguard/treeguard03.png",
-      "treeguard/treeguard04.png",
-      "treeguard/treeguard05.png"
-    ]
-  },
    {
     "id": "tree", 
     "x": 0, 
@@ -177,20 +147,6 @@ var Models = [
     ]
   },
   
-  {
-    "id": "planter", 
-    "x": 0, 
-    "y": 0, 
-    "width": 110, 
-    "height": 110,
-    "image": "planter", 
-    "images": [
-      "planter/planter01.png",
-      "planter/planter02.png",
-      "planter/planter03.png",
-      "planter/planter04.png"
-    ]
-  },
   {
     "id": "plantb", 
     "x": 0, 
@@ -219,6 +175,20 @@ var Models = [
     ]
   },
   {
+    "id": "planter", 
+    "x": 0, 
+    "y": 0, 
+    "width": 110, 
+    "height": 110,
+    "image": "planter", 
+    "images": [
+      "planter/planter01.png",
+      "planter/planter02.png",
+      "planter/planter03.png",
+      "planter/planter04.png"
+    ]
+  },
+  {
     "id": "flowerbox", 
     "x": 0, 
     "y": 0, 
@@ -233,6 +203,21 @@ var Models = [
       "flowerbox/flowerbox05.png",
       "flowerbox/flowerbox06.png",
       "flowerbox/flowerbox07.png"
+    ]
+  },
+  {
+    "id": "bird_house", 
+    "x": 0, 
+    "y": 0, 
+    "width": 127, 
+    "height": 110,
+    "image": "bird_house", 
+    "images": [
+      "bird_house/bird_house01.png",
+      "bird_house/bird_house02.png",
+      "bird_house/bird_house03.png",
+      "bird_house/bird_house04.png",
+      "bird_house/bird_house05.png"
     ]
   },
   {
@@ -261,6 +246,21 @@ var Models = [
       "lamp/lamp02.png",
       "lamp/lamp03.png",
       "lamp/lamp04.png"
+    ]
+  },{
+    "id": "speedbump", 
+    "x": 0, 
+    "y": 0, 
+    "width": 150, 
+    "height": 81,
+    "image": "speedbump", 
+    "images": [
+      "speedbump/speedbump01.png",
+      "speedbump/speedbump02.png",
+      "speedbump/speedbump03.png",
+      "speedbump/speedbump04.png",
+      "speedbump/speedbump05.png",
+      "speedbump/speedbump06.png"
     ]
   },
   {
@@ -306,22 +306,6 @@ var Models = [
     ]
   },
   {
-    "id": "speedbump", 
-    "x": 0, 
-    "y": 0, 
-    "width": 150, 
-    "height": 81,
-    "image": "speedbump", 
-    "images": [
-      "speedbump/speedbump01.png",
-      "speedbump/speedbump02.png",
-      "speedbump/speedbump03.png",
-      "speedbump/speedbump04.png",
-      "speedbump/speedbump05.png",
-      "speedbump/speedbump06.png"
-    ]
-  },
-  {
     "id": "fruitstand", 
     "x": 0, 
     "y": 0, 
@@ -334,6 +318,21 @@ var Models = [
       "fruitstand/fruitstand03.png",
       "fruitstand/fruitstand04.png",
       "fruitstand/fruitstand05.png"
+    ]
+  },
+  
+  {
+    "id": "foodtruck", 
+    "x": 0, 
+    "y": 0, 
+    "width": 229, 
+    "height": 110,
+    "image": "foodtruck", 
+    "images": [
+      "foodtruck/foodtruck01.png",
+      "foodtruck/foodtruck02.png",
+      "foodtruck/foodtruck03.png",
+      "foodtruck/foodtruck04.png"
     ]
   },
   {
@@ -406,19 +405,6 @@ var Models = [
     ]
   },
   {
-    "id": "deadend", 
-    "x": 0, 
-    "y": 0, 
-    "width": 61, 
-    "height": 110,
-    "image": "deadend", 
-    "images": [
-      "deadend/deadend01.png",
-      "deadend/deadend02.png",
-      "deadend/deadend03.png"
-    ]
-  },
-  {
     "id": "stopsign", 
     "x": 0, 
     "y": 0, 
@@ -430,6 +416,19 @@ var Models = [
       "stopsign/stopsign02.png",
       "stopsign/stopsign03.png",
       "stopsign/stopsign04.png"
+    ]
+  },
+  {
+    "id": "deadend", 
+    "x": 0, 
+    "y": 0, 
+    "width": 61, 
+    "height": 110,
+    "image": "deadend", 
+    "images": [
+      "deadend/deadend01.png",
+      "deadend/deadend02.png",
+      "deadend/deadend03.png"
     ]
   }
 ]
