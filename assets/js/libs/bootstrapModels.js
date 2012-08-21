@@ -184,25 +184,21 @@ var Models = [
     "images": [
       "planter/planter01.png",
       "planter/planter02.png",
-      "planter/planter03.png",
-      "planter/planter04.png"
+      "planter/planter03.png"
     ]
   },
   {
     "id": "flowerbox", 
     "x": 0, 
     "y": 0, 
-    "width": 150, 
+    "width": 151, 
     "height": 99,
     "image": "flowerbox", 
     "images": [
       "flowerbox/flowerbox01.png",
       "flowerbox/flowerbox02.png",
       "flowerbox/flowerbox03.png",
-      "flowerbox/flowerbox04.png",
-      "flowerbox/flowerbox05.png",
-      "flowerbox/flowerbox06.png",
-      "flowerbox/flowerbox07.png"
+      "flowerbox/flowerbox04.png"
     ]
   },
   {
