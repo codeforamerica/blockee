@@ -251,6 +251,46 @@ var Models = [
     ]
   },
   {
+    "id": "bikerack", 
+    "x": 0, 
+    "y": 0, 
+    "width": 155, 
+    "height": 110,
+    "image": "bikerack", 
+    "images": [
+      "bikerack/bikerack01.png",
+      "bikerack/bikerack02.png",
+      "bikerack/bikerack03.png"
+    ]
+  },
+  {
+    "id": "urackgreen", 
+    "x": 0, 
+    "y": 0, 
+    "width": 111, 
+    "height": 110,
+    "image": "urackgreen", 
+    "images": [
+      "urackgreen/urackgreen01.png",
+      "urackgreen/urackgreen02.png",
+      "urackgreen/urackgreen03.png",
+      "urackgreen/urackgreen04.png"
+    ]
+  },
+   {
+    "id": "bikeshare", 
+    "x": 0, 
+    "y": 0, 
+    "width": 141, 
+    "height": 110,
+    "image": "bikeshare", 
+    "images": [
+      "bikeshare/bikeshare01.png",
+      "bikeshare/bikeshare02.png",
+      "bikeshare/bikeshare03.png"
+    ]
+  },
+  {
     "id": "love", 
     "x": 0, 
     "y": 0, 
@@ -323,6 +363,22 @@ var Models = [
     ]
   },
   {
+    "id": "drinkingfountain", 
+    "x": 0, 
+    "y": 0, 
+    "width": 61, 
+    "height": 110,
+    "image": "drinkingfountain", 
+    "images": [
+      "drinkingfountain/drinkingfountain01.png",
+      "drinkingfountain/drinkingfountain02.png",
+      "drinkingfountain/drinkingfountain03.png",
+      "drinkingfountain/drinkingfountain04.png",
+      "drinkingfountain/drinkingfountain05.png",
+      "drinkingfountain/drinkingfountain06.png"
+    ]
+  },
+  {
     "id": "solar", 
     "x": 0, 
     "y": 0, 
@@ -336,46 +392,6 @@ var Models = [
       "solar/solar04.png",
       "solar/solar05.png",
       "solar/solar06.png"
-    ]
-  },
-  {
-    "id": "bikerack", 
-    "x": 0, 
-    "y": 0, 
-    "width": 155, 
-    "height": 110,
-    "image": "bikerack", 
-    "images": [
-      "bikerack/bikerack01.png",
-      "bikerack/bikerack02.png",
-      "bikerack/bikerack03.png"
-    ]
-  },
-  {
-    "id": "urackgreen", 
-    "x": 0, 
-    "y": 0, 
-    "width": 111, 
-    "height": 110,
-    "image": "urackgreen", 
-    "images": [
-      "urackgreen/urackgreen01.png",
-      "urackgreen/urackgreen02.png",
-      "urackgreen/urackgreen03.png",
-      "urackgreen/urackgreen04.png"
-    ]
-  },
-   {
-    "id": "bikeshare", 
-    "x": 0, 
-    "y": 0, 
-    "width": 141, 
-    "height": 110,
-    "image": "bikeshare", 
-    "images": [
-      "bikeshare/bikeshare01.png",
-      "bikeshare/bikeshare02.png",
-      "bikeshare/bikeshare03.png"
     ]
   },
    
@@ -404,19 +420,6 @@ var Models = [
       "stopsign/stopsign02.png",
       "stopsign/stopsign03.png",
       "stopsign/stopsign04.png"
-    ]
-  },
-  {
-    "id": "deadend", 
-    "x": 0, 
-    "y": 0, 
-    "width": 61, 
-    "height": 110,
-    "image": "deadend", 
-    "images": [
-      "deadend/deadend01.png",
-      "deadend/deadend02.png",
-      "deadend/deadend03.png"
     ]
   }
 ]
