@@ -25,8 +25,7 @@ var Models = [
       "bikelane/bikelane03.png",
       "bikelane/bikelane04.png",
       "bikelane/bikelane05.png",
-      "bikelane/bikelane06.png",
-      "bikelane/bikelane07.png"
+      "bikelane/bikelane06.png"
     ]
   },
   {
@@ -40,9 +39,7 @@ var Models = [
       "bench/bench01.png",
       "bench/bench02.png",
       "bench/bench03.png",
-      "bench/bench04.png",
-      "bench/bench05.png",
-      "bench/bench06.png"
+      "bench/bench04.png"
     ]
   },  
   {
@@ -55,9 +52,7 @@ var Models = [
     "images": [
       "cafeseat/cafeseat01.png",
       "cafeseat/cafeseat02.png",
-      "cafeseat/cafeseat03.png",
-      "cafeseat/cafeseat04.png",
-      "cafeseat/cafeseat05.png"
+      "cafeseat/cafeseat03.png"
     ]
   },
   {
@@ -70,9 +65,7 @@ var Models = [
     "images": [
       "cafeseatandchair/cafeseatandchair01.png",
       "cafeseatandchair/cafeseatandchair02.png",
-      "cafeseatandchair/cafeseatandchair03.png",
-      "cafeseatandchair/cafeseatandchair04.png",
-      "cafeseatandchair/cafeseatandchair05.png"
+      "cafeseatandchair/cafeseatandchair03.png"
     ]
   },
   {
@@ -100,8 +93,7 @@ var Models = [
       "playground/playground01.png",
       "playground/playground02.png",
       "playground/playground03.png",
-      "playground/playground04.png",
-      "playground/playground05.png"
+      "playground/playground04.png"
     ]
   },
     {
@@ -142,8 +134,7 @@ var Models = [
       "tree/tree01.png",
       "tree/tree02.png",
       "tree/tree03.png",
-      "tree/tree04.png",
-      "tree/tree05.png"
+      "tree/tree04.png"
     ]
   },
   
