@@ -114,8 +114,8 @@ var Models = [
     "id": "hopscotch", 
     "x": 0, 
     "y": 0, 
-    "width": 168, 
-    "height": 105,
+    "width": 159, 
+    "height": 99,
     "image": "hopscotch", 
     "images": [
       "hopscotch/hopscotch01.png",
@@ -312,8 +312,8 @@ var Models = [
     "id": "foodtruck", 
     "x": 0, 
     "y": 0, 
-    "width": 229, 
-    "height": 110,
+    "width": 206, 
+    "height": 99,
     "image": "foodtruck", 
     "images": [
       "foodtruck/foodtruck01.png",
