@@ -37,22 +37,43 @@ function viewAddress() {
 /*
  * Capture Image and inject into canvas.
  */
-function captureSV() {
-  var lat = map.getStreetView().getPosition().lat();
-  var lng = map.getStreetView().getPosition().lng();
-  var positionDetails = "";
+ 
+ function captureSV() {
+  var SVurl;
+  // SATMAPS: added a section to detect if StreetView isn't open. Capture satmap instead
+  if(map.getStreetView().getVisible()){
+    // get StreetView static image
+    var lat = map.getStreetView().getPosition().lat();
+    var lng = map.getStreetView().getPosition().lng();
+    var positionDetails = "";
 
-  positionDetails += "&heading=" + map.getStreetView().getPov().heading;
-  positionDetails += "&pitch=" + map.getStreetView().getPov().pitch;
-  positionDetails += "&fov=90";
+    positionDetails += "&heading=" + map.getStreetView().getPov().heading;
+    positionDetails += "&pitch=" + map.getStreetView().getPov().pitch;
+    positionDetails += "&fov=90";
 
-  var SVurl = 
-    "http://maps.googleapis.com/maps/api/streetview?size=600x435&location=" + 
-      lat + 
-      ",%20" + 
-      lng + 
-      "&sensor=false" + 
-      positionDetails;
+    SVurl = 
+      "http://maps.googleapis.com/maps/api/streetview?size=600x435&location=" + 
+        lat + 
+        "," + 
+        lng + 
+        "&sensor=false" + 
+        positionDetails;
+  }
+  else{
+    // get Google Maps satellite static image
+    var lat = map.getCenter().lat();
+    var lng = map.getCenter().lng();
+    var zoom = map.getZoom();
+    
+    SVurl =
+      "http://maps.googleapis.com/maps/api/staticmap?size=600x435&center=" +
+        lat +
+        "," +
+        lng +
+        "&zoom=" +
+        zoom +
+        "&sensor=false&maptype=satellite";
+  }
 
   $(".kineticjs-content")[0].style
                             .background = "url('" + SVurl + "')";

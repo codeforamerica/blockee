@@ -28,8 +28,9 @@ function(app, $, Backbone, Blockee) {
     },
 
     share: function(blocks, url) {
-      var blocksObject = $.parseJSON(unescape(blocks));    
-      var googleStreetViewUrl = "http://maps.googleapis.com/maps/api/streetview?" + decodeURIComponent(url);
+      var blocksObject = $.parseJSON(unescape(blocks));
+      // don't assume /streetview? so SATMAPS can be added
+      var googleStreetViewUrl = "http://maps.googleapis.com/maps/api/" + decodeURIComponent(url);
 
       var share = new Blockee.Views.Share();
       this.showView(share);
@@ -43,7 +44,8 @@ function(app, $, Backbone, Blockee) {
      */
     blocks: function(blocks, url) { 
       var blocksObject = $.parseJSON(unescape(blocks));    
-      var googleStreetViewUrl = "http://maps.googleapis.com/maps/api/streetview?" + decodeURIComponent(url);
+      // don't assume /streetview? so SATMAPS can be added
+      var googleStreetViewUrl = "http://maps.googleapis.com/maps/api/" + decodeURIComponent(url);
 
       var decorate = new Blockee.Views.Decorate();
       this.showView(decorate);

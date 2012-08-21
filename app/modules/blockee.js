@@ -1029,8 +1029,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
     pushUrl: function() {
       app.router.navigate("", {replace: true});
+      // SATMAPS: don't assume /streetview? to allow SATMAPS
       blockState = "share?blocks=" + blockState + 
-        "+" + encodeURIComponent(googleStreetsUrl.replace("maps.googleapis.com/maps/api/streetview?", ""));
+        "+" + encodeURIComponent(googleStreetsUrl.replace("maps.googleapis.com/maps/api/", ""));
       app.router.navigate(blockState);
     },
 
