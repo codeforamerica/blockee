@@ -37,10 +37,12 @@ function(app, $, Backbone, Blockee) {
       var backgroundURL;
 
       if(bkg_type == "image"){
-        backgroundURL = "https://s3.amazonaws.com/blockee-dev/uploads/" + decodeURIComponent(url) 
+        backgroundURL = "https://s3.amazonaws.com/blockee/uploads/" + decodeURIComponent(url) 
       } else {
         backgroundURL = "http://maps.googleapis.com/maps/api/streetview?" + decodeURIComponent(url);
       }
+
+      console.log(backgroundURL);
 
       var decorate = new Blockee.Views.Decorate();
       this.showView(decorate);

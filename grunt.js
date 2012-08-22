@@ -286,7 +286,7 @@ module.exports = function(grunt) {
         var timestamp = new Date() / 1000;
         var filename = timestamp + file["name"].replace(" ", "");
         if (file && file["size"] > 0) {
-          client.putFile(file["path"], '/uploads/' + filename, function(err, aws_res){
+          client.putFile(file["path"], '/uploads/' + filename, {"Content-Type": "image/jpeg"}, function(err, aws_res){
             if(aws_res.statusCode == 200){
               res.send(
                 '<textarea data-type="application/json">' +

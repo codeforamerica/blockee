@@ -553,7 +553,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
       var encodedImageURL;
       if(backgroundType == "image"){
-        encodedImageURL = "+bkg=image+" + encodeURIComponent(googleStreetsUrl.replace("https://s3.amazonaws.com/blockee-dev/uploads/", ""));
+        encodedImageURL = "+bkg=image+" + encodeURIComponent(googleStreetsUrl.replace("https://s3.amazonaws.com/blockee/uploads/", ""));
       } else {
         encodedImageURL = "+bkg=google+" + encodeURIComponent(googleStreetsUrl.replace("maps.googleapis.com/maps/api/streetview?", ""));
       }
