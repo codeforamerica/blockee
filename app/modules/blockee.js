@@ -8,7 +8,8 @@ define([
   "googlylogo",
   "models",
   "googlystreetview",
-  "sharefeature"
+  "sharefeature",
+  "iframetransport"
 ],
 
 function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeature) {
@@ -50,6 +51,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       MAX_BLINGS_IN_BOX = 3;
 
   var blockState,
+      backgroundType,
       googleStreetsUrl;
 
   // a set of bling models to load when the app starts (bootstrap pattern)
@@ -391,6 +393,29 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   // pass FB publishing call to ShareFeature library
   function handleFBPublish(e) {
     ShareFeature.FBPublish();
+  }  
+
+  function handleFormSubmit(e) {
+    e.preventDefault();
+    var $form = this.$el.find('form').first();
+    var form = _.first($form);
+    $.ajax(form.action, {
+      iframe: true,
+      type: 'POST',
+      files: $form.find(':file')
+    }).complete(function(data){
+      console.log(data);
+      var r = JSON.parse(data.responseText);
+      if(r.url){
+        var backgroundstyle = $(".kineticjs-content")[0].style;
+        backgroundstyle.background = "url('" + r.url + "')";
+        backgroundstyle.backgroundRepeat = "no-repeat";
+        backgroundType = "image"
+        vent.trigger("remove-element", r.url);
+      } else {
+        alert("SOMETHING WENT WRONG HERE");
+      }
+    });
   }  
 
   function removeElement(url) {
@@ -985,7 +1010,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     events: {
       "click #street-view": handleStreetViewClick,
       "click #share-button": handleShareClick,
-      "click #fb-button": handleFBPublish
+      "click #fb-button": handleFBPublish,
+      "submit #upload-form": handleFormSubmit
     },
 
     initialize: function(options) {
@@ -1029,10 +1055,18 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
     pushUrl: function() {
       app.router.navigate("", {replace: true});
-      // SATMAPS: don't assume /streetview? to allow SATMAPS
-      blockState = "share?blocks=" + blockState + 
-        "+" + encodeURIComponent(googleStreetsUrl.replace("maps.googleapis.com/maps/api/", ""));
-      app.router.navigate(blockState);
+
+      var encodedImageURL;
+
+      if(backgroundType == "image"){
+        encodedImageURL = "+bkg=image+" + encodeURIComponent(googleStreetsUrl.replace("https://s3.amazonaws.com/blockee/uploads/", ""));
+      } else {
+        // SATMAPS: don't assume /streetview? to allow SATMAPS
+        encodedImageURL = "+bkg=google+" + encodeURIComponent(googleStreetsUrl.replace("maps.googleapis.com/maps/api/", ""));
+      }
+
+      blockState = "share?blocks=" + blockState + encodedImageURL;
+      app.router.navigate(blockState);      
     },
 
     /*

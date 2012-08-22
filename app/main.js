@@ -17,8 +17,13 @@ function(app, $, Backbone, Blockee) {
   var Router = Backbone.Router.extend({
     routes: {
       "": "index",
-      "?blocks=:blocks+:url": "blocks",
-      "share?blocks=:blocks+:url": "share"      
+      "/monkey": "ugh",
+      "?blocks=:blocks+bkg=:bkg_type+:url": "blocks",
+      "share?blocks=:blocks+bkg=:bkg_type+:url": "share"
+    },
+
+    "ugh": function() {
+      console.log("ugh");
     },
 
     index: function() {
@@ -27,29 +32,39 @@ function(app, $, Backbone, Blockee) {
       Blockee.loadContent(null, null, decorate, {showBlingBox: true});
     },
 
-    share: function(blocks, url) {
+    share: function(blocks, bkg_type, url) {
       var blocksObject = $.parseJSON(unescape(blocks));
-      // don't assume /streetview? so SATMAPS can be added
-      var googleStreetViewUrl = "http://maps.googleapis.com/maps/api/" + decodeURIComponent(url);
+      var backgroundURL;
+      
+      if(bkg_type == "image"){
+        backgroundURL = "https://s3.amazonaws.com/blockee/uploads/" + decodeURIComponent(url) 
+      } else {
+        // don't assume /streetview? so SATMAPS can be added
+        backgroundURL = "http://maps.googleapis.com/maps/api/" + decodeURIComponent(url);
+      }
 
       var share = new Blockee.Views.Share();
       this.showView(share);
-
       // in sharing mode for version 1.0, we will only show the actual image
-      Blockee.loadContent(blocksObject, googleStreetViewUrl, share, {showBlingBox: false});
+      Blockee.loadContent(blocksObject, backgroundURL, share, {showBlingBox: false});
     },
 
     /*
      * Parse block objects and use to render view
      */
-    blocks: function(blocks, url) { 
+    blocks: function(blocks, bkg_type, url) { 
       var blocksObject = $.parseJSON(unescape(blocks));    
-      // don't assume /streetview? so SATMAPS can be added
-      var googleStreetViewUrl = "http://maps.googleapis.com/maps/api/" + decodeURIComponent(url);
+      var backgroundURL;
+
+      if(bkg_type == "image"){
+        backgroundURL = "https://s3.amazonaws.com/blockee/uploads/" + decodeURIComponent(url) 
+      } else {
+        backgroundURL = "http://maps.googleapis.com/maps/api/" + decodeURIComponent(url);
+      }
 
       var decorate = new Blockee.Views.Decorate();
       this.showView(decorate);
-      Blockee.loadContent(blocksObject, googleStreetViewUrl, decorate, {showBlingBox: true});
+      Blockee.loadContent(blocksObject, backgroundURL);
     },
 
     /*

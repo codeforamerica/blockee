@@ -4,6 +4,13 @@
 //
 module.exports = function(grunt) {
 
+  // TODO: ditch this when grunt v0.4 is released
+  grunt.util = grunt.util || grunt.utils;
+
+  var _ = grunt.util._;
+  // Shorthand Grunt functions
+  var log = grunt.log;
+
   grunt.initConfig({
 
     // The clean task ensures all files are removed from the dist/ directory so
@@ -73,6 +80,40 @@ module.exports = function(grunt) {
       "dist/release/require.js": [
         "dist/debug/require.js"
       ]
+    },
+
+    monolithic: {
+      host: "0.0.0.0",
+      port: process.env.PORT || 8000,
+
+      // Ensure the favicon is mapped correctly.
+      files: { "favicon.ico": "favicon.ico" },
+
+      debug: {
+        // Ensure the favicon is mapped correctly.
+        files: { "favicon.ico": "favicon.ico" },
+
+        // Map `server:debug` to `debug` folders.
+        folders: {
+          "app": "dist/debug",
+          "assets/js/libs": "dist/debug"
+        }
+      },
+
+      release: {
+        // This makes it easier for deploying, by defaulting to any IP.
+        host: "0.0.0.0",
+
+        // Ensure the favicon is mapped correctly.
+        files: { "favicon.ico": "favicon.ico" },
+
+        // Map `server:release` to `release` folders.
+        folders: {
+          "app": "dist/release",
+          "assets/js/libs": "dist/release",
+          "assets/css": "dist/release"
+        }
+      }
     },
 
     // Running the server without specifying an action will run the defaults,
@@ -154,5 +195,133 @@ module.exports = function(grunt) {
   // The release task will run the debug tasks and then minify the
   // dist/debug/require.js file and CSS files.
   grunt.registerTask("release", "default min mincss");
+
+  grunt.registerTask("monolithic", "Run node express server.", function(prop) {
+    var options;
+    var props = ["server"];
+
+    // Keep alive
+    var done = this.async();
+
+    // If a prop was passed as the argument, use that sub-property of server.
+    if (prop) { props.push(prop); }
+
+    // Defaults set for server values
+    options = _.defaults(grunt.config(props) || {}, {
+      favicon: "./favicon.ico",
+      index: "./index.html",
+
+      port: process.env.PORT || 8000,
+      host: process.env.HOST || "127.0.0.1"
+    });
+
+    // Run the server
+    grunt.helper("monolithic", options);
+
+    // Fail task if errors were logged
+    if (grunt.errors) { return false; }
+
+    log.writeln("Doing that listening on http://" + options.host + ":" + options.port);
+  });
+
+  grunt.registerHelper("monolithic", function(options) {
+    // Require libraries.
+    var fs = require("fs");
+    var path = require("path");
+    var stylus = require("stylus");
+    var express = require("express");
+    var formidable = require("formidable");
+    var knox = require("knox");
+    var under = require("underscore");
+
+    log.writeln("starting monolithic server");
+
+    // If the server is already available use it.
+    var site = options.server ? options.server() : express();
+
+    // Allow users to override the root.
+    var root = _.isString(options.root) ? options.root : "/";
+
+    log.writeln(__dirname);
+
+    // Serve static files
+    site.use("/app", express.static(__dirname + '/app'));
+    site.use("/assets/js/libs", express.static(__dirname + '/assets/js/libs'));
+    site.use("/assets/js/plugins", express.static(__dirname + '/assets/js/plugins')); 
+    site.use("/assets/css", express.static(__dirname + '/assets/css'));
+    site.use("/assets/img", express.static(__dirname + '/assets/img'));
+    site.use("/dist", express.static(__dirname + '/dist'));
+
+    // Serve favicon.ico
+    site.use(express.favicon(options.favicon));
+
+    // Process stylus stylesheets
+    site.get(/.styl$/, function(req, res) {
+      var url = req.url.split("assets/css/")[1];
+      var file = path.join("assets/css", url);
+
+      fs.readFile(file, function(err, contents) {
+        var processer = stylus(contents.toString());
+
+        processer.set("paths", ["assets/css/"]);
+        processer.render(function(err, css) {
+          res.header("Content-type", "text/css");
+          res.send(css);
+        });
+      });
+    });
+
+    // Serve a data
+    site.post("/api/upload", function(req, res) {
+      log.writeln("got an API request");
+
+      var block_bucket = process.env.AWS_BUCKET
+      var form = new formidable.IncomingForm();
+      var client = knox.createClient({
+        key: process.env.AWS_KEY,
+        secret: process.env.AWS_SECRET,
+        bucket: block_bucket
+      });
+
+      res.set('Content-Type', 'text/html');
+      form.parse(req, function(err, fields, files) {
+        var file = files["file"];
+        var timestamp = new Date() / 1000;
+        var filename = timestamp + file["name"].replace(" ", "");
+        if (file && file["size"] > 0) {
+          client.putFile(file["path"], '/uploads/' + filename, {"Content-Type": "image/jpeg"}, function(err, aws_res){
+            if(aws_res.statusCode == 200){
+              res.send(
+                '<textarea data-type="application/json">' +
+                '{"url": "https://s3.amazonaws.com/' + block_bucket + '/uploads/' + filename + '", "result": "success"}' +
+                '</textarea>'
+              );
+            } else {
+              console.log(aws_res);
+              res.send(
+                '<textarea data-type="application/json">' +
+                '{"result": "unsuccess"}' +
+                '</textarea>'
+              );
+            }
+          });
+        }
+      });
+    });
+
+    // Serve a site
+    site.get("/", function(req, res) {
+      log.writeln("got a site root request")
+      fs.createReadStream(options.index).pipe(res);
+    });
+
+    site.get("*", function(req, res) {
+      log.writeln("got any other kind of request");
+      fs.createReadStream(options.index).pipe(res);
+    })    
+
+    // Actually listen
+    site.listen(options.port, options.host);
+  });
 
 };

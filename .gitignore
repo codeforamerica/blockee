@@ -5,3 +5,4 @@ assets/img/bling/output/
 /dist
 *~
 *.swo
+.amazon_keys
