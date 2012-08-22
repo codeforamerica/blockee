@@ -410,7 +410,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         var backgroundstyle = $(".kineticjs-content")[0].style;
         backgroundstyle.background = "url('" + r.url + "')";
         backgroundstyle.backgroundRepeat = "no-repeat";
-        backgroundType = "image"
+        backgroundType = "image";
         vent.trigger("remove-element", r.url);
       } else {
         alert("SOMETHING WENT WRONG HERE");
