@@ -181,3 +181,30 @@ button {
     -moz-box-shadow: none;
     box-shadow: none;
 }
+
+.filepckr {
+  float:left;
+  height:100%;
+  width:100%;
+}
+
+.filepckr2 {
+  opacity:0;
+  filter:alpha(opacity=0);
+  background:transparent;
+  cursor:pointer;
+  position:relative;
+  top:-40px;
+  left:0;
+
+}
+
+.filehldr{
+  width:150px;
+  height:30px;
+}
+
+
+
+
+
