@@ -18,6 +18,7 @@ require.config({
     googlystreetview: "../assets/js/libs/streetview",
     sharefeature: "../assets/js/libs/sharefeature",
     iframetransport: "../assets/js/libs/jquery.iframe-transport",
+    filepicker: "../assets/js/libs/filepicker",
     models: "../assets/js/libs/bootstrapModels"
   },
 
@@ -43,6 +44,10 @@ require.config({
     iframetransport: {
       deps: ["jquery"],
       exports: "IFrameTransport"
+    },
+    filepicker: {
+      deps: ["jquery", "bootstrap"],
+      exports: "FilePicker"
     },
     models: {
       exports: "Models"

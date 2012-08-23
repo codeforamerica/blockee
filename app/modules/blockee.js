@@ -9,10 +9,11 @@ define([
   "models",
   "googlystreetview",
   "sharefeature",
-  "iframetransport"
+  "iframetransport",
+  "filepicker"
 ],
 
-function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeature) {
+function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeature, IFrameTransport, FilePicker) {
   
   var Blockee = app.module();
   var vent = _.extend({}, Backbone.Events);
@@ -385,6 +386,14 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   function handleStreetViewClick(e) {
     GooglyStreetView.load(vent);
   }
+  
+  function handleFilePickerToggle(e) {
+    FilePicker.toggle(vent);
+  }
+  
+  function handleFilePickerUpload(e) {
+    FilePicker.submitFile(vent);
+  }
 
   function handleShareClick(e) {
     ShareFeature.show();
@@ -412,6 +421,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         backgroundstyle.backgroundRepeat = "no-repeat";
         backgroundType = "image";
         vent.trigger("remove-element", r.url);
+        // toggle the modal window
+        handleFilePickerToggle();
       } else {
         alert("SOMETHING WENT WRONG HERE");
       }
@@ -971,7 +982,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     events: {
       "click #share-button": handleShareClick,
       "click #fb-button": handleFBPublish
-    },    
+    },
 
     initialize: function(options) {
       this.render();
@@ -1011,6 +1022,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       "click #street-view": handleStreetViewClick,
       "click #share-button": handleShareClick,
       "click #fb-button": handleFBPublish,
+      "click #file-view": handleFilePickerToggle,
+      "click #make-upload": handleFilePickerUpload,
       "submit #upload-form": handleFormSubmit
     },
 
@@ -1044,6 +1057,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
       var googleImagePickerTmpl = app.fetchTemplate("app/templates/_google-image-picker-modal");
       $(this.el).append(googleImagePickerTmpl);
+      
+      var filePickerTmpl = app.fetchTemplate("app/templates/_file-picker-modal");
+      $(this.el).append(filePickerTmpl);
       
       return this;
     },
