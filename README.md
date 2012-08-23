@@ -8,11 +8,11 @@ Blockee is a place where you can bring your wonders to life! Explore, reimagine,
 
 ### Does Blockee actually exist?
 
-Yes! And you can see it running [here](http://blockee.herokuapp.com). However, it is in active development and changing constantly - not all the planned features exist yet. But, stay tuned to this repo and watch for changes. Even better, contribute to Blockee's development - we love feature and pull requests!
+Yes! And you can see it running [here](http://blockee.org). However, it is in active development and changing constantly - not all the planned features exist yet. But, stay tuned to this repo and watch for changes. Even better, contribute to Blockee's development - we love feature and pull requests!
 
 ### How do I run Blockee on my machine?
 
-*Note: This is a bit technical and not required unless you want to run Blockee on your own deveopment machine and contribute to development. If you just want to USE Blockee, go [here](http://blockee.herokuapp.com)!*
+*Note: This is a bit technical and not required unless you want to run Blockee on your own deveopment machine and contribute to development. If you just want to USE Blockee, go [here](http://blockee.org)!*
 
 ###### Bleeding edge Rockstar tech!
 Blockee is a [node.js](http://nodejs.org/) application that uses [backbone.js](http://backbonejs.org/) for structure. Specifically, it uses bocoup's [Backbone Boilerplate](http://weblog.bocoup.com/introducing-the-backbone-boilerplate/). As a Backbone Boilerplate project, it employs [grunt](https://github.com/cowboy/grunt) and [grunt-bbb](https://github.com/backbone-boilerplate/grunt-bbb) to manage builds and the local, node test server. The following instructions assume you are on a Mac running OSX Lion with  [Homebrew](http://mxcl.github.com/homebrew/) installed. All of the commands are to be run from your shell command line prompt.
@@ -45,12 +45,14 @@ Now that you've got node, you need only clone this Blockee repo and issue some s
     $ git clone https://github.com/codeforamerica/blockee.git
     $ cd blockee
     $ npm install # install node packages from listed package.json
-    $ bbb server # run the site in devel mode on port 8000
+    $ bbb monolithic # run the site in devel mode on port 8000
     
 After the last step, you should see something like this on your console:
 
-    Running "server" task
-    Listening on http://0.0.0.0:8000
+    Running "monolithic" task
+    starting monolithic server
+    /Users/yourusername/blockee
+    Doing that listening on http://0.0.0.0:8000
 
 If you do, that's a good thing! Because, now you can go to [http://localhost:8000/](http://localhost:8000/) in your browser and check out the Blockee you've just unleased.
 
