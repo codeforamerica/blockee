@@ -18,13 +18,11 @@ function(app, $, Backbone, Blockee) {
     routes: {
       "": "index",
       "?blocks=:blocks+bkg=:bkg_type+:url": "blocks",
-      "share?blocks=:blocks+bkg=:bkg_type+:url": "share",
-      "*path":"ugh"
+      "share?blocks=:blocks+bkg=:bkg_type+:url": "share"
     },
 
-    "ugh": function(path) {
-      
-      console.log("ugh", path);
+    "ugh": function() {
+      console.log("ugh");
     },
 
     index: function() {
