@@ -7,6 +7,9 @@ var FilePicker = {
   
   enableUpload: function() {
     $('#make-upload').css({display: ''});
+    var fakeFileName = $("#modal-file-input").val();
+    fakeFileName = fakeFileName.substring( fakeFileName.lastIndexOf("\\") + 1 );
+    $('#modal-file-name').html( fakeFileName );
   },
   
   submitFile: function() {

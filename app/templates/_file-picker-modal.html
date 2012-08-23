@@ -6,7 +6,12 @@
   <div class="modal-body">
     <form id="upload-form" enctype="multipart/form-data" action="/api/upload" method="post">
       <!-- Should this allow multiple files to be uploaded? -->
-      <input id="modal-file-input" type="file" name="file" value="Choose File" class="btn" multiple />
+      <div class="file-input-holder" style="width:150px;height:30px;">
+        <a id="modal-file-cover" class="btn" style="float:left;height:100%;width:100%;">Choose Image</a>
+        <input id="modal-file-input" type="file" style="opacity:0;filter:alpha(opacity=0);background:transparent;cursor:pointer;position:relative;top:-40px;left:0;" name="file" value="Choose File" class="btn" multiple="">
+      </div>
+      <br/>
+      <span id="modal-file-name"></span>
     </form>
   </div>
   <div class="modal-footer">
