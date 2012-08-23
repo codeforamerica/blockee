@@ -36,7 +36,7 @@ function(app, $, Backbone, Blockee) {
       var backgroundURL;
       
       if(bkg_type == "image"){
-        backgroundURL = "https://s3.amazonaws.com/blockee_prod/" + decodeURIComponent(url);
+        backgroundURL = "https://s3.amazonaws.com/blockee_prod/uploads/" + decodeURIComponent(url);
       } else {
         // don't assume /streetview? so SATMAPS can be added
         backgroundURL = "http://maps.googleapis.com/maps/api/" + decodeURIComponent(url);
@@ -56,7 +56,7 @@ function(app, $, Backbone, Blockee) {
       var backgroundURL;
 
       if(bkg_type == "image"){
-        backgroundURL = "https://s3.amazonaws.com/blockee_prod/" + decodeURIComponent(url);
+        backgroundURL = "https://s3.amazonaws.com/blockee_prod/uploads/" + decodeURIComponent(url);
       } else {
         backgroundURL = "http://maps.googleapis.com/maps/api/" + decodeURIComponent(url);
       }

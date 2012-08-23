@@ -1059,7 +1059,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       var encodedImageURL;
 
       if(backgroundType == "image"){
-        encodedImageURL = "+bkg=image+" + encodeURIComponent(googleStreetsUrl.replace("https://s3.amazonaws.com/blockee_prod/", ""));
+        encodedImageURL = "+bkg=image+" + encodeURIComponent(googleStreetsUrl.replace("https://s3.amazonaws.com/blockee_prod/uploads/", ""));
       } else {
         // SATMAPS: don't assume /streetview? to allow SATMAPS
         encodedImageURL = "+bkg=google+" + encodeURIComponent(googleStreetsUrl.replace("maps.googleapis.com/maps/api/", ""));
