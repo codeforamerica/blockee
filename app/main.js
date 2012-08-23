@@ -18,11 +18,13 @@ function(app, $, Backbone, Blockee) {
     routes: {
       "": "index",
       "?blocks=:blocks+bkg=:bkg_type+:url": "blocks",
-      "share?blocks=:blocks+bkg=:bkg_type+:url": "share"
+      "share?blocks=:blocks+bkg=:bkg_type+:url": "share",
+      "*path":"ugh"
     },
 
-    "ugh": function() {
-      console.log("ugh");
+    "ugh": function(path) {
+      
+      console.log("ugh", path);
     },
 
     index: function() {
@@ -109,7 +111,8 @@ function(app, $, Backbone, Blockee) {
 
     // Ensure the protocol is not part of URL, meaning its relative.
     if (href && href.slice(0, protocol.length) !== protocol &&
-        href.indexOf("javascript:") !== 0) {
+        href.indexOf("javascript:") !== 0  &&
+         href.indexOf("mailto:") !== 0) {
       // Stop the default event to ensure the link will not cause a page
       // refresh.
       evt.preventDefault();
