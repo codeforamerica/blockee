@@ -918,9 +918,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       });      
     });
 
-    // load blings (pass 0 so there is no animation)
-
-    //loadBlings(BACKWARDS, 1.0);
+    // load blings (pass 0 so there is no animation) 
 
     // partial
     var func = _.bind(loadBlings, FORWARDS, 1.0);
@@ -1269,7 +1267,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
   }
 
-  function loadBlings(direction, time) {   
+  function loadBlings(direction) {   
 
     // they fly in from the right or left after having been
     // drawn offscreen
@@ -1298,16 +1296,11 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     }
 
     blingBoxLayer.moveToBottom();
-
-    var duration = 1.0;
-    if (time !== null) {
-      duration = time;
-    }
  
     // fly them in
     blingBoxLayer.transitionTo({          
       x: stage.getSize().width * direction,
-      duration: duration,
+      duration: 1.0,
       easing: 'ease-in-out'
     });
 
