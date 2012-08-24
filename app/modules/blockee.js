@@ -415,10 +415,12 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     }).complete(function(data){
       var r = JSON.parse(data.responseText);
       if(r.url){
-        var backgroundstyle = $(".kineticjs-content")[0].style;
+        // put image into bgdiv and limit size to be contained by blockee stage
+        var backgroundstyle = $("#bgdiv")[0].style;
         backgroundstyle.background = "url('" + r.url + "')";
         backgroundstyle.backgroundRepeat = "no-repeat";
         backgroundType = "image";
+        backgroundstyle.backgroundSize = "contain";
         vent.trigger("remove-element", r.url);
         // toggle the modal window
         handleFilePickerToggle();
@@ -648,6 +650,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       width: viewportWidth,
       height: viewportHeight 
     });
+    
+    // background image layer
+    $(".kineticjs-content").prepend('<div id="bgdiv" style="position:absolute;display:inline-block;width:600px;height:435px;background-position: initial initial; background-repeat: no-repeat no-repeat; background-size: contain;"></div>');
 
     // main layer
     layer = new Kinetic.Layer();
@@ -803,10 +808,13 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       if (previewBlocks) {
         Blockee.loadPreviewBling(previewBlocks);
         // show image url
-        $(".kineticjs-content")[0].style
+        // moved background to #bgdiv inside stage
+        $("#bgdiv")[0].style
                             .background = "url('" + imageUrl + "')";
-        $(".kineticjs-content")[0].style
+        $("#bgdiv")[0].style
                             .backgroundRepeat = "no-repeat";
+        $("#bgdiv")[0].style
+                            .backgroundSize = "contain"; // use contain to shrink image to fit inside blockee stage
         streetViewLoaded = true;
         vent.trigger("remove-element", imageUrl);                                                  
       }

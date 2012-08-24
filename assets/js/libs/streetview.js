@@ -75,10 +75,10 @@ function viewAddress() {
         "&sensor=false&maptype=satellite";
   }
 
-  $(".kineticjs-content")[0].style
-                            .background = "url('" + SVurl + "')";
-  $(".kineticjs-content")[0].style
-                            .backgroundRepeat = "no-repeat";
+  // move background to #bgdiv and scale to be contained by blockee stage
+  $("#bgdiv")[0].style.background = "url('" + SVurl + "')";
+  $("#bgdiv")[0].style.backgroundRepeat = "no-repeat";
+  $("#bgdiv")[0].style.backgroundSize = "contain";
 
   vent.trigger("remove-element", SVurl);
 }
