@@ -18,6 +18,10 @@
 
 #main h1{padding-top: 10px;}
 
+body .row-fluid {
+  margin-bottom: 12px;
+}
+
 .row-fluid a:hover { 
     color: #ffc0cb; 
 }
