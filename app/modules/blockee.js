@@ -892,7 +892,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       updateBlingBoxCache(FORWARDS, callback);
 
       blingBoxLayer.transitionTo({
-        x: -1325,
+        x: -1400,
         duration: 0.5,
         easing: 'ease-in-out'
         // callback is handled by imageLoad
@@ -911,7 +911,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       updateBlingBoxCache(BACKWARDS, callback);
 
       blingBoxLayer.transitionTo({        
-        x: 1325,
+        x: 1400,
         duration: 0.5,
         easing: 'ease-in-out'
         // callback is handled by imageLoad
