@@ -627,7 +627,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     // any blocks passed in the URL for preview to finish
     // rendering    
     this.preInitStage(options); 
-    this.loadImages(previewBlocks);    
+    //this.loadImages(previewBlocks);    
     this.initializeStage(previewBlocks, imageUrl, options);    
     
     // draw the googly eyed logo
@@ -892,7 +892,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       updateBlingBoxCache(FORWARDS, callback);
 
       blingBoxLayer.transitionTo({
-        x: -1250,
+        x: -1325,
         duration: 0.5,
         easing: 'ease-in-out'
         // callback is handled by imageLoad
@@ -911,15 +911,20 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       updateBlingBoxCache(BACKWARDS, callback);
 
       blingBoxLayer.transitionTo({        
-        x: 1250,
+        x: 1325,
         duration: 0.5,
         easing: 'ease-in-out'
         // callback is handled by imageLoad
       });      
     });
 
-    // load blings, they fly in from the right
-    loadBlings(BACKWARDS);
+    // load blings (pass 0 so there is no animation)
+
+    //loadBlings(BACKWARDS, 1.0);
+
+    // partial
+    var func = _.bind(loadBlings, FORWARDS, 1.0);
+    this.loadImages(previewBlocks, func);
 
     // draw the stage in its initial state
     stage.draw();
@@ -1264,7 +1269,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
   }
 
-  function loadBlings(direction) {   
+  function loadBlings(direction, time) {   
 
     // they fly in from the right or left after having been
     // drawn offscreen
@@ -1293,11 +1298,16 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     }
 
     blingBoxLayer.moveToBottom();
+
+    var duration = 1.0;
+    if (time !== null) {
+      duration = time;
+    }
  
     // fly them in
     blingBoxLayer.transitionTo({          
       x: stage.getSize().width * direction,
-      duration: 1.0,
+      duration: duration,
       easing: 'ease-in-out'
     });
 
