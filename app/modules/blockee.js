@@ -413,7 +413,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       type: 'POST',
       files: $form.find(':file')
     }).complete(function(data){
-      console.log(data);
       var r = JSON.parse(data.responseText);
       if(r.url){
         var backgroundstyle = $(".kineticjs-content")[0].style;
@@ -800,31 +799,23 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     }
   };
 
+  Blockee.shareBlingPrep = function(previewBlocks, imageUrl) {    
+      if (previewBlocks) {
+        Blockee.loadPreviewBling(previewBlocks);
+        // show image url
+        $(".kineticjs-content")[0].style
+                            .background = "url('" + imageUrl + "')";
+        $(".kineticjs-content")[0].style
+                            .backgroundRepeat = "no-repeat";
+        streetViewLoaded = true;
+        vent.trigger("remove-element", imageUrl);                                                  
+      }
+    };
+
   /*
    * Setup the Kinetic Stage object 
    */
   Blockee.initializeStage = function(previewBlocks, imageUrl, options) {
-      
-    // if we have bling to preview from the url, display it
-    if (previewBlocks) {
-      this.loadPreviewBling(previewBlocks);
-
-      // show image url
-      $(".kineticjs-content")[0].style
-                          .background = "url('" + imageUrl + "')";
-      $(".kineticjs-content")[0].style
-                          .backgroundRepeat = "no-repeat";
-
-      streetViewLoaded = true;
-
-      vent.trigger("remove-element", imageUrl);                                                  
-    }
-
-    if (!options.showBlingBox) {
-      // short circuit here; we don't need to draw anything else
-      stage.draw();
-      return;
-    }
 
     // bling box paging buttons
     var leftButton = new Kinetic.Rect({
@@ -916,13 +907,18 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         easing: 'ease-in-out'
         // callback is handled by imageLoad
       });      
-    });
+    });  
 
-    // load blings (pass 0 so there is no animation) 
-
-    // partial
-    var func = _.bind(loadBlings, FORWARDS, 1.0);
-    this.loadImages(previewBlocks, func);
+    // call load images with callback functions (as partials) to draw the rest of the
+    // display after images are loaded
+    var func;
+    if (!options.showBlingBox) {
+      func = _.bind(Blockee.shareBlingPrep, null, previewBlocks, imageUrl);
+      this.loadImages(previewBlocks, func);
+    } else {
+      func = _.bind(loadBlings, null, BACKWARDS, 1.0);
+      this.loadImages(previewBlocks, func);
+    }    
 
     // draw the stage in its initial state
     stage.draw();
@@ -976,7 +972,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     // method when everything is complete to render the view
     var handleImageLoad = function() {
       if (++loadedImages === imagesToLoad) {
-        console.log("image loading complete");   
         $("#loading").css("visibility", "hidden");   
         if (callback) {
           callback();
@@ -1175,12 +1170,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       // already displayed
       displayedBlingCollection.remove(displayBling); 
       displayedBlingCollection.add(displayBling); 
-
-      console.log(bling);
-
-      // this.displayedBlingCollection.remove(bling); 
-      // this.displayedBlingCollection.add(bling); 
-
     },
 
     cyclePreview: function() {
