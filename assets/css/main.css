@@ -214,8 +214,8 @@ button {
 }
 
 #loading {
+  padding-top: 30px;
   position: absolute;
-  left: 630px;
-  top: 530px;
+  top: 7px;
   visibility: hidden;
 }
