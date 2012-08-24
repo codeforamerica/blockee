@@ -882,34 +882,39 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     // paging button click event logic
     rightButton.on("click", function(frame) {
 
+      var callback = function() {
+        blingBoxLayer.removeChildren();
+        blingBoxLayer.setX(0);              
+        loadBlings(BACKWARDS);
+      };
+      
       // Load the blings that will slide in from left or right and clear existing ones.
-      updateBlingBoxCache(FORWARDS);
+      updateBlingBoxCache(FORWARDS, callback);
 
       blingBoxLayer.transitionTo({
         x: -1250,
         duration: 0.5,
-        easing: 'ease-in-out',
-        callback: function() {
-          blingBoxLayer.removeChildren();
-          blingBoxLayer.setX(0);              
-          loadBlings(BACKWARDS);
-        }
-      });        
+        easing: 'ease-in-out'
+        // callback is handled by imageLoad
+      });      
+
     });
     leftButton.on("click", function(frame) {
 
-      // Load the blings that will slide in from left or right and clear existing ones.
-      updateBlingBoxCache(BACKWARDS);
+      var callback =function() {
+        blingBoxLayer.removeChildren();
+        blingBoxLayer.setX(0);
+        loadBlings(FORWARDS); // reverse slide in order
+      };
 
-      blingBoxLayer.transitionTo({
+      // Load the blings that will slide in from left or right and clear existing ones.
+      updateBlingBoxCache(BACKWARDS, callback);
+
+      blingBoxLayer.transitionTo({        
         x: 1250,
         duration: 0.5,
-        easing: 'ease-in-out',
-        callback: function() {
-          blingBoxLayer.removeChildren();
-          blingBoxLayer.setX(0);
-          loadBlings(FORWARDS); // reverse slide in order
-        }
+        easing: 'ease-in-out'
+        // callback is handled by imageLoad
       });      
     });
 
@@ -924,14 +929,14 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
    * Handle loading png images files from disk that are used
    * in the canvas scene
    */
-  Blockee.loadImages = function(previewBlocks) {
-
-    // show the spinner
-    $("#loading").css("visibility", "visible");
+  Blockee.loadImages = function(previewBlocks, callback) {
 
     var imageSources = {};
     var loadedImages = 0;
     var imagesToLoad = 0;
+
+    // show the spinner
+    $("#loading").css("visibility", "visible");
 
     // this is set to all images if we are looking up previews and
     // set to blingbox cache if not
@@ -969,7 +974,10 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     var handleImageLoad = function() {
       if (++loadedImages === imagesToLoad) {
         console.log("image loading complete");   
-        $("#loading").css("visibility", "hidden");       
+        $("#loading").css("visibility", "hidden");   
+        if (callback) {
+          callback();
+        }
       }
     };
 
@@ -1238,7 +1246,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
    * Load the blings that will slide in from left or right.
    */
   var count = 0;
-  function updateBlingBoxCache(direction) {
+  function updateBlingBoxCache(direction, callback) {
 
     blingBoxCursor += (3 * direction);
     var cursor = (blingBoxCursor.mod(blingCollection.models.length));
@@ -1252,7 +1260,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     }
 
     // now that we have the image list, we can load the images on the fly
-    Blockee.loadImages(null);
+    Blockee.loadImages(null, callback);
 
   }
 

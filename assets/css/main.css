@@ -217,5 +217,5 @@ button {
   position: absolute;
   left: 630px;
   top: 530px;
-  visibility: visible;
+  visibility: hidden;
 }
