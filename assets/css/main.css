@@ -93,6 +93,11 @@ button {
   border-width: 0px;
   padding-top: 20 px;}
 
+.footerphone {
+  font-size: 18px;
+  line-height: 110%;
+}
+
 .footer a:hover { 
     color: #ffc0cb; 
 }
