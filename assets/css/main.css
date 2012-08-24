@@ -219,3 +219,9 @@ button {
   top: 7px;
   visibility: hidden;
 }
+
+@media only screen and (max-width: 480px), only screen and (max-device-width: 480px)  {
+   #stage {
+      zoom: 0.5;
+   }
+}
