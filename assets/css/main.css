@@ -97,10 +97,6 @@ button {
   border-width: 0px;
   padding-top: 20 px;}
 
-.footerphone {
-  font-size: 18px;
-  line-height: 110%;
-}
 
 .footer a:hover { 
     color: #ffc0cb; 
@@ -116,6 +112,17 @@ button {
     bottom: 20px;
 }
 
+.footerphone {
+  font-size: 18px;
+  line-height: 110%;
+}
+.footerphone a:hover { 
+    color: #ffc0cb; 
+}
+.footerphone a { 
+    color: #000;
+    text-decoration: underline;
+}
 
 .uibutton { 
     position: relative; 
