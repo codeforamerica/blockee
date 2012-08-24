@@ -926,23 +926,33 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
    */
   Blockee.loadImages = function(previewBlocks) {
 
+    // show the spinner
+    $("#loading").css("visibility", "visible");
+
     var imageSources = {};
     var loadedImages = 0;
     var imagesToLoad = 0;
 
-    // XXX: if required build list of images that matter
+    // this is set to all images if we are looking up previews and
+    // set to blingbox cache if not
+    var imageCache = blingBoxCollection;
+
     previews = [];
-    if (previewBlocks !== null) {
+    if (previewBlocks !== null) {      
       for (var block=0; block<previewBlocks.length; block++) {
         previews.push(previewBlocks[block].image);
-      }
+      }      
+      imageCache = blingCollection;
     }
 
     // map all image paths for each image type
-    blingCollection.each(function(bling) {
+    imageCache.each(function(bling) {
 
-      // if we have a specific list of images to show, make sure we honor that (see just above)
-      if (previewBlocks !== null && _.include(previews, bling.image)) {
+      // if we have a specific list of images to show, make sure we honor that
+      // basically, we only want to queue up images to load if they are in the preview blocks
+      // so we check that our specific list "previews" contains the image, if it does not
+      // then we skip loading the current bling in the loop by simply calling "return"
+      if (previewBlocks !== null && !_.include(previews, bling.get("image"))) {        
         return;
       }
 
@@ -958,9 +968,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     // method when everything is complete to render the view
     var handleImageLoad = function() {
       if (++loadedImages === imagesToLoad) {
-        // XXX: should probably show a loading spinner (or something)
-        // and diasallow bling paging until things are loaded
-        console.log("image loading complete");          
+        console.log("image loading complete");   
+        $("#loading").css("visibility", "hidden");       
       }
     };
 
@@ -973,7 +982,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         images[idx][i].onload = handleImageLoad; 
         images[idx][i].src = imageSources[idx][i];
       }
-    }      
+    }    
   };
 
   Blockee.Views.Share = Backbone.View.extend({
@@ -1242,6 +1251,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         blingBoxCollection.models.push(blingCollection.models[i]);
     }
 
+    // now that we have the image list, we can load the images on the fly
+    Blockee.loadImages(null);
+
   }
 
   function loadBlings(direction) {   
@@ -1252,19 +1264,25 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     var inverseDirection = direction * -1;
 
     // opp of stage width and direction
-    var xLocation = (stage.getSize().width + (50 * direction) + 
+    var xLocation = ((stage.getSize().width + (100 * direction) + 
       (150 * inverseDirection)) * 
-      inverseDirection;
- 
+      inverseDirection) + 20;
+    
     // draw them offscreen
-    blingBoxCollection.each(function(bling) {
-
+    // XXX: This sucks, need to put blings in conistent size boxes
+    for (var i=0; i<blingBoxCollection.models.length; i++) {
+      var bling = blingBoxCollection.models[i];
       bling.set("x", xLocation);
       bling.set("y", 480);
       blingBoxLayer.add(bling.render());
-      // XXX: should do this dynamically so they space out nicely
+
       xLocation += 150;
-    });   
+      // get next bling (if available)
+      if (i+1 != blingBoxCollection.models.length) {
+        var nextBling = blingCollection.models[i+1];
+        xLocation += (nextBling.get("width") / 3) - 20;
+      }      
+    }
 
     blingBoxLayer.moveToBottom();
  

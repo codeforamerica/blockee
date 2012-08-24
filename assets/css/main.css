@@ -213,7 +213,9 @@ button {
   height:30px;
 }
 
-
-
-
-
+#loading {
+  position: absolute;
+  left: 630px;
+  top: 530px;
+  visibility: visible;
+}

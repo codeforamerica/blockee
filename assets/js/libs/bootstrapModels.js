@@ -13,6 +13,20 @@ var Models = [
     ]
   },
   {
+    "id": "bench", 
+    "x": 0, 
+    "y": 0, 
+    "width": 175, 
+    "height": 110,
+    "image": "bench", 
+    "images": [
+      "bench/bench01.png",
+      "bench/bench02.png",
+      "bench/bench03.png",
+      "bench/bench04.png"
+    ]
+  }, 
+  {
     "id": "bikelane", 
     "x": 0, 
     "y": 0, 
@@ -27,21 +41,7 @@ var Models = [
       "bikelane/bikelane05.png",
       "bikelane/bikelane06.png"
     ]
-  },
-  {
-    "id": "bench", 
-    "x": 0, 
-    "y": 0, 
-    "width": 175, 
-    "height": 110,
-    "image": "bench", 
-    "images": [
-      "bench/bench01.png",
-      "bench/bench02.png",
-      "bench/bench03.png",
-      "bench/bench04.png"
-    ]
-  },  
+  }, 
   {
     "id": "cafeseat", 
     "x": 0, 
@@ -82,6 +82,20 @@ var Models = [
       "wifi/wifi04.png"
     ]
   },
+    {
+    "id": "geodesic", 
+    "x": 0, 
+    "y": 0, 
+    "width": 149, 
+    "height": 110,
+    "image": "geodesic", 
+    "images": [
+      "geodesic/geodesic01.png",
+      "geodesic/geodesic02.png",
+      "geodesic/geodesic03.png",
+      "geodesic/geodesic04.png"
+    ]
+  },   
   {
     "id": "playground", 
     "x": 0, 
@@ -96,33 +110,19 @@ var Models = [
       "playground/playground04.png"
     ]
   },
-    {
-    "id": "geodesic", 
-    "x": 0, 
-    "y": 0, 
-    "width": 149, 
-    "height": 110,
-    "image": "geodesic", 
-    "images": [
-      "geodesic/geodesic01.png",
-      "geodesic/geodesic02.png",
-      "geodesic/geodesic03.png",
-      "geodesic/geodesic04.png"
-    ]
-  }, 
   {
     "id": "hopscotch", 
     "x": 0, 
     "y": 0, 
-    "width": 159, 
-    "height": 99,
+    "width": 143, 
+    "height": 89,
     "image": "hopscotch", 
     "images": [
       "hopscotch/hopscotch01.png",
       "hopscotch/hopscotch02.png",
       "hopscotch/hopscotch03.png"
     ]
-  },
+  },  
    {
     "id": "tree", 
     "x": 0, 
@@ -222,19 +222,6 @@ var Models = [
     ]
   },
   {
-    "id": "lamp", 
-    "x": 0, 
-    "y": 0, 
-    "width": 27, 
-    "height": 110,
-    "image": "lamp", 
-    "images": [
-      "lamp/lamp01.png",
-      "lamp/lamp02.png",
-      "lamp/lamp03.png",
-      "lamp/lamp04.png"
-    ]
-  },{
     "id": "speedbump", 
     "x": 0, 
     "y": 0, 
@@ -248,6 +235,20 @@ var Models = [
       "speedbump/speedbump04.png",
       "speedbump/speedbump05.png",
       "speedbump/speedbump06.png"
+    ]
+  },  
+  {
+    "id": "lamp", 
+    "x": 0, 
+    "y": 0, 
+    "width": 27, 
+    "height": 110,
+    "image": "lamp", 
+    "images": [
+      "lamp/lamp01.png",
+      "lamp/lamp02.png",
+      "lamp/lamp03.png",
+      "lamp/lamp04.png"
     ]
   },
   {
@@ -346,14 +347,13 @@ var Models = [
       "fruitstand/fruitstand04.png",
       "fruitstand/fruitstand05.png"
     ]
-  },
-  
+  },  
   {
     "id": "foodtruck", 
     "x": 0, 
     "y": 0, 
-    "width": 206, 
-    "height": 99,
+    "width": 186, 
+    "height": 89,
     "image": "foodtruck", 
     "images": [
       "foodtruck/foodtruck01.png",
@@ -361,7 +361,7 @@ var Models = [
       "foodtruck/foodtruck03.png",
       "foodtruck/foodtruck04.png"
     ]
-  },
+  },   
   {
     "id": "drinkingfountain", 
     "x": 0, 
@@ -377,7 +377,7 @@ var Models = [
       "drinkingfountain/drinkingfountain05.png",
       "drinkingfountain/drinkingfountain06.png"
     ]
-  },
+  },   
   {
     "id": "solar", 
     "x": 0, 
