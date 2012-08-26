@@ -408,6 +408,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     e.preventDefault();
     var $form = this.$el.find('form').first();
     var form = _.first($form);
+    $form.addClass("disabled");
     $.ajax(form.action, {
       iframe: true,
       type: 'POST',
@@ -427,6 +428,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       } else {
         alert("SOMETHING WENT WRONG HERE");
       }
+      $form.removeClass("disabled");
     });
   }  
 

@@ -289,7 +289,7 @@ module.exports = function(grunt) {
       form.parse(req, function(err, fields, files) {
         var file = files["file"];
         var timestamp = new Date() / 1000;
-        var filename = timestamp + file["name"].replace(" ", "");
+        var filename = timestamp + encodeURIComponent(file["name"]);
         if (file && file["size"] > 0) {
           client.putFile(file["path"], '/uploads/' + filename, {"Content-Type": "image/jpeg"}, function(err, aws_res){
             if(aws_res.statusCode == 200){
