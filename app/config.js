@@ -22,6 +22,9 @@ require.config({
     models: "../assets/js/libs/bootstrapModels"
   },
 
+  bootstrap: "../assets/js/libs/bootstrap",
+  filepicker: "../assets/js/libs/filepicker",
+
   shim: {
     backbone: {
       deps: ["lodash", "jquery"],
@@ -34,7 +37,7 @@ require.config({
       exports: "Googlylogo"
     },
     googlystreetview: {
-      deps: ["jquery", "bootstrap"],
+      deps: ["jquery", "bootstrap", "filepicker"],
       exports: "GooglyStreetView"
     },
     sharefeature: {
