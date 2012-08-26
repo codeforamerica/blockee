@@ -204,15 +204,24 @@ button {
   width:100%;
 }
 
-.filepckr2 {
+#upload-form a{
+  cursor:pointer;
+}
+
+#upload-form.disabled a {
+  cursor: default;
+  opacity: 0.4;
+  z-index: 3;
+}
+
+.filepckr2, .filepckr2[disabled] {
   opacity:0;
   filter:alpha(opacity=0);
   background:transparent;
-  cursor:pointer;
   position:relative;
   top:-40px;
   left:0;
-
+  z-index: 2;
 }
 
 .filehldr{
