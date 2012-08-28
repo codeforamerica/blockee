@@ -34,8 +34,8 @@ var ShareFeature = {
       method: 'feed',
       link: this.shortUrl,
       picture: 'http://i.imgur.com/BbUJG.png',
-      name: 'Blockee',
-      caption: 'Can we make this happen?',
+      name: 'Can we make this happen?',
+      caption: 'Blockee.org',
       description: ''
     };
 
