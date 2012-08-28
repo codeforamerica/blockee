@@ -12,13 +12,11 @@ var ShareFeature = {
     $.getJSON(url, function(data) {
       var messages = [
         // "Your message ",
-        "Can we make this happen?",
-        "Rock your block with some neighborhood bling at",
-        "Bling your block! Help better your hood at",
-        "It's a blingy block party! Better your block at",
-        "If you like it, you should put bling on it! Bling your block at",
-        "Diamonds are forever. Bling is for the clever.",
-        "Paving the streets with gold is so yesterday:"
+        "Can we make this happen? via Blockee.org",
+        "Rock your block w/ some neighborhood bling.",
+        "Bling our block.",
+        "If you like it, you should put bling on it.",
+        "Better your block with bling."
       ];
       var textPrompt = messages[Math.floor(Math.random() * messages.length)];
       $(".twitter-share-iframe")[0].src="//platform.twitter.com/widgets/tweet_button.html?count=none&text=" + encodeURIComponent(textPrompt) + "&url=" + encodeURIComponent(data.data.url);
@@ -40,7 +38,7 @@ var ShareFeature = {
       link: this.shortUrl,
       picture: 'http://i.imgur.com/BbUJG.png',
       name: 'Blockee',
-      caption: 'Can we make this happen?',
+      caption: 'If you like it, you should put bling on it.',
       description: ''
     };
 
