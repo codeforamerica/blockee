@@ -13,9 +13,6 @@ var ShareFeature = {
       var messages = [
         // "Your message ",
         "Can we make this happen? via Blockee.org",
-        "Rock your block w/ some neighborhood bling.",
-        "Bling our block.",
-        "If you like it, you should put bling on it.",
         "Better your block with bling."
       ];
       var textPrompt = messages[Math.floor(Math.random() * messages.length)];
@@ -38,7 +35,7 @@ var ShareFeature = {
       link: this.shortUrl,
       picture: 'http://i.imgur.com/BbUJG.png',
       name: 'Blockee',
-      caption: 'If you like it, you should put bling on it.',
+      caption: 'Can we make this happen?',
       description: ''
     };
 
