@@ -13,7 +13,7 @@ var ShareFeature = {
       var messages = [
         // "Your message ",
         "Can we make this happen? via Blockee.org",
-        "Better your block with bling."
+        "Can we make this happen? via Blockee.org"
       ];
       var textPrompt = messages[Math.floor(Math.random() * messages.length)];
       $(".twitter-share-iframe")[0].src="//platform.twitter.com/widgets/tweet_button.html?count=none&text=" + encodeURIComponent(textPrompt) + "&url=" + encodeURIComponent(data.data.url);
