@@ -97,8 +97,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       var height = bottomLeft.attrs.y - topLeft.attrs.y;        
 
       // save to use when updating the bling object's position
-      group.attrs.resizeYAdj = topLeft.attrs.y;
-      group.attrs.resizeXAdj = topLeft.attrs.x; 
+      group.attrs.resizeYAdj = topLeft.attrs.y + 7;
+      group.attrs.resizeXAdj = topLeft.attrs.x + 7; 
 
       // set the size of each image based on anchor drag
       var resizingImages = group.get(".image");
@@ -110,8 +110,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
           // set the position of each image based on anchor drag
           image.setPosition(topLeft.attrs.x + 7, topLeft.attrs.y + 7);
-
-
 
           //image.setPosition(topLeft.attrs.x, topLeft.attrs.y);
 
@@ -527,8 +525,11 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         // width of group based on it's image
         var image = this.get(".image")[0];
 
+        //console.log(this.get(".topLeft")[0]);
+        //console.log(this.attrs.resizeXAdj);
+
         self.set("x", this.getX() + this.attrs.resizeXAdj);
-        self.set("y", this.getY() + this.attrs.resizeYAdj);
+        self.set("y", this.getY() + this.attrs.resizeYAdj);       
 
         self.set("width", image.getWidth());
         self.set("height", image.getHeight()); 
