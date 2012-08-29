@@ -70,7 +70,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       var bottomRight = group.get(".bottomRight")[0];
 
       var anchorBox = group.get(".anchorBox")[0];
-      var lock = group.get(".lock")[0];
+      //var lock = group.get(".lock")[0];
       var rotate = group.get(".rotate")[0];   
 
       // update anchor positions
@@ -128,10 +128,12 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
           //      images for lock and rotate are not available yet because the lock/rotate
           //      cannot be drawn
           // XXX: Commenting for now because version 1 won't use lock and rotate
-          // lock.attrs.x = anchorBox.getX() + anchorBox.getWidth() + 5;
-          // lock.attrs.y = anchorBox.getY() + anchorBox.getHeight() - 16;
-          // rotate.attrs.x = anchorBox.getX() + anchorBox.getWidth() + 5;
-          // rotate.attrs.y = anchorBox.getY() + anchorBox.getHeight() - 35;
+           //lock.attrs.x = anchorBox.getX() + anchorBox.getWidth() + 5;
+           //lock.attrs.y = anchorBox.getY() + anchorBox.getHeight() - 16;
+           
+           // put a rotation-enable button outside the box
+           rotate.attrs.x = anchorBox.getX() + anchorBox.getWidth() + 5;
+           rotate.attrs.y = anchorBox.getY() + anchorBox.getHeight() - 35;
         }
       }
 
@@ -251,58 +253,95 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
     // XXX: Commenting for version 1
     // add lock and rotate buttons & behaviors
-    // var lock = new Image();
-    // lock.src = buttonIcons[6];
-    // var unlock = new Image();
-    // unlock.src = buttonIcons[7];
-    // unlock.onload = function() {      
-    //   var image = new Kinetic.Image({
-    //     x: anchorBox.getX() + anchorBox.getWidth() + 5,
-    //     y: anchorBox.getY() + anchorBox.getHeight() - 16,
-    //     image: unlock,
-    //     width: 17,
-    //     height: 17,
-    //     name: "lock"
-    //   });
-    //   image.on("click", function() {              
-    //     if (group.attrs.locked) {
-    //       this.setImage(unlock);
-    //       group.attrs.anchors.forEach(function(anchor) {
-    //         anchor.show();
-    //       });
-    //       group.attrs.anchorBox.show();
-    //       group.attrs.locked = false;
-    //       return;
-    //     }        
-    //     this.setImage(lock);
-    //     group.attrs.anchors.forEach(function(anchor) {
-    //       anchor.hide();
-    //     });
-    //     group.attrs.anchorBox.hide();
-    //     group.attrs.locked = true;
-    //     layer.draw();
-    //   });
-    //   group.add(image);      
-    // };
+    /* var lock = new Image();
+     lock.src = buttonIcons[6];
+     var unlock = new Image();
+     unlock.src = buttonIcons[7];
+     unlock.onload = function() {      
+       var image = new Kinetic.Image({
+         x: anchorBox.getX() + anchorBox.getWidth() + 5,
+         y: anchorBox.getY() + anchorBox.getHeight() - 16,
+         image: unlock,
+         width: 17,
+         height: 17,
+         name: "lock"
+       });
+       image.on("click", function() {              
+         if (group.attrs.locked) {
+           this.setImage(unlock);
+           group.attrs.anchors.forEach(function(anchor) {
+             anchor.show();
+           });
+           group.attrs.anchorBox.show();
+           group.attrs.locked = false;
+           return;
+         }        
+         this.setImage(lock);
+         group.attrs.anchors.forEach(function(anchor) {
+           anchor.hide();
+         });
+         group.attrs.anchorBox.hide();
+         group.attrs.locked = true;
+         layer.draw();
+       });
+       group.add(image);      
+     };*/
+     var rotateImg, rotateContinueImg;
 
-    // var rotate = new Image();
-    // rotate.src = buttonIcons[8];
-    // rotate.onload = function() {   
-    //   var image = new Kinetic.Image({
-    //     x: anchorBox.getX() + anchorBox.getWidth() + 5,
-    //     y: anchorBox.getY() + anchorBox.getHeight() - 35,
-    //     image: rotate,
-    //     width: 17,
-    //     height: 17,
-    //     name: "rotate"
-    //   });
-    //   image.on("click", function() { 
-    //     controlBox.moveToTop();
-    //     console.log(group);    
-    //     group.rotateDeg(20);
-    //   });
-    //   group.add(image);    
-    // };    
+     var rotate = new Image();
+     rotate.src = buttonIcons[8];
+     rotate.onload = function() {   
+       rotateImg = new Kinetic.Image({
+         x: anchorBox.getX() + anchorBox.getWidth() + 5,
+         y: anchorBox.getY() + anchorBox.getHeight() - 35,
+         image: rotate,
+         width: 17,
+         height: 17,
+         name: "rotate"
+       });
+       rotateImg.on("click", function() { 
+         // rotate button only acts to enable central rotate button
+         rotateContinueImg.show();
+         rotateImg.hide();
+       });
+       group.add(rotateImg);    
+     };
+
+     var rotateContinue = new Image();
+     rotateContinue.src = buttonIcons[8];
+     rotateContinue.onload = function() {   
+       rotateContinueImg = new Kinetic.Image({
+         x: anchorBox.getX() + Math.round(anchorBox.getWidth() / 2) - 15,
+         y: anchorBox.getY() + Math.round(anchorBox.getHeight() / 2) - 15,
+         image: rotate,
+         width: 30,
+         height: 30,
+         name: "rotateContinue"
+       });
+       rotateContinueImg.on("click", function() { 
+         //controlBox.moveToTop();
+         //console.log(group);
+         group.rotateDeg(20);
+       });
+       
+       // add the continue rotation image, but hide it
+       group.add(rotateContinueImg);
+       rotateContinueImg.hide();
+
+       // disable rotation when the mouse exits the group
+       // but wait until after user mouses over the button
+       var insideRotation = false;
+       rotateContinueImg.on("mouseover", function() {
+         insideRotation = true;
+       });
+       group.on("mouseout", function() {
+         if(insideRotation){
+           rotateContinueImg.hide();
+           rotateImg.show();
+           insideRotation = false;
+         }
+       });
+     };
   }
 
   /*
@@ -326,8 +365,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       y: bling.get("y"),
       draggable: draggable,
       resizeYAdj: 0,
-      resizeXAdj: 0     
-    });    
+      resizeXAdj: 0
+    });
    
     // add all related images for this bling to its group 
     var imageCollection = images[bling.get("image")];
@@ -338,8 +377,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         x: 0,
         y: 0,
         image: imageCollection[i],
-        name: "image"
-        //offset: {x: bling.get("width") / 2, y: bling.get("height") / 2}
+        name: "image",
+        // set offset to center of image
+        offset: {x: bling.get("width") / 2, y: bling.get("height") / 2}
       });
       image.setWidth(bling.get("width"));
       image.setHeight(bling.get("height"));
@@ -1192,8 +1232,10 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
             anchor.show();
           });
           group.attrs.anchorBox.show();
+          group.get(".rotate")[0].show(); // show rotate button, too
         });        
-      } else {
+      }
+      else{
         previewOn = true;
         displayedBlingCollection.forEach(function(bling) {
           var group = bling.group;
@@ -1201,6 +1243,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
             anchor.hide();
           });
           group.attrs.anchorBox.hide();
+          group.get(".rotate")[0].hide(); // hide rotate buttons, too
+          group.get(".rotateContinue")[0].hide();
         });
       }
     },
@@ -1284,7 +1328,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     for (var i=0; i<blingBoxCollection.models.length; i++) {
       var bling = blingBoxCollection.models[i];
       bling.set("x", xLocation);
-      bling.set("y", 480);
+      bling.set("y", 520); // increased y offset in toybox
       blingBoxLayer.add(bling.render());
 
       xLocation += 150;
