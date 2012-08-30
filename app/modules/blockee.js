@@ -322,6 +322,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
          //controlBox.moveToTop();
          //console.log(group);
          group.rotateDeg(20);
+         bling.set("rotation", bling.get("rotation") + 20 * Math.PI / 180);
        });
        
        // add the continue rotation image, but hide it
@@ -363,6 +364,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     var group = new Kinetic.Group({
       x: bling.get("x"),
       y: bling.get("y"),
+      rotation: bling.get("rotation"),
       draggable: draggable,
       resizeYAdj: 0,
       resizeXAdj: 0
@@ -488,6 +490,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       "y": 0,
       "width": 0,
       "height": 0,
+      "rotation": 0,
       "onStage": false,
       "image": ""
     },
@@ -528,10 +531,10 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         var centerY = this.getY() + this.attrs.resizeYAdj + maxheight * 0.5;
 
         // hit test: if bling is over trash, then trash bling
-        if(centerX > trash_area.getX() - 25 && 
-           centerX < trash_area.getX() + trash_area.getWidth() + 25 && 
-           centerY > trash_area.getY() - 25 && 
-           centerY < trash_area.getY() + trash_area.getHeight() + 25) {
+        if(centerX > trash_area.getX() - trash_area.getWidth() / 2 - 25 && 
+           centerX < trash_area.getX() + trash_area.getWidth() / 2 + 25 && 
+           centerY > trash_area.getY() - trash_area.getHeight() / 2 - 25 && 
+           centerY < trash_area.getY() + trash_area.getHeight() / 2 + 25) {
 
           // in trash
           trash_area.open();
@@ -833,10 +836,12 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       var x = (block.hasOwnProperty("x")) ? block.x : 20;
       var y = (block.hasOwnProperty("y")) ? block.y : 100;
       var width = (block.hasOwnProperty("width")) ? block.width : 100;
-      var height = (block.hasOwnProperty("height")) ? block.height : 100;        
+      var height = (block.hasOwnProperty("height")) ? block.height : 100;
+      var rotation = (block.hasOwnProperty("rotation")) ? block.rotation : 0;
       var bling = blingCollection.get(block.image).clone();
       bling.set("x", x);
       bling.set("y", y);
+      bling.set("rotation", rotation);
       bling.set("width", width);
       bling.set("height", height);
 
@@ -1163,10 +1168,12 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       blockState = "";
       displayedBlingCollection.each(function(bling) {
         if (bling.get("onStage")) {
-          blockState = blockState.concat('{"x":' + bling.get("x") +    
-                                         ',"y":' + bling.get("y") +
-                                         ',"width":' + bling.get("width") +
-                                         ',"height":' + bling.get("height") +
+          console.log(bling);
+          blockState = blockState.concat('{"x":' + (bling.get("x") - bling.get("width") / 2).toFixed(0) +    
+                                         ',"y":' + (bling.get("y") - bling.get("height") / 2).toFixed(0) +
+                                         ',"width":' + bling.get("width").toFixed(0) +
+                                         ',"height":' + bling.get("height").toFixed(0) +
+                                         ',"rotation":' + bling.get("rotation").toFixed(6) +
                                          ',"id":"' + bling.id + '"' +
                                          ',"image":"' + bling.get("image") + '"},');
         }
