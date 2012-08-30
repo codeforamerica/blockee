@@ -109,7 +109,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
           image.setSize(width - 10, height - 10);
 
           // set the position of each image based on anchor drag
-          image.setPosition(topLeft.attrs.x + 7, topLeft.attrs.y + 7);
+          image.setPosition(topLeft.attrs.x + (width-10) / 2 + 7, topLeft.attrs.y + (height-10) / 2 + 7);
+          image.setOffset((width-10) / 2, (height-10) / 2);
 
           //image.setPosition(topLeft.attrs.x, topLeft.attrs.y);
 
@@ -302,6 +303,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
        rotateImg.on("click", function() { 
          // rotate button only acts to enable central rotate button
          rotateContinueImg.show();
+         rotateContinueImg.attrs.x = anchorBox.getX() + Math.round(anchorBox.getWidth() / 2) - 15;
+         rotateContinueImg.attrs.y = anchorBox.getY() + Math.round(anchorBox.getHeight() / 2) - 15;
          rotateImg.hide();
        });
        group.add(rotateImg);    
@@ -381,12 +384,17 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         x: 0,
         y: 0,
         image: imageCollection[i],
-        name: "image",
-        // set offset to center of image
-        offset: {x: bling.get("width") / 2, y: bling.get("height") / 2}
+        name: "image"
       });
       image.setWidth(bling.get("width"));
       image.setHeight(bling.get("height"));
+      if(((window.location + "").indexOf("rotation") == -1) && ((window.location + "").indexOf("width") > -1)){
+        // loading an old blockee with different coordinates
+        image.setOffset({
+          x: bling.get("width") / 2,
+          y: bling.get("height") / 2
+        });
+      }
       group.add(image);
     }       
     
@@ -1330,14 +1338,14 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     // opp of stage width and direction
     var xLocation = ((stage.getSize().width + (100 * direction) + 
       (150 * inverseDirection)) * 
-      inverseDirection) + 70;
+      inverseDirection) + 10;
     
     // draw them offscreen
     // XXX: This sucks, need to put blings in conistent size boxes
     for (var i=0; i<blingBoxCollection.models.length; i++) {
       var bling = blingBoxCollection.models[i];
       bling.set("x", xLocation);
-      bling.set("y", 520); // increased y offset in toybox
+      bling.set("y", 480); // restored y offset in toybox
       blingBoxLayer.add(bling.render());
 
       xLocation += 150;
