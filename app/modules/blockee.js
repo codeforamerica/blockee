@@ -322,7 +322,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
          //controlBox.moveToTop();
          //console.log(group);
          group.rotateDeg(20);
+         //console.log(bling.get("rotation"));
          bling.set("rotation", bling.get("rotation") + 20 * Math.PI / 180);
+         vent.trigger("move", bling);
        });
        
        // add the continue rotation image, but hide it
