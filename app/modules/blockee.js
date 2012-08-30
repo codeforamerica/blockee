@@ -389,13 +389,13 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       });
       image.setWidth(bling.get("width"));
       image.setHeight(bling.get("height"));
-      if(((window.location + "").indexOf("rotation") == -1) && ((window.location + "").indexOf("width") > -1)){
+      //if(((window.location + "").indexOf("rotation") == -1) && ((window.location + "").indexOf("width") > -1)){
         // loading an old blockee with different coordinates
         image.setOffset({
           x: bling.get("width") / 2,
           y: bling.get("height") / 2
         });
-      }
+      //}
       group.add(image);
     }       
     
@@ -1339,14 +1339,14 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     // opp of stage width and direction
     var xLocation = ((stage.getSize().width + (100 * direction) + 
       (150 * inverseDirection)) * 
-      inverseDirection) + 10;
+      inverseDirection) + 70;
     
     // draw them offscreen
     // XXX: This sucks, need to put blings in conistent size boxes
     for (var i=0; i<blingBoxCollection.models.length; i++) {
       var bling = blingBoxCollection.models[i];
       bling.set("x", xLocation);
-      bling.set("y", 480); // restored y offset in toybox
+      bling.set("y", 520); // increased y offset in toybox
       blingBoxLayer.add(bling.render());
 
       xLocation += 150;
