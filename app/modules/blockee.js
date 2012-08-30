@@ -527,14 +527,14 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
         var maxwidth = self.group.attrs.anchorBox.getWidth();
         var maxheight = self.group.attrs.anchorBox.getHeight();        
-        var centerX = this.getX() + this.attrs.resizeXAdj + maxwidth * 0.5;
-        var centerY = this.getY() + this.attrs.resizeYAdj + maxheight * 0.5;
+        var centerX = this.getX();
+        var centerY = this.getY();
 
         // hit test: if bling is over trash, then trash bling
-        if(centerX > trash_area.getX() - trash_area.getWidth() / 2 - 25 && 
-           centerX < trash_area.getX() + trash_area.getWidth() / 2 + 25 && 
-           centerY > trash_area.getY() - trash_area.getHeight() / 2 - 25 && 
-           centerY < trash_area.getY() + trash_area.getHeight() / 2 + 25) {
+        if(centerX > trash_area.getX() - 25 && 
+           centerX < trash_area.getX() + trash_area.getWidth() + 25 && 
+           centerY > trash_area.getY() - 25 && 
+           centerY < trash_area.getY() + trash_area.getHeight() + 25) {
 
           // in trash
           trash_area.open();
@@ -1328,7 +1328,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     // opp of stage width and direction
     var xLocation = ((stage.getSize().width + (100 * direction) + 
       (150 * inverseDirection)) * 
-      inverseDirection) + 20;
+      inverseDirection) + 70;
     
     // draw them offscreen
     // XXX: This sucks, need to put blings in conistent size boxes
