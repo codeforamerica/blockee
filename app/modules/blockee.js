@@ -325,9 +325,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
        rotateContinueImg.on("click", function() { 
          //controlBox.moveToTop();
          //console.log(group);
-         group.rotateDeg(20);
+         group.rotateDeg(-20);
          //console.log(bling.get("rotation"));
-         bling.set("rotation", bling.get("rotation") + 20 * Math.PI / 180);
+         bling.set("rotation", bling.get("rotation") - 20 * Math.PI / 180);
          vent.trigger("move", bling);
        });
        
