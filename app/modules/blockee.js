@@ -43,7 +43,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
                    "/assets/img/trash_over.png",
                    "/assets/img/locked.png",
                    "/assets/img/unlocked.png",
-                   "/assets/img/rotate.png"];
+                   "/assets/img/rotate.png",
+                   "/assets/img/rotate2.png"];
 
   // application configuration
   // XXX: this probably should be in a config file
@@ -289,14 +290,14 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
      var rotateImg, rotateContinueImg;
 
      var rotate = new Image();
-     rotate.src = buttonIcons[8];
+     rotate.src = buttonIcons[9];
      rotate.onload = function() {   
        rotateImg = new Kinetic.Image({
          x: anchorBox.getX() + anchorBox.getWidth() + 5,
          y: anchorBox.getY() + anchorBox.getHeight() - 35,
          image: rotate,
          width: 17,
-         height: 17,
+         height: 14,
          name: "rotate"
        });
        rotateImg.on("click", function() { 
@@ -308,14 +309,14 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
      };
 
      var rotateContinue = new Image();
-     rotateContinue.src = buttonIcons[8];
+     rotateContinue.src = buttonIcons[9];
      rotateContinue.onload = function() {   
        rotateContinueImg = new Kinetic.Image({
          x: anchorBox.getX() + Math.round(anchorBox.getWidth() / 2) - 15,
          y: anchorBox.getY() + Math.round(anchorBox.getHeight() / 2) - 15,
          image: rotate,
          width: 30,
-         height: 30,
+         height: 25,
          name: "rotateContinue"
        });
        rotateContinueImg.on("click", function() { 
