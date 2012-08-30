@@ -33,6 +33,10 @@ function(app, $, Backbone, Blockee) {
 
     share: function(blocks, bkg_type, url) {
       var blocksObject = $.parseJSON(unescape(blocks));
+      for(var b=0;b<blocksObject.length;b++){
+        blocksObject[b].x += blocksObject[b].width / 2;
+        blocksObject[b].y += blocksObject[b].height / 2;        
+      }
       var backgroundURL;
       
       if(bkg_type == "image"){
@@ -52,7 +56,11 @@ function(app, $, Backbone, Blockee) {
      * Parse block objects and use to render view
      */
     blocks: function(blocks, bkg_type, url) { 
-      var blocksObject = $.parseJSON(unescape(blocks));    
+      var blocksObject = $.parseJSON(unescape(blocks));
+      for(var b=0;b<blocksObject.length;b++){
+        blocksObject[b].x += blocksObject[b].width / 2;
+        blocksObject[b].y += blocksObject[b].height / 2;        
+      }   
       var backgroundURL;
 
       if(bkg_type == "image"){
