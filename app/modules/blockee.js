@@ -1043,6 +1043,28 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
   });
 
+  Blockee.Views.Embed = Backbone.View.extend({
+    template: "app/templates/decorateembed",
+
+    initialize: function(options) {
+      this.render();
+    },
+
+    /*
+     * Backbone render implementation
+     */
+    render: function(previewBlocks) {
+      // Fetch the template
+      var tmpl = app.fetchTemplate(this.template);
+      
+      // Set the template contents
+      this.$el.html(tmpl()); 
+      
+      return this;
+    }
+
+  });
+
   // the decorate view
   Blockee.Views.Decorate = Backbone.View.extend({
     template: "app/templates/decorate",
