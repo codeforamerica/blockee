@@ -310,8 +310,6 @@ module.exports = function(grunt) {
         }
       });
     });
-<<<<<<< HEAD
-=======
     
     // Post the blockee to Tumblr
     var http = require("http");
@@ -368,7 +366,6 @@ module.exports = function(grunt) {
       });
       req.resume();
     });
->>>>>>> Fix of canvas embed cut off
 
     // Serve a site
     site.get("/", function(req, res) {
