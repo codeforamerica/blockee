@@ -25,6 +25,25 @@ var ShareFeature = {
     });
   },
 
+  showsharedialog: function() {
+    var longUrl = "http://blockee.org/" + Backbone.history.fragment;
+    var url = "http://api.bitly.com/v3/shorten?longUrl=" + encodeURIComponent(longUrl) + "&login=o_cdttlflq9&apiKey=R_54cc6bcddf5bd50607743cc8158d722f";
+    var sf = this;
+    $.getJSON(url, function(data) {
+      var messages = [
+        // "Your message ",
+        "Can we make this happen? via Blockee",
+        "Can we make this happen? via Blockee"
+      ];
+      var textPrompt = messages[Math.floor(Math.random() * messages.length)];
+      $(".twitter-share-iframe")[0].src="//platform.twitter.com/widgets/tweet_button.html?count=none&text=" + encodeURIComponent(textPrompt) + "&url=" + encodeURIComponent(data.data.url);
+      sf.shortUrl = data.data.url;
+      $("#long_url").val( data.data.url );
+      $("#shares").css({ display: "block" });
+      $("#share-button").css({ display: "none" });
+    });
+  },
+
   // added the new Facebook update
   FBPublish: function() {
     //var longUrl = "http://blockee.org/" + Backbone.history.fragment;
