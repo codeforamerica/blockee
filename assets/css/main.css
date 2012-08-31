@@ -236,6 +236,17 @@ button {
   visibility: hidden;
 }
 
+<<<<<<< HEAD
+=======
+.embed-row {
+  zoom: 0.91;
+  margin-left: -44px;
+  margin-top: -22px;
+}
+
+.embed-row 
+
+>>>>>>> Fix of canvas embed cut off
 @media only screen and (max-width: 480px), only screen and (max-device-width: 480px)  {
    #stage {
       zoom: 0.5;
