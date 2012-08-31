@@ -18,8 +18,7 @@ function(app, $, Backbone, Blockee) {
     routes: {
       "": "index",
       "?blocks=:blocks+bkg=:bkg_type+:url": "blocks",
-      "share?blocks=:blocks+bkg=:bkg_type+:url": "share",
-      "embed?blocks=:blocks+bkg=:bkg_type+:url": "embed"
+      "share?blocks=:blocks+bkg=:bkg_type+:url": "share"
     },
 
     "ugh": function() {
@@ -44,23 +43,6 @@ function(app, $, Backbone, Blockee) {
       }
 
       var share = new Blockee.Views.Share();
-      this.showView(share);
-      // in sharing mode for version 1.0, we will only show the actual image
-      Blockee.loadContent(blocksObject, backgroundURL, share, {showBlingBox: false});
-    },
-    
-    embed: function(blocks, bkg_type, url) {
-      var blocksObject = $.parseJSON(unescape(blocks));
-      var backgroundURL;
-      
-      if(bkg_type == "image"){
-        backgroundURL = "https://s3.amazonaws.com/blockee_prod/uploads/" + decodeURIComponent(url);
-      } else {
-        // don't assume /streetview? so SATMAPS can be added
-        backgroundURL = "http://maps.googleapis.com/maps/api/" + decodeURIComponent(url);
-      }
-
-      var share = new Blockee.Views.Embed();
       this.showView(share);
       // in sharing mode for version 1.0, we will only show the actual image
       Blockee.loadContent(blocksObject, backgroundURL, share, {showBlingBox: false});

@@ -310,62 +310,6 @@ module.exports = function(grunt) {
         }
       });
     });
-    
-    // Post the blockee to Tumblr
-    var http = require("http");
-    var querystring = require("querystring");
-    site.post("/api/tumblrpost", function(req, res) {
-      log.writeln("got a Tumblr post");
-      var body = "";
-      req.pause();
-      req.addListener('data', function (chunk) {
-        log.writeln("Got 'data' event");
-        body += chunk;
-      });
-      req.addListener('end', function () {
-        log.writeln("Got 'end' event");
-
-        body = querystring.parse(body);
-        var longurl = body.longurl;
-        var shorturl = body.shorturl;
-
-        var tumblr_mail = "nickd@codeforamerica.org";
-        var tumblr_pass = "fixmyblock";
-        if(process.env.TUMBLR_EMAIL){
-          tumblr_mail = process.env.TUMBLR_EMAIL;
-          tumblr_pass = process.env.TUMBLR_PASSWORD;
-        }
-
-        var post_data = querystring.stringify({
-          "email": tumblr_mail,
-          "password": tumblr_pass,
-          "type": "regular",
-          "title": "Fixed a Block",
-          "body": "<iframe src='" + longurl + "' width='505' scrolling='no' height='410' marginwidth='0' marginheight='0' frameborder='no'></iframe><br/><a href='" + shorturl + "'>On Blockee</a>",
-          "tags": "blockee",
-          "format": "html"
-        });
-        var post_options = {
-          host: "www.tumblr.com",
-          path: "/api/write",
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': post_data.length
-          }
-        };
-        var post_req = http.request(post_options, function(tmb){
-          tmb.on('data', function (chunk) {
-            console.log(chunk);
-          });
-        });
-        post_req.write(post_data);
-        post_req.end();
-
-        res.send({});
-      });
-      req.resume();
-    });
 
     // Serve a site
     site.get("/", function(req, res) {

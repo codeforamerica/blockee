@@ -236,17 +236,8 @@ button {
   visibility: hidden;
 }
 
-.embed-row {
-  zoom: 0.91;
-  margin-left: -44px;
-  margin-top: -22px;
-}
-
 @media only screen and (max-width: 480px), only screen and (max-device-width: 480px)  {
    #stage {
       zoom: 0.5;
-   }
-   .embed-row #stage {
-      zoom: 1;
    }
 }
