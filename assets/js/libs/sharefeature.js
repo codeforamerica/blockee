@@ -22,6 +22,13 @@ var ShareFeature = {
       $("#long_url").val( data.data.url );
       $("#shares").css({ display: "block" });
       $("#share-button").css({ display: "none" });
+      $.ajax("/api/tumblrpost", {
+        type: "POST",
+        data: {
+          shorturl: data.data.url,
+          longurl: longUrl.replace("/share","/embed")
+        }
+      });
     });
   },
 
