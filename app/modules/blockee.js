@@ -640,6 +640,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
   Blockee.preInitStage = function(options) {
 
+   if((window.location + "").indexOf("/embed") > -1){
+      $("#stage").width("600px");
+    }
     var viewportWidth = $('#stage').width();
     // 600 when not share and 450 when share
     var viewportHeight = 600;

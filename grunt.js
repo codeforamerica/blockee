@@ -340,8 +340,8 @@ module.exports = function(grunt) {
           "email": tumblr_mail,
           "password": tumblr_pass,
           "type": "regular",
-          "title": "Fixed a Block",
-          "body": "<iframe src='" + longurl + "' width='505' scrolling='no' height='410' marginwidth='0' marginheight='0' frameborder='no'></iframe><br/><a href='" + shorturl + "'>On Blockee</a>",
+          "title": " ",
+          "body": "<iframe src='" + longurl + "' width='505' scrolling='no' height='410' marginwidth='0' marginheight='0' frameborder='no'></iframe><br/><a href='" + shorturl + "'>View on Blockee.org</a>",
           "tags": "blockee",
           "format": "html"
         });
