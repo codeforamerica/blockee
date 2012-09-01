@@ -328,6 +328,8 @@ module.exports = function(grunt) {
         body = querystring.parse(body);
         var longurl = body.longurl;
         var shorturl = body.shorturl;
+        var location = body.location || "";
+        log.writeln("location written as: " + location);
 
         var tumblr_mail = "nickd@codeforamerica.org";
         var tumblr_pass = "fixmyblock";
@@ -340,7 +342,7 @@ module.exports = function(grunt) {
           "email": tumblr_mail,
           "password": tumblr_pass,
           "type": "regular",
-          "title": " ",
+          "title": location,
           "body": "<iframe src='" + longurl + "' width='505' scrolling='no' height='410' marginwidth='0' marginheight='0' frameborder='no'></iframe><br/><a href='" + shorturl + "'>View on Blockee.org</a>",
           "tags": "blockee",
           "format": "html"
