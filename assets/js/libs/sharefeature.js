@@ -1,6 +1,7 @@
 /*
  * Manages Share Button.
  */
+var geocoder;
 var ShareFeature = {
 
   shortUrl: "",
@@ -22,13 +23,57 @@ var ShareFeature = {
       $("#long_url").val( data.data.url );
       $("#shares").css({ display: "block" });
       $("#share-button").css({ display: "none" });
-      $.ajax("/api/tumblrpost", {
-        type: "POST",
-        data: {
-          shorturl: data.data.url,
-          longurl: longUrl.replace("/share","/embed")
+      if(longUrl.indexOf("/share") > -1){
+        // if blockee has added features, post it to Tumblr
+        if((longUrl.indexOf("center%3D") > -1) || (longUrl.indexOf("location%3D") > -1)){
+          // using StreetView or Google Maps: do reverse geocode before sharing
+          var latlng = "";
+          if(longUrl.indexOf("center%3D") > -1){
+            latlng = longUrl.substring(longUrl.indexOf("center%3D") + 9).replace("%2C",",");
+          }
+          else{
+            latlng = longUrl.substring(longUrl.indexOf("location%3D") + 11).replace("%2C",",");
+          }
+          latlng = latlng.substring(0,latlng.indexOf("%26")).split(",");
+          if(!geocoder){
+            geocoder = new google.maps.Geocoder();
+          }
+          geocoder.geocode({'latLng': new google.maps.LatLng(latlng[0], latlng[1])}, function(geocoded, status){
+            var locationp1 = "";
+            var locationp2 = "";
+            if(status == google.maps.GeocoderStatus.OK){
+              for(var r=0;r<geocoded[0].address_components.length;r++){
+                if(geocoded[0].address_components[r].types.indexOf("locality") > -1){
+                  locationp1 = geocoded[0].address_components[r].long_name;
+                }
+                if(geocoded[0].address_components[r].types.indexOf("administrative_area_level_1") > -1){
+                  locationp2 = geocoded[0].address_components[r].short_name;
+                }
+              }
+            }
+            console.log(locationp1 + ", " + locationp2);
+            $.ajax("/api/tumblrpost", {
+              type: "POST",
+              data: {
+                shorturl: data.data.url,
+                longurl: longUrl.replace("/share","/embed"),
+                location: locationp1 + ", " + locationp2
+              }
+            });
+          });
         }
-      });
+        else{
+          // using custom image: share now
+          $.ajax("/api/tumblrpost", {
+            type: "POST",
+            data: {
+              shorturl: data.data.url,
+              longurl: longUrl.replace("/share","/embed"),
+              location: ""
+            }
+          });
+        }
+      }
     });
   },
 
