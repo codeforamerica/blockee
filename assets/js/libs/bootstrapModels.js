@@ -114,8 +114,8 @@ var Models = [
     "id": "hopscotch", 
     "x": 0, 
     "y": 0, 
-    "width": 143, 
-    "height": 89,
+    "width": 140, 
+    "height": 81,
     "image": "hopscotch", 
     "images": [
       "hopscotch/hopscotch01.png",
@@ -208,6 +208,20 @@ var Models = [
     ]
   },
   {
+    "id": "antigraffiti", 
+    "x": 0, 
+    "y": 0, 
+    "width": 50, 
+    "height": 110,
+    "image": "antigraffiti", 
+    "images": [
+      "antigraffiti/antigraffiti01.png",
+      "antigraffiti/antigraffiti02.png",
+      "antigraffiti/antigraffiti03.png",
+      "antigraffiti/antigraffiti04.png"
+    ]
+  },
+  {
     "id": "solar-street-light", 
     "x": 0, 
     "y": 0, 
@@ -219,22 +233,6 @@ var Models = [
       "solar-street-light/solar-street-light02.png",
       "solar-street-light/solar-street-light03.png",
       "solar-street-light/solar-street-light04.png"
-    ]
-  },
-  {
-    "id": "speedbump", 
-    "x": 0, 
-    "y": 0, 
-    "width": 150, 
-    "height": 81,
-    "image": "speedbump", 
-    "images": [
-      "speedbump/speedbump01.png",
-      "speedbump/speedbump02.png",
-      "speedbump/speedbump03.png",
-      "speedbump/speedbump04.png",
-      "speedbump/speedbump05.png",
-      "speedbump/speedbump06.png"
     ]
   },  
   {
@@ -251,6 +249,49 @@ var Models = [
       "lamp/lamp04.png"
     ]
   },
+  {
+    "id": "speedbump", 
+    "x": 0, 
+    "y": 0, 
+    "width": 140, 
+    "height": 72,
+    "image": "speedbump", 
+    "images": [
+      "speedbump/speedbump01.png",
+      "speedbump/speedbump02.png",
+      "speedbump/speedbump03.png",
+      "speedbump/speedbump04.png",
+      "speedbump/speedbump05.png",
+      "speedbump/speedbump06.png"
+    ]
+  }, 
+  {
+    "id": "drain", 
+    "x": 0, 
+    "y": 0, 
+    "width": 120, 
+    "height": 61,
+    "image": "drain", 
+    "images": [
+      "drain/drain01.png",
+      "drain/drain02.png",
+      "drain/drain03.png"
+    ]
+  }, 
+    {
+    "id": "crosswalk", 
+    "x": 0, 
+    "y": 0, 
+    "width": 140, 
+    "height": 62,
+    "image": "crosswalk", 
+    "images": [
+      "crosswalk/crosswalk01.png",
+      "crosswalk/crosswalk02.png",
+      "crosswalk/crosswalk03.png",
+      "crosswalk/crosswalk04.png"
+    ]
+  },  
   {
     "id": "bikerack", 
     "x": 0, 
