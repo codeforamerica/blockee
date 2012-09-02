@@ -247,3 +247,13 @@ button {
       zoom: 0.5;
    }
 }
+
+.tumblrtype{
+  font-family: 'Rokkitt', Times, serif;
+  font-size: 18px;
+  font-weight: normal;
+  line-height: 110%;
+  border-style: solid;
+  border-width: 0px;
+  
+}
