@@ -233,7 +233,9 @@ module.exports = function(grunt) {
     var stylus = require("stylus");
     var express = require("express");
     var formidable = require("formidable");
+    var im = require("imagemagick");
     var knox = require("knox");
+
     var under = require("underscore");
 
     log.writeln("starting monolithic server");
@@ -273,7 +275,7 @@ module.exports = function(grunt) {
       });
     });
 
-    // Serve a data
+    // Upload an image to AWS
     site.post("/api/upload", function(req, res) {
       log.writeln("got an API request");
 
@@ -291,22 +293,35 @@ module.exports = function(grunt) {
         var timestamp = new Date() / 1000;
         var filename = timestamp + encodeURIComponent(file["name"]);
         if (file && file["size"] > 0) {
-          client.putFile(file["path"], '/uploads/' + filename, {"Content-Type": "image/jpeg"}, function(err, aws_res){
-            if(aws_res.statusCode == 200){
-              res.send(
-                '<textarea data-type="application/json">' +
-                '{"url": "https://s3.amazonaws.com/' + block_bucket + '/uploads/' + filename + '", "result": "success"}' +
-                '</textarea>'
-              );
+          im.resize({
+            srcPath: file["path"],
+            width: 600,
+            height: 435,
+            dstPath: file["path"]
+          }, function(err, stout, stderr){
+            if(err){
+              log.writeln("image incorrectly resized!");
+              log.writeln(err);
             } else {
-              console.log(aws_res);
-              res.send(
-                '<textarea data-type="application/json">' +
-                '{"result": "unsuccess"}' +
-                '</textarea>'
-              );
+              log.writeln("image correctly resized!");
             }
-          });
+             client.putFile(file["path"], '/uploads/' + filename, {"Content-Type": "image/jpeg"}, function(err, aws_res){
+              if(aws_res.statusCode == 200){
+                res.send(
+                  '<textarea data-type="application/json">' +
+                  '{"url": "https://s3.amazonaws.com/' + block_bucket + '/uploads/' + filename + '", "result": "success"}' +
+                  '</textarea>'
+                );
+              } else {
+                console.log(aws_res);
+                res.send(
+                  '<textarea data-type="application/json">' +
+                  '{"result": "unsuccess"}' +
+                  '</textarea>'
+                );
+              }
+            });
+         });
         }
       });
     });
