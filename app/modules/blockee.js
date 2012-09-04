@@ -1148,10 +1148,10 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       blockState = "";
       displayedBlingCollection.each(function(bling) {
         if (bling.get("onStage")) {
-          blockState = blockState.concat('{"x":' + bling.get("x") +    
-                                         ',"y":' + bling.get("y") +
-                                         ',"width":' + bling.get("width") +
-                                         ',"height":' + bling.get("height") +
+          blockState = blockState.concat('{"x":' + Math.round( bling.get("x") ) +    
+                                         ',"y":' + Math.round( bling.get("y") ) +
+                                         ',"width":' + Math.round( bling.get("width") ) +
+                                         ',"height":' + Math.round( bling.get("height") ) +
                                          ',"id":"' + bling.id + '"' +
                                          ',"image":"' + bling.get("image") + '"},');
         }
