@@ -43,12 +43,12 @@ function viewAddress() {
   // SATMAPS: added a section to detect if StreetView isn't open. Capture satmap instead
   if(map.getStreetView().getVisible()){
     // get StreetView static image
-    var lat = map.getStreetView().getPosition().lat();
-    var lng = map.getStreetView().getPosition().lng();
+    var lat = map.getStreetView().getPosition().lat().toFixed(7);
+    var lng = map.getStreetView().getPosition().lng().toFixed(7);
     var positionDetails = "";
 
-    positionDetails += "&heading=" + map.getStreetView().getPov().heading;
-    positionDetails += "&pitch=" + map.getStreetView().getPov().pitch;
+    positionDetails += "&heading=" + map.getStreetView().getPov().heading.toFixed(4);
+    positionDetails += "&pitch=" + map.getStreetView().getPov().pitch.toFixed(4);
     positionDetails += "&fov=90";
 
     SVurl = 
@@ -61,8 +61,8 @@ function viewAddress() {
   }
   else{
     // get Google Maps satellite static image
-    var lat = map.getCenter().lat();
-    var lng = map.getCenter().lng();
+    var lat = map.getCenter().lat().toFixed(7);
+    var lng = map.getCenter().lng().toFixed(7);
     var zoom = map.getZoom();
     
     SVurl =
