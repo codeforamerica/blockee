@@ -948,6 +948,12 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     var loadedImages = 0;
     var imagesToLoad = 0;
 
+    // if I didn't load bootstrap modal library
+    // refresh page to load
+    if( ! $("#loading").modal ){
+      document.location.reload(true);
+    }
+
     // show the spinner
     $("#loading").css("visibility", "visible");
 
