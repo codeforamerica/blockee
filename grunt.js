@@ -235,10 +235,12 @@ module.exports = function(grunt) {
     var formidable = require("formidable");
     var im = require("imagemagick");
     var knox = require("knox");
-
-    var under = require("underscore");
+    var http = require("http");
+    var querystring = require("querystring");
+    var OAuth = require("oauth").OAuth;
 
     log.writeln("starting monolithic server");
+    var session = {};
 
     // If the server is already available use it.
     var site = options.server ? options.server() : express();
@@ -327,10 +329,20 @@ module.exports = function(grunt) {
     });
     
     // Post the blockee to Tumblr
-    var http = require("http");
-    var querystring = require("querystring");
     site.post("/api/tumblrpost", function(req, res) {
       log.writeln("got a Tumblr post");
+      var tumblr_consumer_key = process.env.OAUTH_CONSUMER_KEY;
+      var tumblr_secret = process.env.OAUTH_SECRET_KEY;
+      var tumblr_access_key = process.env.OAUTH_ACCESS_KEY;
+      var tumblr_access_key_secret = process.env.OAUTH_ACCESS_KEY_SECRET;
+
+      oauth = new OAuth(
+        "http://www.tumblr.com/oauth/request_token",
+        "http://www.tumblr.com/oauth/access_token",
+        tumblr_consumer_key, tumblr_secret,
+        "1.0A", "http://localhost:8000/api/oauth/callback", "HMAC-SHA1"
+      );
+
       var body = "";
       req.pause();
       req.addListener('data', function (chunk) {
@@ -346,42 +358,60 @@ module.exports = function(grunt) {
         var location = body.location || "";
         log.writeln("location written as: " + location);
 
-        var tumblr_mail = "nickd@codeforamerica.org";
-        var tumblr_pass = "fixmyblock";
-        if(process.env.TUMBLR_EMAIL){
-          tumblr_mail = process.env.TUMBLR_EMAIL;
-          tumblr_pass = process.env.TUMBLR_PASSWORD;
-        }
-
-        var post_data = querystring.stringify({
-          "email": tumblr_mail,
-          "password": tumblr_pass,
-          "type": "regular",
+        var post_data = {
+          "type": "text",
           "title": location,
           "body": "<iframe src='" + longurl + "' width='505' scrolling='no' height='410' marginwidth='0' marginheight='0' frameborder='no'></iframe><br/><a href='" + shorturl + "'>View on Blockee.org</a>",
           "tags": "blockee",
           "format": "html"
-        });
-        var post_options = {
-          host: "www.tumblr.com",
-          path: "/api/write",
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': post_data.length
-          }
         };
-        var post_req = http.request(post_options, function(tmb){
-          tmb.on('data', function (chunk) {
+        var post_req = oauth.post("http://api.tumblr.com/v2/blog/blockeedotorg.tumblr.com/post",
+                                  tumblr_access_key, tumblr_access_key_secret,
+                                  post_data);
+        post_req.addListener('response', function(response){
+          response.addListener('data', function(chunk){
             console.log(chunk);
           });
+          response.addListener('end', function () {
+            console.log('--- END ---')
+          });
         });
-        post_req.write(post_data);
-        post_req.end();
-
         res.send({});
       });
       req.resume();
+    });
+
+    // OAuth testing
+    site.get("/api/oauth", function(req, res){
+        var tumblr_consumer_key = process.env.OAUTH_CONSUMER_KEY
+        var tumblr_secret = process.env.OAUTH_SECRET_KEY
+
+        oauth = new OAuth(
+          "http://www.tumblr.com/oauth/request_token",
+          "http://www.tumblr.com/oauth/access_token",
+          tumblr_consumer_key, tumblr_secret,
+          "1.0A", "http://localhost:8000/api/oauth/callback", "HMAC-SHA1"
+        );
+
+        oauth.getOAuthRequestToken(function(err, token, token_secret, parsedQueryString){
+          session.oauth = {};
+          session.oauth.token = token;
+          session.oauth.token_secret = token_secret;
+          res.redirect("http://www.tumblr.com/oauth/authorize?oauth_token=" + token);
+        });
+    });
+
+    // OAuth callback
+    site.get("/api/oauth/callback", function(req, res){
+      res.send("Got an oauth callback");
+      session.oauth.verifier = req.query.oauth_verifier;
+      oauth.getOAuthAccessToken(session.oauth.token, session.oauth.token_secret, session.oauth.verifier, function(error, oauth_access_token, oauth_access_token_secret, results){
+        console.log(oauth_access_token);
+        console.log(oauth_access_token_secret);
+        session.oauth.access_token = oauth_access_token;
+        session.oauth.access_token_secret = oauth_access_token_secret;
+
+      });
     });
 
     // Serve a site
