@@ -365,17 +365,13 @@ module.exports = function(grunt) {
           "tags": "blockee",
           "format": "html"
         };
-        var post_req = oauth.post("http://api.tumblr.com/v2/blog/blockeedotorg.tumblr.com/post",
-                                  tumblr_access_key, tumblr_access_key_secret,
-                                  post_data);
-        post_req.addListener('response', function(response){
-          response.addListener('data', function(chunk){
-            console.log(chunk);
+        oauth.post("http://api.tumblr.com/v2/blog/blockeedotorg.tumblr.com/post",
+          tumblr_access_key, tumblr_access_key_secret,
+          post_data,
+          function(err, data) {
+            if (err) { console.log (err) };
+            console.log(data);
           });
-          response.addListener('end', function () {
-            console.log('--- END ---')
-          });
-        });
         res.send({});
       });
       req.resume();
