@@ -1,4 +1,3 @@
-
 ////
 // Googlylogo Namespace
 ////
@@ -12,15 +11,17 @@ var Googlylogo = {
     // set up my settings for the face
     var scale = 1;  
     var color = '#1B1918';
-    var eyeL = new this.Eye( 15 * scale, 15 * scale, 8 * scale, color );
+    var eyeL = new this.Eye( 15* scale, 15 * scale, 8 * scale, color );
     var eyeR = new this.Eye( 33 * scale, 15 * scale, 8 * scale, color );
     var eyeballL = new this.Eyeball( 15 * scale, 15 * scale, 3 * scale, eyeL.radius - 4 * scale, color );
     var eyeballR = new this.Eyeball( 33 * scale, 15 * scale, 3 * scale, eyeR.radius - 4 * scale, color );
 
-    this.blockee(ctx);
+    this.drblockee(ctx);
+    
 
     this.blocklogo(ctx);
-    
+    this.glasses(ctx);
+      
     ctx.lineWidth = 1 * scale;
     eyeL.paint(ctx);
     eyeR.paint(ctx);
@@ -56,6 +57,7 @@ var Googlylogo = {
         eyeR.paint(ctx);
         eyeballL.paint(ctx);
         eyeballR.paint(ctx);
+        that.glasses(ctx);
 
     });
 },
@@ -110,159 +112,371 @@ var Googlylogo = {
      };
 },
 
-  blockee: function(ctx) {
+    drblockee: function(ctx) {
 
-  // blockee/Group
-  ctx.save();
+       // drblockee/Path
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(1.3, 30.3);
+      ctx.lineTo(46.7, 30.3);
+      ctx.lineTo(46.7, 0.0);
+      ctx.lineTo(1.3, 0.0);
+      ctx.lineTo(1.3, 30.3);
+      ctx.closePath();
+      ctx.fillStyle = "rgb(152, 152, 152)";
+      ctx.fill();
 
-  // blockee/Group/Path
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(83.6, 24.4);
-  ctx.lineTo(95.7, 24.4);
-  ctx.lineTo(95.7, 30.5);
-  ctx.lineTo(77.5, 30.5);
-  ctx.lineTo(77.5, 0.2);
-  ctx.lineTo(83.6, 0.2);
-  ctx.lineTo(83.6, 24.4);
-  ctx.closePath();
-  ctx.fillStyle = "rgb(152, 152, 152)";
-  ctx.fill();
+      // drblockee/Path
+      ctx.beginPath();
+      ctx.moveTo(19.3, 15.2);
+      ctx.bezierCurveTo(19.3, 19.0, 16.1, 22.1, 12.3, 22.1);
+      ctx.bezierCurveTo(8.4, 22.1, 5.3, 19.0, 5.3, 15.2);
+      ctx.bezierCurveTo(5.3, 11.3, 8.4, 8.2, 12.3, 8.2);
+      ctx.bezierCurveTo(16.1, 8.2, 19.3, 11.3, 19.3, 15.2);
+      ctx.closePath();
+      ctx.fillStyle = "rgb(252, 253, 253)";
+      ctx.fill();
 
-  // blockee/Group/Compound Path
-  ctx.beginPath();
+      // drblockee/Path
+      ctx.beginPath();
+      ctx.moveTo(16.2, 17.2);
+      ctx.bezierCurveTo(16.2, 19.3, 14.5, 21.1, 12.3, 21.1);
+      ctx.bezierCurveTo(10.1, 21.1, 8.3, 19.3, 8.3, 17.2);
+      ctx.bezierCurveTo(8.3, 15.0, 10.1, 13.2, 12.3, 13.2);
+      ctx.bezierCurveTo(14.5, 13.2, 16.2, 15.0, 16.2, 17.2);
+      ctx.closePath();
+      ctx.fillStyle = "rgb(0, 0, 0)";
+      ctx.fill();
 
-  // blockee/Group/Compound Path/Path
-  ctx.moveTo(119.9, 0.2);
-  ctx.lineTo(119.9, 30.5);
-  ctx.lineTo(101.8, 30.5);
-  ctx.lineTo(101.8, 0.2);
-  ctx.lineTo(119.9, 0.2);
-  ctx.closePath();
+      // drblockee/Path
+      ctx.beginPath();
+      ctx.moveTo(40.6, 15.2);
+      ctx.bezierCurveTo(40.6, 19.0, 37.5, 22.1, 33.6, 22.1);
+      ctx.bezierCurveTo(29.8, 22.1, 26.6, 19.0, 26.6, 15.2);
+      ctx.bezierCurveTo(26.6, 11.3, 29.8, 8.2, 33.6, 8.2);
+      ctx.bezierCurveTo(37.5, 8.2, 40.6, 11.3, 40.6, 15.2);
+      ctx.closePath();
+      ctx.fillStyle = "rgb(252, 253, 253)";
+      ctx.fill();
 
-  // blockee/Group/Compound Path/Path
-  ctx.moveTo(113.9, 24.4);
-  ctx.lineTo(113.9, 6.2);
-  ctx.lineTo(107.8, 6.2);
-  ctx.lineTo(107.8, 24.4);
-  ctx.lineTo(113.9, 24.4);
-  ctx.lineTo(113.9, 24.4);
-  ctx.closePath();
-  ctx.fill();
+      // drblockee/Path
+      ctx.beginPath();
+      ctx.moveTo(36.6, 17.2);
+      ctx.bezierCurveTo(36.6, 19.3, 34.8, 21.1, 32.6, 21.1);
+      ctx.bezierCurveTo(30.4, 21.1, 28.7, 19.3, 28.7, 17.2);
+      ctx.bezierCurveTo(28.7, 15.0, 30.4, 13.2, 32.6, 13.2);
+      ctx.bezierCurveTo(34.8, 13.2, 36.6, 15.0, 36.6, 17.2);
+      ctx.closePath();
+      ctx.fillStyle = "rgb(0, 0, 0)";
+      ctx.fill();
 
-  // blockee/Group/Path
-  ctx.beginPath();
-  ctx.moveTo(144.2, 6.2);
-  ctx.lineTo(132.1, 6.2);
-  ctx.lineTo(132.1, 24.4);
-  ctx.lineTo(144.2, 24.4);
-  ctx.lineTo(144.2, 30.5);
-  ctx.lineTo(126.0, 30.5);
-  ctx.lineTo(126.0, 0.2);
-  ctx.lineTo(144.2, 0.2);
-  ctx.lineTo(144.2, 6.2);
-  ctx.closePath();
-  ctx.fill();
+      // drblockee/Path
+      ctx.beginPath();
+      ctx.moveTo(19.3, 15.2);
+      ctx.bezierCurveTo(19.3, 20.2, 15.2, 24.2, 10.3, 24.2);
+      ctx.bezierCurveTo(5.3, 24.2, 1.3, 20.2, 1.3, 15.2);
+      ctx.bezierCurveTo(1.3, 10.3, 5.3, 6.2, 10.3, 6.2);
+      ctx.bezierCurveTo(15.2, 6.2, 19.3, 10.3, 19.3, 15.2);
+      ctx.closePath();
+      ctx.lineWidth = 2.6;
+      ctx.stroke();
 
-  // blockee/Group/Compound Path
-  ctx.beginPath();
+      // drblockee/Path
+      ctx.beginPath();
+      ctx.moveTo(41.9, 15.2);
+      ctx.bezierCurveTo(41.9, 20.2, 37.9, 24.2, 32.9, 24.2);
+      ctx.bezierCurveTo(27.9, 24.2, 23.9, 20.2, 23.9, 15.2);
+      ctx.bezierCurveTo(23.9, 10.3, 27.9, 6.2, 32.9, 6.2);
+      ctx.bezierCurveTo(37.9, 6.2, 41.9, 10.3, 41.9, 15.2);
+      ctx.closePath();
+      ctx.stroke();
 
-  // blockee/Group/Compound Path/Path
-  ctx.moveTo(150.3, 0.2);
-  ctx.lineTo(156.3, 0.2);
-  ctx.lineTo(156.3, 12.3);
-  ctx.lineTo(162.4, 12.3);
-  ctx.lineTo(162.4, 18.3);
-  ctx.lineTo(156.3, 18.3);
-  ctx.lineTo(156.3, 30.5);
-  ctx.lineTo(150.3, 30.5);
-  ctx.lineTo(150.3, 0.2);
-  ctx.closePath();
+      // drblockee/Path
+      ctx.beginPath();
+      ctx.moveTo(19.3, 15.2);
+      ctx.lineTo(23.6, 15.2);
+      ctx.lineWidth = 2.0;
+      ctx.stroke();
 
-  // blockee/Group/Compound Path/Path
-  ctx.moveTo(162.4, 0.2);
-  ctx.lineTo(162.4, 12.3);
-  ctx.lineTo(168.4, 12.3);
-  ctx.lineTo(168.4, 0.2);
-  ctx.lineTo(162.4, 0.2);
-  ctx.closePath();
+      // drblockee/Path
+      ctx.beginPath();
+      ctx.moveTo(41.9, 15.2);
+      ctx.lineTo(46.7, 15.2);
+      ctx.stroke();
 
-  // blockee/Group/Compound Path/Path
-  ctx.moveTo(168.4, 18.3);
-  ctx.lineTo(162.4, 18.3);
-  ctx.lineTo(162.4, 30.5);
-  ctx.lineTo(168.4, 30.5);
-  ctx.lineTo(168.4, 18.3);
-  ctx.closePath();
-  ctx.fill();
+      // drblockee/Group
 
-  // blockee/Group/Path
-  ctx.beginPath();
-  ctx.moveTo(192.7, 6.2);
-  ctx.lineTo(180.6, 6.2);
-  ctx.lineTo(180.6, 12.3);
-  ctx.lineTo(186.6, 12.3);
-  ctx.lineTo(186.6, 18.3);
-  ctx.lineTo(180.6, 18.3);
-  ctx.lineTo(180.6, 24.4);
-  ctx.lineTo(192.7, 24.4);
-  ctx.lineTo(192.7, 30.5);
-  ctx.lineTo(174.5, 30.5);
-  ctx.lineTo(174.5, 0.2);
-  ctx.lineTo(192.7, 0.2);
-  ctx.lineTo(192.7, 6.2);
-  ctx.closePath();
-  ctx.fill();
+      // drblockee/Group/Compound Path
+      ctx.save();
+      ctx.beginPath();
 
-  // blockee/Group/Path
-  ctx.beginPath();
-  ctx.moveTo(216.9, 6.2);
-  ctx.lineTo(204.8, 6.2);
-  ctx.lineTo(204.8, 12.3);
-  ctx.lineTo(210.9, 12.3);
-  ctx.lineTo(210.9, 18.3);
-  ctx.lineTo(204.8, 18.3);
-  ctx.lineTo(204.8, 24.4);
-  ctx.lineTo(216.9, 24.4);
-  ctx.lineTo(216.9, 30.5);
-  ctx.lineTo(198.7, 30.5);
-  ctx.lineTo(198.7, 0.2);
-  ctx.lineTo(216.9, 0.2);
-  ctx.lineTo(216.9, 6.2);
-  ctx.closePath();
-  ctx.fill();
+      // drblockee/Group/Compound Path/Path
+      ctx.moveTo(70.2, 6.2);
+      ctx.lineTo(76.1, 6.2);
+      ctx.lineTo(76.1, 24.1);
+      ctx.lineTo(70.2, 24.1);
+      ctx.lineTo(70.2, 30.0);
+      ctx.lineTo(58.3, 30.0);
+      ctx.lineTo(58.3, 0.3);
+      ctx.lineTo(70.2, 0.3);
+      ctx.lineTo(70.2, 6.2);
+      ctx.closePath();
 
-  // blockee/Compound Path
-  ctx.restore();
-  ctx.beginPath();
+      // drblockee/Group/Compound Path/Path
+      ctx.moveTo(70.0, 6.2);
+      ctx.lineTo(64.3, 6.2);
+      ctx.lineTo(64.3, 24.1);
+      ctx.lineTo(70.0, 24.1);
+      ctx.lineTo(70.0, 6.2);
+      ctx.closePath();
+      ctx.fillStyle = "rgb(152, 152, 152)";
+      ctx.fill();
 
-  // blockee/Compound Path/Path
-  ctx.moveTo(53.3, 0.2);
-  ctx.lineTo(53.3, 30.5);
-  ctx.lineTo(71.4, 30.5);
-  ctx.lineTo(71.4, 0.2);
-  ctx.lineTo(53.3, 0.2);
-  ctx.closePath();
+      // drblockee/Group/Compound Path
+      ctx.beginPath();
 
-  // blockee/Compound Path/Path
-  ctx.moveTo(65.1, 24.4);
-  ctx.lineTo(59.3, 24.4);
-  ctx.lineTo(59.3, 18.3);
-  ctx.lineTo(65.1, 18.3);
-  ctx.lineTo(65.1, 24.4);
-  ctx.closePath();
+      // drblockee/Group/Compound Path/Path
+      ctx.moveTo(99.9, 30.0);
+      ctx.lineTo(94.0, 30.0);
+      ctx.lineTo(94.0, 18.1);
+      ctx.lineTo(88.0, 18.1);
+      ctx.lineTo(88.0, 30.0);
+      ctx.lineTo(82.1, 30.0);
+      ctx.lineTo(82.1, 0.3);
+      ctx.lineTo(99.9, 0.3);
+      ctx.lineTo(99.9, 12.2);
+      ctx.lineTo(94.0, 12.2);
+      ctx.lineTo(94.0, 18.1);
+      ctx.lineTo(99.9, 18.1);
+      ctx.lineTo(99.9, 30.0);
+      ctx.closePath();
 
-  // blockee/Compound Path/Path
-  ctx.moveTo(65.1, 12.3);
-  ctx.lineTo(59.3, 12.3);
-  ctx.lineTo(59.3, 6.2);
-  ctx.lineTo(65.1, 6.2);
-  ctx.lineTo(65.1, 12.3);
-  ctx.closePath();
-  ctx.fillStyle = "rgb(152, 152, 152)";
-  ctx.fill();
-  ctx.restore();
-},
+      // drblockee/Group/Compound Path/Path
+      ctx.moveTo(93.7, 12.2);
+      ctx.lineTo(93.7, 6.2);
+      ctx.lineTo(88.0, 6.2);
+      ctx.lineTo(88.0, 12.2);
+      ctx.lineTo(93.7, 12.2);
+      ctx.closePath();
+      ctx.fill();
+
+      // drblockee/Group/Compound Path
+      ctx.beginPath();
+
+      // drblockee/Group/Compound Path/Path
+      ctx.moveTo(105.8, 24.1);
+      ctx.lineTo(111.8, 24.1);
+      ctx.lineTo(111.8, 30.0);
+      ctx.lineTo(105.8, 30.0);
+      ctx.lineTo(105.8, 24.1);
+      ctx.closePath();
+      ctx.fill();
+
+      // drblockee/Group
+      ctx.restore();
+
+      // drblockee/Group/Group
+      ctx.save();
+
+      // drblockee/Group/Group/Compound Path
+      ctx.save();
+      ctx.beginPath();
+
+      // drblockee/Group/Group/Compound Path/Path
+      ctx.moveTo(150.1, 24.3);
+      ctx.lineTo(162.2, 24.3);
+      ctx.lineTo(162.2, 30.4);
+      ctx.lineTo(144.0, 30.4);
+      ctx.lineTo(144.0, 0.1);
+      ctx.lineTo(150.1, 0.1);
+      ctx.lineTo(150.1, 24.3);
+      ctx.closePath();
+      ctx.fillStyle = "rgb(152, 152, 152)";
+      ctx.fill();
+
+      // drblockee/Group/Group/Compound Path
+      ctx.beginPath();
+
+      // drblockee/Group/Group/Compound Path/Path
+      ctx.moveTo(186.4, 0.1);
+      ctx.lineTo(186.4, 30.4);
+      ctx.lineTo(168.2, 30.4);
+      ctx.lineTo(168.2, 0.1);
+      ctx.lineTo(186.4, 0.1);
+      ctx.closePath();
+
+      // drblockee/Group/Group/Compound Path/Path
+      ctx.moveTo(180.4, 24.3);
+      ctx.lineTo(180.4, 6.1);
+      ctx.lineTo(174.3, 6.1);
+      ctx.lineTo(174.3, 24.3);
+      ctx.lineTo(180.4, 24.3);
+      ctx.closePath();
+      ctx.fill();
+
+      // drblockee/Group/Group/Compound Path
+      ctx.beginPath();
+
+      // drblockee/Group/Group/Compound Path/Path
+      ctx.moveTo(210.7, 6.1);
+      ctx.lineTo(198.5, 6.1);
+      ctx.lineTo(198.5, 24.3);
+      ctx.lineTo(210.7, 24.3);
+      ctx.lineTo(210.7, 30.4);
+      ctx.lineTo(192.5, 30.4);
+      ctx.lineTo(192.5, 0.1);
+      ctx.lineTo(210.7, 0.1);
+      ctx.lineTo(210.7, 6.1);
+      ctx.closePath();
+      ctx.fill();
+
+      // drblockee/Group/Group/Compound Path
+      ctx.beginPath();
+
+      // drblockee/Group/Group/Compound Path/Path
+      ctx.moveTo(216.7, 0.1);
+      ctx.lineTo(222.8, 0.1);
+      ctx.lineTo(222.8, 12.2);
+      ctx.lineTo(228.9, 12.2);
+      ctx.lineTo(228.9, 18.3);
+      ctx.lineTo(222.8, 18.3);
+      ctx.lineTo(222.8, 30.4);
+      ctx.lineTo(216.7, 30.4);
+      ctx.lineTo(216.7, 0.1);
+      ctx.closePath();
+
+      // drblockee/Group/Group/Compound Path/Path
+      ctx.moveTo(228.9, 0.1);
+      ctx.lineTo(228.9, 12.2);
+      ctx.lineTo(234.9, 12.2);
+      ctx.lineTo(234.9, 0.1);
+      ctx.lineTo(228.9, 0.1);
+      ctx.closePath();
+
+      // drblockee/Group/Group/Compound Path/Path
+      ctx.moveTo(234.9, 18.3);
+      ctx.lineTo(228.9, 18.3);
+      ctx.lineTo(228.9, 30.4);
+      ctx.lineTo(234.9, 30.4);
+      ctx.lineTo(234.9, 18.3);
+      ctx.closePath();
+      ctx.fill();
+
+      // drblockee/Group/Group/Compound Path
+      ctx.beginPath();
+
+      // drblockee/Group/Group/Compound Path/Path
+      ctx.moveTo(259.2, 6.1);
+      ctx.lineTo(247.0, 6.1);
+      ctx.lineTo(247.0, 12.2);
+      ctx.lineTo(253.1, 12.2);
+      ctx.lineTo(253.1, 18.3);
+      ctx.lineTo(247.0, 18.3);
+      ctx.lineTo(247.0, 24.3);
+      ctx.lineTo(259.2, 24.3);
+      ctx.lineTo(259.2, 30.4);
+      ctx.lineTo(241.0, 30.4);
+      ctx.lineTo(241.0, 0.1);
+      ctx.lineTo(259.2, 0.1);
+      ctx.lineTo(259.2, 6.1);
+      ctx.closePath();
+      ctx.fill();
+
+      // drblockee/Group/Group/Compound Path
+      ctx.beginPath();
+
+      // drblockee/Group/Group/Compound Path/Path
+      ctx.moveTo(283.4, 6.1);
+      ctx.lineTo(271.3, 6.1);
+      ctx.lineTo(271.3, 12.2);
+      ctx.lineTo(277.4, 12.2);
+      ctx.lineTo(277.4, 18.3);
+      ctx.lineTo(271.3, 18.3);
+      ctx.lineTo(271.3, 24.3);
+      ctx.lineTo(283.4, 24.3);
+      ctx.lineTo(283.4, 30.4);
+      ctx.lineTo(265.2, 30.4);
+      ctx.lineTo(265.2, 0.1);
+      ctx.lineTo(283.4, 0.1);
+      ctx.lineTo(283.4, 6.1);
+      ctx.closePath();
+      ctx.fill();
+
+      // drblockee/Group/Compound Path
+      ctx.restore();
+      ctx.beginPath();
+
+      // drblockee/Group/Compound Path/Path
+      ctx.moveTo(119.7, 0.1);
+      ctx.lineTo(119.7, 30.4);
+      ctx.lineTo(137.9, 30.4);
+      ctx.lineTo(137.9, 0.1);
+      ctx.lineTo(119.7, 0.1);
+      ctx.closePath();
+
+      // drblockee/Group/Compound Path/Path
+      ctx.moveTo(131.6, 24.3);
+      ctx.lineTo(125.8, 24.3);
+      ctx.lineTo(125.8, 18.3);
+      ctx.lineTo(131.6, 18.3);
+      ctx.lineTo(131.6, 24.3);
+      ctx.closePath();
+
+      // drblockee/Group/Compound Path/Path
+      ctx.moveTo(131.6, 12.2);
+      ctx.lineTo(125.8, 12.2);
+      ctx.lineTo(125.8, 6.1);
+      ctx.lineTo(131.6, 6.1);
+      ctx.lineTo(131.6, 12.2);
+      ctx.closePath();
+      ctx.fillStyle = "rgb(152, 152, 152)";
+      ctx.fill();
+
+      // drblockee/Guide
+      ctx.restore();
+
+      // drblockee/Guide
+      ctx.restore();
+    },
+    
+    glasses: function(ctx) {
+
+      // glasses/Path
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(19.3, 10.3);
+      ctx.bezierCurveTo(19.3, 15.2, 15.2, 19.3, 10.3, 19.3);
+      ctx.bezierCurveTo(5.3, 19.3, 1.3, 15.2, 1.3, 10.3);
+      ctx.bezierCurveTo(1.3, 5.3, 5.3, 1.3, 10.3, 1.3);
+      ctx.bezierCurveTo(15.2, 1.3, 19.3, 5.3, 19.3, 10.3);
+      ctx.closePath();
+      ctx.lineWidth = 2.6;
+      ctx.stroke();
+
+      // glasses/Path
+      ctx.beginPath();
+      ctx.moveTo(41.9, 10.3);
+      ctx.bezierCurveTo(41.9, 15.2, 37.9, 19.3, 32.9, 19.3);
+      ctx.bezierCurveTo(27.9, 19.3, 23.9, 15.2, 23.9, 10.3);
+      ctx.bezierCurveTo(23.9, 5.3, 27.9, 1.3, 32.9, 1.3);
+      ctx.bezierCurveTo(37.9, 1.3, 41.9, 5.3, 41.9, 10.3);
+      ctx.closePath();
+      ctx.stroke();
+
+      // glasses/Path
+      ctx.beginPath();
+      ctx.moveTo(19.3, 10.2);
+      ctx.lineTo(23.6, 10.2);
+      ctx.lineWidth = 2.0;
+      ctx.stroke();
+
+      // glasses/Path
+      ctx.beginPath();
+      ctx.moveTo(41.9, 10.3);
+      ctx.lineTo(46.7, 10.2);
+      ctx.stroke();
+      ctx.restore();
+    },
 
   blocklogo: function(ctx) {
 

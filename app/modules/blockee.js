@@ -1114,7 +1114,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
   // the decorate view
   Blockee.Views.Decorate = Backbone.View.extend({
-    template: "app/templates/decorate",
+    template: "app/templates/decoratedrtest",
      
     events: {
       "click #street-view": handleStreetViewClick,
