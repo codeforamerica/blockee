@@ -44,8 +44,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
                    "/assets/img/locked.png",
                    "/assets/img/unlocked.png",
                    "/assets/img/rotate.png",
-                   "/assets/img/preview_help_hide_edge.png",
-                   "/assets/img/preview_help_show_edge.png"];
+                   "/assets/img/preview_mode.png",
+                   "/assets/img/preview_mode_over.png"];
 
   // application configuration
   // XXX: this probably should be in a config file
@@ -698,15 +698,15 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         x: 628,
         y: 35,
         image: previewHelpHideEdge,
-        width: 70,
-        height: 33
+        width: 51,
+        height: 31
       });
       var helpImageShowEdge = new Kinetic.Image({
         x: 628,
         y: 35,
         image: previewHelpShowEdge,
-        width: 70,
-        height: 33
+        width: 51,
+        height: 31
       });      
       var image = new Kinetic.Image({
         x: 630,
