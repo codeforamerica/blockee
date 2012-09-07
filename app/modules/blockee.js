@@ -43,7 +43,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
                    "/assets/img/trash_over.png",
                    "/assets/img/locked.png",
                    "/assets/img/unlocked.png",
-                   "/assets/img/rotate.png"];
+                   "/assets/img/rotate.png",
+                   "/assets/img/preview_mode.png",
+                   "/assets/img/preview_mode_over.png"];
 
   // application configuration
   // XXX: this probably should be in a config file
@@ -685,7 +687,27 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     preview.src = buttonIcons[0];
     var previewOver = new Image();
     previewOver.src = buttonIcons[4];
+
+    var previewHelpHideEdge = new Image();
+    previewHelpHideEdge.src = buttonIcons[9];
+    var previewHelpShowEdge = new Image();
+    previewHelpShowEdge.src = buttonIcons[10];    
+    
     preview.onload = function() {
+      var helpImageHideEdge = new Kinetic.Image({
+        x: 628,
+        y: 35,
+        image: previewHelpHideEdge,
+        width: 51,
+        height: 31
+      });
+      var helpImageShowEdge = new Kinetic.Image({
+        x: 628,
+        y: 35,
+        image: previewHelpShowEdge,
+        width: 51,
+        height: 31
+      });      
       var image = new Kinetic.Image({
         x: 630,
         y: 0,
@@ -693,6 +715,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         width: 41,
         height: 27 
       });
+      var currentHelpImage;
       image.on("mouseover", function() {
         var options = {
           "target": this,
@@ -700,6 +723,13 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
           "cursor": "pointer"
         };
         vent.trigger("icon-hover", options);
+
+        // help image show
+        var helpImage = (previewOn === false) ? helpImageHideEdge : helpImageShowEdge;
+        layer.add(helpImage);
+        currentHelpImage = helpImage;
+
+        stage.draw();
       });
       image.on("mouseout", function() {
         var options = {
@@ -708,10 +738,22 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
           "cursor": "default"
         };
         vent.trigger("icon-hover", options);
+        
+        // help image hide
+        if (currentHelpImage) {
+          layer.remove(currentHelpImage);
+          currentHelpImage = null;
+          stage.draw();
+        }
       });
       image.on("click", function() {
         self.cyclePreview();
+        // help image hide
+        layer.remove(currentHelpImage);
+        currentHelpImage = null;
+        stage.draw();
       });
+
       layer.add(image);
       stage.draw();
     };
@@ -721,8 +763,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     trash.src = buttonIcons[2];
     var trashOver = new Image();
     trashOver.src = buttonIcons[5];
-    trash.onload = function() {
-  
+    trash.onload = function() {  
       var image = new Kinetic.Image({
         x: 630,
         y: 394,
