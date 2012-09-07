@@ -104,14 +104,16 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       // set the size of each image based on anchor drag
       var resizingImages = group.get(".image");
       if(width && height) {
+        group.setOffset( (width-10) / 2, (height-10) / 2 );
+      
         for (var i=0; i<resizingImages.length; i++) {
           
           var image = resizingImages[i];
           image.setSize(width - 10, height - 10);
 
           // set the position of each image based on anchor drag
-          image.setPosition(topLeft.attrs.x + (width-10) / 2 + 7, topLeft.attrs.y + (height-10) / 2 + 7);
-          image.setOffset((width-10) / 2, (height-10) / 2);
+          //image.setPosition(topLeft.attrs.x + (width-10) / 2 + 7, topLeft.attrs.y + (height-10) / 2 + 7);
+          //image.setOffset((width-10) / 2, (height-10) / 2);
 
           //image.setPosition(topLeft.attrs.x, topLeft.attrs.y);
 
@@ -391,7 +393,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       image.setHeight(bling.get("height"));
       //if(((window.location + "").indexOf("rotation") == -1) && ((window.location + "").indexOf("width") > -1)){
         // loading an old blockee with different coordinates
-        image.setOffset({
+        group.setOffset({
           x: bling.get("width") / 2,
           y: bling.get("height") / 2
         });
