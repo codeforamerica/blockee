@@ -6,3 +6,4 @@ assets/img/bling/output/
 *~
 *.swo
 .amazon_keys
+.env
