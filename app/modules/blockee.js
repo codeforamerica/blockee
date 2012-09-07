@@ -405,7 +405,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   }
 
   function handleRemixClick(e) {
-    console.log(Backbone.history.fragment.replace("share", ""));
     app.router.navigate(Backbone.history.fragment.replace("share", ""), {trigger: true});
   }
 

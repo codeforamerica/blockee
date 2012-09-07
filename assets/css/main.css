@@ -262,6 +262,6 @@ button {
   cursor: pointer;
   text-decoration:underline;
 }
-#remix :hover { 
+#remix:hover { 
     color: #ffc0cb; 
 }
