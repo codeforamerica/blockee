@@ -7,17 +7,18 @@
       <span></br>Good for what ails your block.</span>
     </div>
     <div class="row-fluid">
-      <span>1. Choose an image from your computer or Google Maps</span>
+      <span>1. Where is the problem?</span>
     </div>
     <div class="row-fluid">
-      <input type="button" id="file-view" value="Upload a File" class="btn"/>
-      <br/>
-      <input type="button" id="street-view" value="Use Google Street View" class="btn"/>
+      <input id="placesearch" class="input-small" value="155 9th St, SF" onkeypress="checkForEnter(event)"/>
+  <a class="btn" style="vertical-align:top;" onclick="viewAddress()">Search</a>
       <br/>
     </div>
     <div class="row-fluid">
-      <span>2. Drag & drop some Civic Bling</span>
+      <span>2. What is wrong?</span>
+      <input type="text" data-provide="typeahead" data source = "["Graffitti", "Pothole"]">
     </div>
+
       <!-- /adding share feature -->
     <div class="row-fluid">
       3. Share the link, start a block party:
