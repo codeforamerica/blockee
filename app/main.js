@@ -81,7 +81,7 @@ function(app, $, Backbone, Blockee) {
 
       var decorate = new Blockee.Views.Decorate();
       this.showView(decorate);
-      Blockee.loadContent(blocksObject, backgroundURL);
+      Blockee.loadContent(blocksObject, backgroundURL, decorate, {showBlingBox: true, reshare: true});
     },
 
     /*

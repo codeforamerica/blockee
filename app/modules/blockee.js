@@ -402,7 +402,11 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   // pass FB publishing call to ShareFeature library
   function handleFBPublish(e) {
     ShareFeature.FBPublish();
-  }  
+  }
+
+  function handleRemixClick(e) {
+    app.router.navigate(Backbone.history.fragment.replace("share", ""), {trigger: true});
+  }
 
   function handleFormSubmit(e) {
     e.preventDefault();
@@ -540,7 +544,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         vent.trigger("move", self);
 
         // don't clone clones
-        this.off("dragstart");     
+        this.off("dragstart");  
       });
 
       // when group is touched, move it to top and redraw stage
@@ -584,8 +588,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         // XXX: need to build id generator
         clone.id = clone.id + cloneId++;
         clone.cid = clone.id;
-
-        //console.log(clone);
 
         // tell the system to render and manage clone 
         // and refresh blingCollection with clone (removing old "self")
@@ -631,9 +633,18 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     // load images that are used for bling objects
     // when done, callback to initializeStage method with
     // any blocks passed in the URL for preview to finish
-    // rendering    
+    // rendering
+
+    // if we are re-rendering shared image, we need to remeber image type state
+    if(Backbone.history.fragment.indexOf("bkg=image") > 0) {
+      backgroundType = "image";            
+    }
+
+    if (null === previewBlocks) {
+      displayedBlingCollection.reset();
+    }
+
     this.preInitStage(options); 
-    //this.loadImages(previewBlocks);    
     this.initializeStage(previewBlocks, imageUrl, options);    
     
     // draw the googly eyed logo
@@ -675,7 +686,6 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     blingBoxEdgeLayer = new Kinetic.Layer();
     stage.add(blingBoxEdgeLayer);
     
-
     if (!options.showBlingBox) {
       // short circuit here; we don't need to draw anything else
       stage.draw();
@@ -824,7 +834,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   /*
    * Load any bling objects defined in URL
    */ 
-  Blockee.loadPreviewBling = function(blocks) {
+  Blockee.loadPreviewBling = function(blocks, options) {
 
     // XXX: Due to bug in Kinetic code, you need to have at
     // least one child in the layer before you attempt to remove something
@@ -837,23 +847,36 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       var x = (block.hasOwnProperty("x")) ? block.x : 20;
       var y = (block.hasOwnProperty("y")) ? block.y : 100;
       var width = (block.hasOwnProperty("width")) ? block.width : 100;
-      var height = (block.hasOwnProperty("height")) ? block.height : 100;        
-      var bling = blingCollection.get(block.image).clone();
+      var height = (block.hasOwnProperty("height")) ? block.height : 100;
+      var id = (block.hasOwnProperty("id")) ? block.id : "default_id";
+      cloneId++; // we have to simulate update of clone id so remixed blings don't collide with old
+      var bling = blingCollection.get(block.image).clone();      
       bling.set("x", x);
       bling.set("y", y);
       bling.set("width", width);
       bling.set("height", height);
+      bling.set("id", id);
 
-      var previewGroup = createGroup(bling, {draggable: false});
-      previewBlings.push(previewGroup);
-      layer.add(previewGroup);
+      if (!options.reshare) {
+        var previewGroup = createGroup(bling, {draggable: false});
+        previewBlings.push(previewGroup);
+        layer.add(previewGroup);
+      } else {
+        bling.group = bling.render();
+        bling.set("onStage", true);
+        bling.group.off("dragstart");               
+        layer.add(bling.group);
+        displayedBlingCollection.add(bling);
+        addResizeAnchors(bling);
+      }
+
       stage.draw();
     }
   };
 
-  Blockee.shareBlingPrep = function(previewBlocks, imageUrl) {    
+  Blockee.shareBlingPrep = function(previewBlocks, imageUrl, options) {    
       if (previewBlocks) {
-        Blockee.loadPreviewBling(previewBlocks);
+        Blockee.loadPreviewBling(previewBlocks, options);
         // show image url
         // moved background to #bgdiv inside stage
         $("#bgdiv")[0].style
@@ -967,9 +990,13 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     // call load images with callback functions (as partials) to draw the rest of the
     // display after images are loaded
     var func;
-    if (!options.showBlingBox) {
-      func = _.bind(Blockee.shareBlingPrep, null, previewBlocks, imageUrl);
+    if (!options.showBlingBox || options.reshare) {
+      func = _.bind(Blockee.shareBlingPrep, null, previewBlocks, imageUrl, options);
       this.loadImages(previewBlocks, func);
+      if (options.reshare) {
+        var func2 = _.bind(loadBlings, null, BACKWARDS, 1.0);
+        this.loadImages(null, func2); 
+      }
     } else {
       func = _.bind(loadBlings, null, BACKWARDS, 1.0);
       this.loadImages(previewBlocks, func);
@@ -1057,7 +1084,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
     events: {
       "click #share-button": handleShareClick,
-      "click #fb-button": handleFBPublish
+      "click #fb-button": handleFBPublish,
+      "click #remix": handleRemixClick
     },
 
     initialize: function(options) {
@@ -1122,7 +1150,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       "click #fb-button": handleFBPublish,
       "click #file-view": handleFilePickerToggle,
       "click #make-upload": handleFilePickerUpload,
-      "submit #upload-form": handleFormSubmit
+      "submit #upload-form": handleFormSubmit      
     },
 
     initialize: function(options) {
@@ -1172,7 +1200,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
       var encodedImageURL;
 
-      if(backgroundType == "image"){
+      if(backgroundType == "image"){      
         encodedImageURL = "+bkg=image+" + encodeURIComponent(googleStreetsUrl.replace("https://s3.amazonaws.com/blockee_prod/uploads/", ""));
       } else {
         // SATMAPS: don't assume /streetview? to allow SATMAPS
