@@ -837,12 +837,15 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       var x = (block.hasOwnProperty("x")) ? block.x : 20;
       var y = (block.hasOwnProperty("y")) ? block.y : 100;
       var width = (block.hasOwnProperty("width")) ? block.width : 100;
-      var height = (block.hasOwnProperty("height")) ? block.height : 100;        
-      var bling = blingCollection.get(block.image).clone();
+      var height = (block.hasOwnProperty("height")) ? block.height : 100;
+      var id = (block.hasOwnProperty("id")) ? block.id : "default_id";
+      cloneId++; // we have to simulate update of clone id so remixed blings don't collide with old
+      var bling = blingCollection.get(block.image).clone();      
       bling.set("x", x);
       bling.set("y", y);
       bling.set("width", width);
       bling.set("height", height);
+      bling.set("id", id);
 
       if (!options.reshare) {
         var previewGroup = createGroup(bling, {draggable: false});
