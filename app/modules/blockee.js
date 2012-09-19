@@ -635,6 +635,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     // any blocks passed in the URL for preview to finish
     // rendering
 
+    // if we are re-rendering shared image, we need to remeber image type state
     if(Backbone.history.fragment.indexOf("bkg=image") > 0) {
       backgroundType = "image";            
     }
