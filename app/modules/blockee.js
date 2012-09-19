@@ -634,6 +634,11 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     // when done, callback to initializeStage method with
     // any blocks passed in the URL for preview to finish
     // rendering    
+
+    if (null === previewBlocks) {
+      displayedBlingCollection.reset();
+    }
+
     this.preInitStage(options); 
     this.initializeStage(previewBlocks, imageUrl, options);    
     
