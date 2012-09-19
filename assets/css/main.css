@@ -257,3 +257,11 @@ button {
   border-width: 0px;
   
 }
+
+#remix {
+  cursor: pointer;
+  text-decoration:underline;
+}
+#remix:hover { 
+    color: #ffc0cb; 
+}
