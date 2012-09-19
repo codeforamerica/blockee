@@ -633,7 +633,11 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     // load images that are used for bling objects
     // when done, callback to initializeStage method with
     // any blocks passed in the URL for preview to finish
-    // rendering    
+    // rendering
+
+    if(Backbone.history.fragment.indexOf("bkg=image") > 0) {
+      backgroundType = "image";            
+    }
 
     if (null === previewBlocks) {
       displayedBlingCollection.reset();
@@ -1195,7 +1199,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
       var encodedImageURL;
 
-      if(backgroundType == "image"){
+      if(backgroundType == "image"){      
         encodedImageURL = "+bkg=image+" + encodeURIComponent(googleStreetsUrl.replace("https://s3.amazonaws.com/blockee_prod/uploads/", ""));
       } else {
         // SATMAPS: don't assume /streetview? to allow SATMAPS
