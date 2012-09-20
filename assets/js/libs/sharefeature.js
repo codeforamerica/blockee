@@ -42,6 +42,7 @@ var ShareFeature = {
             var locationp1 = "";
             var locationp2;
             var locationp3;
+            var locationp4;
             if(status == google.maps.GeocoderStatus.OK){
               for(var r=0;r<geocoded[0].address_components.length;r++){
                 if(geocoded[0].address_components[r].types.indexOf("locality") > -1){
@@ -53,9 +54,12 @@ var ShareFeature = {
                 if(geocoded[0].address_components[r].types.indexOf("country") > -1){
                   locationp3 = geocoded[0].address_components[r].long_name;
                 }
+                if(geocoded[0].address_components[r].types.indexOf("sublocality") > -1){
+                  locationp4 = geocoded[0].address_components[r].long_name;
+                }
               }
             }
-            console.log(locationp1 + ", " + ((locationp2 || locationp3) || ""));
+            console.log((locationp1 || locationp4) + ", " + ((locationp2 || locationp3) || ""));
             $.ajax("/api/tumblrpost", {
               type: "POST",
               data: {
