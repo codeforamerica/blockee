@@ -59,13 +59,13 @@ var ShareFeature = {
                 }
               }
             }
-            console.log((locationp1 || locationp4) + ", " + ((locationp2 || locationp3) || ""));
+            //console.log((locationp1 || locationp4) + ", " + ((locationp2 || locationp3) || ""));
             $.ajax("/api/tumblrpost", {
               type: "POST",
               data: {
                 shorturl: data.data.url,
                 longurl: longUrl.replace("/share","/embed"),
-                location: locationp1 + ", " + ((locationp2 || locationp3) || "")
+                location: ((locationp1 || locationp4) || "") + ", " + ((locationp2 || locationp3) || "")
               }
             });
           });
