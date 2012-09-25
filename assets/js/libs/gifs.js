@@ -20,7 +20,7 @@ var GIFs = {
       var bkgParams = bkgString.substring(bkgString.indexOf("+") + 1);
 
       if(bkgType == "image"){
-        GIFs.createComposite("/api/proxy?src=" + bkgParams);
+        GIFs.createComposite("/api/proxy?src=https://s3.amazonaws.com/blockee_prod/uploads/" + bkgParams);
       } else {
         var bkgURL = "http://maps.googleapis.com/maps/api/" + bkgParams;
         GIFs.createComposite("/api/proxy?src=" + bkgURL);
