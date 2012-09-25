@@ -10,7 +10,8 @@ define([
   "googlystreetview",
   "sharefeature",
   "iframetransport",
-  "filepicker"
+  "filepicker",
+  "gifs"
 ],
 
 function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeature, IFrameTransport, FilePicker) {
