@@ -11,6 +11,16 @@
 
 var GIFs = {
 
+  shorturl: "",
+  location: "",
+
+  startGeneration: function(options){
+    GIFs.shorturl = options.shorturl;
+    GIFs.location = options.location;
+
+    GIFs.parseBackground();
+  },
+
   parseBackground: function(){
     var longUrl = "http://blockee.org/" + Backbone.history.fragment;
     var bkgIndex = longUrl.indexOf("bkg");
@@ -30,14 +40,14 @@ var GIFs = {
 
   createComposite: function(url){
     var grabShots = function(bgimage){
-      var grabLimit = 13;  // Number of screenshots to take
+      var grabLimit = 10;  // Number of screenshots to take
       var grabRate  = 100; // Miliseconds. 500 = half a second
       var count     = 0;
 
       var grabber = setInterval(function(){
         if (count >= grabLimit) {
           clearInterval(grabber);
-          $.get("/api/gif-generator/", {stamp: timestamp}, function(data){
+          $.get("/api/gif-generator/", {stamp: timestamp, shorturl: GIFs.shorturl, location: GIFs.location}, function(data){
 
           });
         } else {

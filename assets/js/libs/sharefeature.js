@@ -26,61 +26,54 @@ var ShareFeature = {
       if(longUrl.indexOf("/share") > -1){
         // if blockee has added features, post it to Tumblr
         if((longUrl.indexOf("center%3D") > -1) || (longUrl.indexOf("location%3D") > -1)){
-          // using StreetView or Google Maps: do reverse geocode before sharing
-          var latlng = "";
-          if(longUrl.indexOf("center%3D") > -1){
-            latlng = longUrl.substring(longUrl.indexOf("center%3D") + 9).replace("%2C",",");
+            ShareFeature.getLocation(longUrl);
           }
-          else{
-            latlng = longUrl.substring(longUrl.indexOf("location%3D") + 11).replace("%2C",",");
+      }else{
+        // using custom image: share now
+        GIFs.startGeneration({shorturl: sf.shortUrl});
+      }
+     });
+  },
+
+  getLocation: function(longUrl){
+    if(!geocoder){
+      geocoder = new google.maps.Geocoder();
+    }
+
+    // using StreetView or Google Maps: do reverse geocode before sharing
+    var latlng = "";
+    if(longUrl.indexOf("center%3D") > -1){
+      latlng = longUrl.substring(longUrl.indexOf("center%3D") + 9).replace("%2C",",");
+    }
+    else{
+      latlng = longUrl.substring(longUrl.indexOf("location%3D") + 11).replace("%2C",",");
+    }
+    latlng = latlng.substring(0,latlng.indexOf("%26")).split(",");
+
+    geocoder.geocode({'latLng': new google.maps.LatLng(latlng[0], latlng[1])}, function(geocoded, status){
+      var locationp1 = "";
+      var locationp2;
+      var locationp3;
+      var locationp4;
+      if(status == google.maps.GeocoderStatus.OK){
+        for(var r=0;r<geocoded[0].address_components.length;r++){
+          if(geocoded[0].address_components[r].types.indexOf("locality") > -1){
+            locationp1 = geocoded[0].address_components[r].long_name;
           }
-          latlng = latlng.substring(0,latlng.indexOf("%26")).split(",");
-          if(!geocoder){
-            geocoder = new google.maps.Geocoder();
+          if(geocoded[0].address_components[r].types.indexOf("administrative_area_level_1") > -1){
+            locationp2 = geocoded[0].address_components[r].short_name;
           }
-          geocoder.geocode({'latLng': new google.maps.LatLng(latlng[0], latlng[1])}, function(geocoded, status){
-            var locationp1 = "";
-            var locationp2;
-            var locationp3;
-            var locationp4;
-            if(status == google.maps.GeocoderStatus.OK){
-              for(var r=0;r<geocoded[0].address_components.length;r++){
-                if(geocoded[0].address_components[r].types.indexOf("locality") > -1){
-                  locationp1 = geocoded[0].address_components[r].long_name;
-                }
-                if(geocoded[0].address_components[r].types.indexOf("administrative_area_level_1") > -1){
-                  locationp2 = geocoded[0].address_components[r].short_name;
-                }
-                if(geocoded[0].address_components[r].types.indexOf("country") > -1){
-                  locationp3 = geocoded[0].address_components[r].long_name;
-                }
-                if(geocoded[0].address_components[r].types.indexOf("sublocality") > -1){
-                  locationp4 = geocoded[0].address_components[r].long_name;
-                }
-              }
-            }
-            //console.log((locationp1 || locationp4) + ", " + ((locationp2 || locationp3) || ""));
-            $.ajax("/api/tumblrpost", {
-              type: "POST",
-              data: {
-                shorturl: data.data.url,
-                longurl: longUrl.replace("/share","/embed"),
-                location: ((locationp1 || locationp4) || "") + ", " + ((locationp2 || locationp3) || "")
-              }
-            });
-          });
+          if(geocoded[0].address_components[r].types.indexOf("country") > -1){
+            locationp3 = geocoded[0].address_components[r].long_name;
+          }
+          if(geocoded[0].address_components[r].types.indexOf("sublocality") > -1){
+            locationp4 = geocoded[0].address_components[r].long_name;
+          }
         }
-        else{
-          // using custom image: share now
-          $.ajax("/api/tumblrpost", {
-            type: "POST",
-            data: {
-              shorturl: data.data.url,
-              longurl: longUrl.replace("/share","/embed"),
-              location: ""
-            }
-          });
-        }
+        GIFs.startGeneration({
+          shorturl:  ShareFeature.shortUrl,
+          location: ((locationp1 || locationp4) || "") + ", " + ((locationp2 || locationp3) || "")
+        });
       }
     });
   },

@@ -302,10 +302,53 @@ module.exports = function(grunt) {
 
     site.get("/api/gif-generator", function(req, res){
       log.writeln("time to make a gif");
-      exec("convert tmp/" + req.query.stamp + "*.gif -delay 100 -loop 0 tmp/" + req.query.stamp + "animated.gif", function(err, stdout, stderr){
+      var gifpath = req.query.stamp + "animated.gif";
+      exec("convert tmp/" + req.query.stamp + "*.gif -delay 100 -loop 0 tmp/" + gifpath, function(err, stdout, stderr){
         if(err){
           console.log(err);
         }
+
+        var block_bucket = process.env.AWS_BUCKET
+        var client = knox.createClient({
+          key: process.env.AWS_KEY,
+          secret: process.env.AWS_SECRET,
+          bucket: block_bucket
+        });
+
+        client.putFile("tmp/" + gifpath, "/gifs/" + gifpath, {"Content-Type": "image/gif"}, function(err, aws_res){
+          if(err){
+            log.writeln(err);
+          }else{
+            var tumblr_consumer_key = process.env.OAUTH_CONSUMER_KEY;
+            var tumblr_secret = process.env.OAUTH_SECRET_KEY;
+            var tumblr_access_key = process.env.OAUTH_ACCESS_KEY;
+            var tumblr_access_key_secret = process.env.OAUTH_ACCESS_KEY_SECRET;
+            var shorturl = req.query.shorturl;
+            var oauth = new OAuth(
+              "http://www.tumblr.com/oauth/request_token",
+              "http://www.tumblr.com/oauth/access_token",
+              tumblr_consumer_key, tumblr_secret,
+              "1.0A", "http://localhost:8000/api/oauth/callback", "HMAC-SHA1"
+            );
+
+            var post_data = {
+              "type": "text",
+              "title": req.query.location || "",
+              "body": "<img src='http://s3.amazonaws.com/blockee_prod/gifs/" + gifpath + "'><br/><a href='" + shorturl + "'>View on Blockee.org</a>",
+              "tags": "blockee",
+              "format": "html"
+            };
+
+            oauth.post("http://api.tumblr.com/v2/blog/blockeedotorg.tumblr.com/post",
+              tumblr_access_key, tumblr_access_key_secret,
+              post_data,
+              function(err, data) {
+                if (err) { console.log (err) };
+                console.log(data);
+              }
+            );
+           }
+        });
       });
       res.send("donezo!");
     });
