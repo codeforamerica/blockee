@@ -397,6 +397,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   }
 
   function handleShareClick(e) {
+    this.cyclePreview({preview: true});
     ShareFeature.show();
   }
 
@@ -1151,7 +1152,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       "click #fb-button": handleFBPublish,
       "click #file-view": handleFilePickerToggle,
       "click #make-upload": handleFilePickerUpload,
-      "submit #upload-form": handleFormSubmit      
+      "submit #upload-form": handleFormSubmit
     },
 
     initialize: function(options) {
@@ -1161,6 +1162,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       _.bindAll(this, "initializeStage");
       _.bindAll(this, "removeBling");
       _.bindAll(this, "streetview-reminder");
+      _.bindAll(this, "cyclePreview"); 
       vent.bind("clone", this.addBlingToCollection);
       vent.bind("move", this.updateUrl);
       vent.bind("icon-hover", this.handleIconHover);      
@@ -1284,8 +1286,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       displayedBlingCollection.add(displayBling); 
     },
 
-    cyclePreview: function() {
-      if (previewOn) {
+    cyclePreview: function(options) {
+      if (previewOn || ( options && options.preview == true )) {
         previewOn = false;
         displayedBlingCollection.forEach(function(bling) {
           var group = bling.group;
