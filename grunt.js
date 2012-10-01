@@ -303,7 +303,7 @@ module.exports = function(grunt) {
     site.get("/api/gif-generator", function(req, res){
       log.writeln("time to make a gif");
       var gifpath = req.query.stamp + "animated.gif";
-      exec("convert tmp/" + req.query.stamp + "*.gif -delay 100 -loop 0 tmp/" + gifpath, function(err, stdout, stderr){
+      exec("convert tmp/" + req.query.stamp + "*.gif -delay 50 -colors 128 -loop 0 tmp/" + gifpath, function(err, stdout, stderr){
         if(err){
           console.log(err);
         }

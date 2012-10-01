@@ -41,7 +41,7 @@ var GIFs = {
   createComposite: function(url){
     var grabShots = function(bgimage){
       var grabLimit = 10;  // Number of screenshots to take
-      var grabRate  = 100; // Miliseconds. 500 = half a second
+      var grabRate  = 50; // Miliseconds. 500 = half a second
       var count     = 0;
 
       var grabber = setInterval(function(){
