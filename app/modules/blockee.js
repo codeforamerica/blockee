@@ -45,7 +45,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
                    "/assets/img/unlocked.png",
                    "/assets/img/rotate.png",
                    "/assets/img/preview_mode.png",
-                   "/assets/img/preview_mode_over.png"];
+                   "/assets/img/preview_mode_over.png",
+                   "/assets/img/stickie.png",
+                   "/assets/img/stickie_over.png"];
 
   // application configuration
   // XXX: this probably should be in a config file
@@ -680,7 +682,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       // short circuit here; we don't need to draw anything else
       stage.draw();
       return;
-    }    
+    }   
+     
 
     // preview button                   
     var preview = new Image();
@@ -757,7 +760,35 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       layer.add(image);
       stage.draw();
     };
-    
+     // Stickie button 
+var stick = new Image();
+    stick.src = buttonIcons[11];
+    var stickOver = new Image();
+    stickOver.src = buttonIcons[12];
+stick.onload = function() {
+ var image = new Kinetic.Image({
+        x: 630,
+        y: 200,
+        image: stick,
+        width: 42,
+        height: 42 
+      });
+ var currentHelpImage;
+      image.on("mouseover", function() {
+        var options = {
+          "target": this,
+          "replaceImg": stickOver,
+          "cursor": "pointer"
+        };
+        vent.trigger("icon-hover", options);
+
+        stage.draw();
+      });
+
+ layer.add(image);
+      stage.draw();
+    }
+
     // trash button
     var trash = new Image();
     trash.src = buttonIcons[2];
