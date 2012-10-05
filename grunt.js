@@ -232,12 +232,13 @@ module.exports = function(grunt) {
     var path = require("path");
     var stylus = require("stylus");
     var express = require("express");
-    var formidable = require("formidable");
     var im = require("imagemagick");
     var knox = require("knox");
     var http = require("http");
+    var request = require("request");
     var querystring = require("querystring");
     var OAuth = require("oauth").OAuth;
+    var exec  = require('child_process').exec;
 
     log.writeln("starting monolithic server");
     var session = {};
@@ -250,6 +251,8 @@ module.exports = function(grunt) {
 
     log.writeln(__dirname);
 
+    site.use(express.bodyParser());
+
     // Serve static files
     site.use("/app", express.static(__dirname + '/app'));
     site.use("/assets/js/libs", express.static(__dirname + '/assets/js/libs'));
@@ -257,6 +260,7 @@ module.exports = function(grunt) {
     site.use("/assets/css", express.static(__dirname + '/assets/css'));
     site.use("/assets/img", express.static(__dirname + '/assets/img'));
     site.use("/dist", express.static(__dirname + '/dist'));
+    site.use("/tmp", express.static(__dirname + '/tmp'));
 
     // Serve favicon.ico
     site.use(express.favicon(options.favicon));
@@ -277,12 +281,83 @@ module.exports = function(grunt) {
       });
     });
 
+    site.all("/api/proxy", function(req, res){
+      log.writeln("got a proxy request");
+      var src = decodeURIComponent(req.query.src);
+      request(src).pipe(res);
+    });
+
+    site.post("/api/gifs", function(req, res){
+      log.writeln("got a gif request");
+      // console.log(req.body["shot"]);
+      var base64Data = req.body["img"];
+      base64Data  +=  base64Data.replace('+', ' ');
+      var binaryData = new Buffer(base64Data, 'base64').toString('binary');
+      fs.writeFile("tmp/" + req.body['stamp'] + '-' + req.body['shot'] + ".gif", binaryData, "binary", function(err){
+        if(err)
+          console.log(err);
+      });
+      res.send("ah okay");
+    });
+
+    site.get("/api/gif-generator", function(req, res){
+      log.writeln("time to make a gif");
+      var gifpath = req.query.stamp + "animated.gif";
+      exec("convert tmp/" + req.query.stamp + "*.gif -delay 50 -colors 128 -loop 0 tmp/" + gifpath, function(err, stdout, stderr){
+        if(err){
+          console.log(err);
+        }
+
+        var block_bucket = process.env.AWS_BUCKET
+        var client = knox.createClient({
+          key: process.env.AWS_KEY,
+          secret: process.env.AWS_SECRET,
+          bucket: block_bucket
+        });
+
+        client.putFile("tmp/" + gifpath, "/gifs/" + gifpath, {"Content-Type": "image/gif"}, function(err, aws_res){
+          if(err){
+            log.writeln(err);
+          }else{
+            var tumblr_consumer_key = process.env.OAUTH_CONSUMER_KEY;
+            var tumblr_secret = process.env.OAUTH_SECRET_KEY;
+            var tumblr_access_key = process.env.OAUTH_ACCESS_KEY;
+            var tumblr_access_key_secret = process.env.OAUTH_ACCESS_KEY_SECRET;
+            var shorturl = req.query.shorturl;
+            var oauth = new OAuth(
+              "http://www.tumblr.com/oauth/request_token",
+              "http://www.tumblr.com/oauth/access_token",
+              tumblr_consumer_key, tumblr_secret,
+              "1.0A", "http://localhost:8000/api/oauth/callback", "HMAC-SHA1"
+            );
+
+            var post_data = {
+              "type": "text",
+              "title": req.query.location || "",
+              "body": "<img src='http://s3.amazonaws.com/blockee_prod/gifs/" + gifpath + "'><br/><a href='" + shorturl + "'>View on Blockee.org</a>",
+              "tags": "blockee",
+              "format": "html"
+            };
+
+            oauth.post("http://api.tumblr.com/v2/blog/blockeedotorg.tumblr.com/post",
+              tumblr_access_key, tumblr_access_key_secret,
+              post_data,
+              function(err, data) {
+                if (err) { console.log (err) };
+                console.log(data);
+              }
+            );
+           }
+        });
+      });
+      res.send("donezo!");
+    });
+
     // Upload an image to AWS
     site.post("/api/upload", function(req, res) {
       log.writeln("got an API request");
 
       var block_bucket = process.env.AWS_BUCKET
-      var form = new formidable.IncomingForm();
       var client = knox.createClient({
         key: process.env.AWS_KEY,
         secret: process.env.AWS_SECRET,
@@ -290,42 +365,41 @@ module.exports = function(grunt) {
       });
 
       res.set('Content-Type', 'text/html');
-      form.parse(req, function(err, fields, files) {
-        var file = files["file"];
-        var timestamp = new Date() / 1000;
-        var filename = timestamp + encodeURIComponent(file["name"]);
-        if (file && file["size"] > 0) {
-          im.resize({
-            srcPath: file["path"],
-            width: 600,
-            height: 435,
-            dstPath: file["path"]
-          }, function(err, stout, stderr){
-            if(err){
-              log.writeln("image incorrectly resized!");
-              log.writeln(err);
+      var file = req.files.file;
+      console.log(file);
+      var timestamp = new Date() / 1000;
+      var filename = timestamp + encodeURIComponent(file["name"]);
+      if (file && file.length > 0) {
+        im.resize({
+          srcPath: file["path"],
+          width: 600,
+          height: 435,
+          dstPath: file["path"]
+        }, function(err, stout, stderr){
+          if(err){
+            log.writeln("image incorrectly resized!");
+            log.writeln(err);
+          } else {
+            log.writeln("image correctly resized!");
+          }
+           client.putFile(file["path"], '/uploads/' + filename, {"Content-Type": "image/jpeg"}, function(err, aws_res){
+            if(aws_res.statusCode == 200){
+              res.send(
+                '<textarea data-type="application/json">' +
+                '{"url": "https://s3.amazonaws.com/' + block_bucket + '/uploads/' + filename + '", "result": "success"}' +
+                '</textarea>'
+              );
             } else {
-              log.writeln("image correctly resized!");
+              console.log(aws_res);
+              res.send(
+                '<textarea data-type="application/json">' +
+                '{"result": "unsuccess"}' +
+                '</textarea>'
+              );
             }
-             client.putFile(file["path"], '/uploads/' + filename, {"Content-Type": "image/jpeg"}, function(err, aws_res){
-              if(aws_res.statusCode == 200){
-                res.send(
-                  '<textarea data-type="application/json">' +
-                  '{"url": "https://s3.amazonaws.com/' + block_bucket + '/uploads/' + filename + '", "result": "success"}' +
-                  '</textarea>'
-                );
-              } else {
-                console.log(aws_res);
-                res.send(
-                  '<textarea data-type="application/json">' +
-                  '{"result": "unsuccess"}' +
-                  '</textarea>'
-                );
-              }
-            });
+          });
          });
         }
-      });
     });
     
     // Post the blockee to Tumblr

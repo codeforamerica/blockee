@@ -19,6 +19,7 @@ require.config({
     sharefeature: "../assets/js/libs/sharefeature",
     iframetransport: "../assets/js/libs/jquery.iframe-transport",
     filepicker: "../assets/js/libs/filepicker",
+    gifs: "../assets/js/libs/gifs",
     models: "../assets/js/libs/bootstrapModels"
   },
 
@@ -51,6 +52,10 @@ require.config({
     filepicker: {
       deps: ["jquery", "bootstrap"],
       exports: "FilePicker"
+    },
+    gifs: {
+      deps: ["jquery"],
+      exports: "GIFs"
     },
     models: {
       exports: "Models"

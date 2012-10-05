@@ -3,6 +3,7 @@
 node_modules
 assets/img/bling/output/
 /dist
+/tmp
 *~
 *.swo
 .amazon_keys
