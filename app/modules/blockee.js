@@ -787,7 +787,7 @@ stick.onload = function() {
 
  layer.add(image);
       stage.draw();
-    }
+    };
 
     // trash button
     var trash = new Image();
