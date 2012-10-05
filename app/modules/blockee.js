@@ -1242,6 +1242,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
        */
       $("#shares").css({ display: "none" });
       $("#share-button").css({ display: "block" });
+      this.cyclePreview({ preview: false });
     },
 
     /*
