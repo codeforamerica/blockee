@@ -47,6 +47,8 @@ var GIFs = {
       var grabber = setInterval(function(){
         if (count >= grabLimit) {
           clearInterval(grabber);
+          $("#loading").css("visibility", "hidden");
+
           $.get("/api/gif-generator/", {stamp: timestamp, shorturl: GIFs.shorturl, location: GIFs.location}, function(data){
 
           });

@@ -397,6 +397,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
   }
 
   function handleShareClick(e) {
+    $("#loading").css("visibility", "visible");
     this.cyclePreview({preview: true});
     ShareFeature.show();
   }
