@@ -472,7 +472,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       "height": 0,
       "onStage": false,
       "image": "",
-      "rotation": 0,
+      "rotation": 0
     },
 
     /*
