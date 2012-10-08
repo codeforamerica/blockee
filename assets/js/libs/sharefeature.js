@@ -27,6 +27,8 @@ var ShareFeature = {
         // if blockee has added features, post it to Tumblr
         if((longUrl.indexOf("center%3D") > -1) || (longUrl.indexOf("location%3D") > -1)){
             ShareFeature.getLocation(longUrl);
+          } else if(longUrl.indexOf("bkg=image") > 1){
+            GIFs.startGeneration({shorturl: sf.shortUrl});
           }
       }else{
         // using custom image: share now
