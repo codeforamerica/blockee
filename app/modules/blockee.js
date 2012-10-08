@@ -77,6 +77,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       var rotate = group.get(".rotate")[0];   
 
       // update anchor positions
+      var width = topRight.attrs.x - topLeft.attrs.x;
+      var height = bottomLeft.attrs.y - topLeft.attrs.y; 
+
       switch (activeAnchor.getName()) {
         case "topLeft":
           topRight.attrs.y = topLeft.attrs.y;
@@ -89,15 +92,12 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         case "bottomLeft":
           bottomRight.attrs.y = activeAnchor.attrs.y;
           topLeft.attrs.x = activeAnchor.attrs.x;
-          break;          
+          break; 
         case "bottomRight":
           bottomLeft.attrs.y = activeAnchor.attrs.y;
           topRight.attrs.x = activeAnchor.attrs.x;
           break;
-      }         
-
-      var width = topRight.attrs.x - topLeft.attrs.x;
-      var height = bottomLeft.attrs.y - topLeft.attrs.y;        
+      }       
 
       // save to use when updating the bling object's position
       group.attrs.resizeYAdj = topLeft.attrs.y + 7;
@@ -105,26 +105,28 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
 
       // set the size of each image based on anchor drag
       var resizingImages = group.get(".image");
+      //var old_group_pos = { x: group.getPosition().x * 1.0, y: group.getPosition().y * 1.0 };
+
       if(width && height) {
         for (var i=0; i<resizingImages.length; i++) {
           
           var image = resizingImages[i];
+          //var old_img_size = image.getSize();
+          //console.log("image size");
+          //console.log(old_img_size);
           image.setSize(width - 10, height - 10);
 
-          // set the position of each image based on anchor drag
-          image.setPosition(topLeft.attrs.x + 7, topLeft.attrs.y + 7);
-
-          //image.setPosition(topLeft.attrs.x, topLeft.attrs.y);
+          // re-center rotation
+          image.setOffset( (width - 10) / 2 , (height - 10) / 2 );
+          //group.setPosition( old_group_pos.x + (width - 10 - old_img_size.width) / 2, old_group_pos.y + (height - 10 - old_img_size.height) / 2);
+          //image.setOffset( (width - 10) / 2 , (height - 10) / 2 );
+          image.setPosition( topLeft.attrs.x + 7 + (width - 10) / 2 , topLeft.attrs.y + 7 + (height - 10) / 2 );
+          //image.setPosition( topLeft.attrs.x + 7 , topLeft.attrs.y + 7 );
 
           // also move and make the anchorBox bigger to fix new image size
           anchorBox.setSize(width, height);
           anchorBox.attrs.x = topLeft.attrs.x + 2;
           anchorBox.attrs.y = topLeft.attrs.y + 2;          
-          
-          // re-center rotation
-          // XXX: Updating offset does not seem to work
-          //image.setOffset(width / 2 - 60, height / 2 - 60);
-          //image.setOffset( (bling.get("width")) / 2, (bling.get("height")) / 2 );
 
           // also move the lock and rotate buttons
           // XXX: In current implementation, this'll cause a problem if the 
@@ -133,8 +135,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
           // XXX: Commenting for now because version 1 won't use lock and rotate
           // lock.attrs.x = anchorBox.getX() + anchorBox.getWidth() + 5;
           // lock.attrs.y = anchorBox.getY() + anchorBox.getHeight() - 16;
-          // rotate.attrs.x = anchorBox.getX() + anchorBox.getWidth() + 5;
-          // rotate.attrs.y = anchorBox.getY() + anchorBox.getHeight() - 35;
+          rotate.attrs.x = anchorBox.getX() + anchorBox.getWidth() + 5;
+          rotate.attrs.y = anchorBox.getY() + anchorBox.getHeight() - 35;
         }
       }
 
@@ -288,24 +290,28 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     //   group.add(image);      
     // };
 
-    // var rotate = new Image();
-    // rotate.src = buttonIcons[8];
-    // rotate.onload = function() {   
-    //   var image = new Kinetic.Image({
-    //     x: anchorBox.getX() + anchorBox.getWidth() + 5,
-    //     y: anchorBox.getY() + anchorBox.getHeight() - 35,
-    //     image: rotate,
-    //     width: 17,
-    //     height: 17,
-    //     name: "rotate"
-    //   });
-    //   image.on("click", function() { 
-    //     controlBox.moveToTop();
-    //     console.log(group);    
-    //     group.rotateDeg(20);
-    //   });
-    //   group.add(image);    
-    // };    
+    var rotate = new Image();
+    rotate.src = buttonIcons[8];
+    rotate.onload = function() {   
+      var image = new Kinetic.Image({
+        x: anchorBox.getX() + anchorBox.getWidth() + 5,
+        y: anchorBox.getY() + anchorBox.getHeight() - 35,
+        image: rotate,
+        width: 17,
+        height: 17,
+        name: "rotate"
+      });
+      image.on("click", function() { 
+        //controlBox.moveToTop();
+        //console.log(group.get(".image"));
+        for(var i = 0; i < group.get(".image").length; i++){
+          group.get(".image")[i].rotateDeg(20);
+        }
+        bling.set("rotation", (bling.get("rotation") + 20) % 360);
+        vent.trigger("move", bling);
+      });
+      group.add(image);    
+    };    
   }
 
   /*
@@ -327,6 +333,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     var group = new Kinetic.Group({
       x: bling.get("x"),
       y: bling.get("y"),
+      rotation: bling.get("rotation"),
       draggable: draggable,
       resizeYAdj: 0,
       resizeXAdj: 0     
@@ -337,15 +344,22 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     //var imageCollection = bling.get("images");
 
     for (var i=0; i<imageCollection.length; i++) {
+      var compatibleOffset = { x: bling.get("width") / 2, y: bling.get("height") / 2 };
+      var myurl = window.location + "";
+      if(myurl.indexOf("share") > -1 && myurl.indexOf("angle") == -1){
+        compatibleOffset = { x: 0, y: 0 };
+      }
       var image = new Kinetic.Image({
         x: 0,
         y: 0,
         image: imageCollection[i],
-        name: "image"
-        //offset: {x: bling.get("width") / 2, y: bling.get("height") / 2}
+        name: "image",
+        width: bling.get("width"),
+        height: bling.get("height"),
+        offset: compatibleOffset
+        //offset: { x: 0, y: 0 }
       });
-      image.setWidth(bling.get("width"));
-      image.setHeight(bling.get("height"));
+      //group.setOffset(bling.get("width") / 2, bling.get("height") / 2);
       group.add(image);
     }       
     
@@ -457,7 +471,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       "width": 0,
       "height": 0,
       "onStage": false,
-      "image": ""
+      "image": "",
+      "rotation": 0,
     },
 
     /*
@@ -540,7 +555,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         self.set("y", this.getY() + this.attrs.resizeYAdj);       
 
         self.set("width", image.getWidth());
-        self.set("height", image.getHeight()); 
+        self.set("height", image.getHeight());
               
         // view should respond (update url) to handle moved bling
         vent.trigger("move", self);
@@ -850,6 +865,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       var y = (block.hasOwnProperty("y")) ? block.y : 100;
       var width = (block.hasOwnProperty("width")) ? block.width : 100;
       var height = (block.hasOwnProperty("height")) ? block.height : 100;
+      var rotation = (block.hasOwnProperty("angle")) ? block.angle : 0;
       var id = (block.hasOwnProperty("id")) ? block.id : "default_id";
       cloneId++; // we have to simulate update of clone id so remixed blings don't collide with old
       var bling = blingCollection.get(block.image).clone();      
@@ -857,6 +873,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       bling.set("y", y);
       bling.set("width", width);
       bling.set("height", height);
+      bling.set("rotation", rotation / 180 * Math.PI );
       bling.set("id", id);
 
       if (!options.reshare) {
@@ -1230,6 +1247,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
                                          ',"y":' + Math.round( bling.get("y") ) +
                                          ',"width":' + Math.round( bling.get("width") ) +
                                          ',"height":' + Math.round( bling.get("height") ) +
+                                         ',"angle":' + Math.round( bling.get("rotation") ) +
                                          ',"id":"' + bling.id + '"' +
                                          ',"image":"' + bling.get("image") + '"},');
         }
@@ -1292,6 +1310,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         previewOn = false;
         displayedBlingCollection.forEach(function(bling) {
           var group = bling.group;
+          group.get(".rotate")[0].show();
           group.attrs.anchors.forEach(function(anchor) {
             anchor.show();
           });
@@ -1301,6 +1320,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
         previewOn = true;
         displayedBlingCollection.forEach(function(bling) {
           var group = bling.group;
+          group.get(".rotate")[0].hide();
           group.attrs.anchors.forEach(function(anchor) {
             anchor.hide();
           });
@@ -1387,8 +1407,8 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     // XXX: This sucks, need to put blings in conistent size boxes
     for (var i=0; i<blingBoxCollection.models.length; i++) {
       var bling = blingBoxCollection.models[i];
-      bling.set("x", xLocation);
-      bling.set("y", 480);
+      bling.set("x", xLocation + 60);
+      bling.set("y", 520);
       blingBoxLayer.add(bling.render());
 
       xLocation += 150;
