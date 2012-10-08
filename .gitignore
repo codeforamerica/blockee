@@ -3,8 +3,8 @@
 node_modules
 assets/img/bling/output/
 /dist
-/tmp
 *~
+/tmp/*.gif
 *.swo
 .amazon_keys
 .env
