@@ -17,7 +17,8 @@ var GIFs = {
   startGeneration: function(options){
     GIFs.shorturl = options.shorturl;
     GIFs.location = options.location;
-
+    GIFs.callback = function(gifurl, locationName, bitly){ };
+    GIFs.callback = options.callback || GIFs.callback;
     GIFs.parseBackground();
   },
 
@@ -87,6 +88,8 @@ var GIFs = {
           $.post("/api/gifs", {shot: count, stamp: timestamp, img: outcanv.toDataURL("image/png").replace("data:image/png;base64,", "")}, function(data){
              console.log(data);
           });
+          
+          GIFs.callback( "http://s3.amazonaws.com/blockee_prod/gifs/" + timestamp + "animated.gif", GIFs.location, GIFs.shorturl );
         }
       }
     }

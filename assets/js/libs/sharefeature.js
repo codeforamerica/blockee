@@ -30,7 +30,8 @@ var ShareFeature = {
           }
       }else{
         // using custom image: share now
-        GIFs.startGeneration({shorturl: sf.shortUrl});
+        // TumblrPublish( "", "", sf.shortUrl );
+        GIFs.startGeneration({shorturl: sf.shortUrl, callback: sf.TumblrPublish });
       }
      });
   },
@@ -70,9 +71,12 @@ var ShareFeature = {
             locationp4 = geocoded[0].address_components[r].long_name;
           }
         }
+        var locationName = ((locationp1 || locationp4) || "") + ", " + ((locationp2 || locationp3) || "");
+        // TumblrPublish( "", locationName, ShareFeature.shortUrl );
         GIFs.startGeneration({
           shorturl:  ShareFeature.shortUrl,
-          location: ((locationp1 || locationp4) || "") + ", " + ((locationp2 || locationp3) || "")
+          location: locationName,
+          callback: ShareFeature.TumblrPublish
         });
       }
     });
