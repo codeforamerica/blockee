@@ -116,6 +116,10 @@ var ShareFeature = {
     };
     
     FB.ui(obj, callback);
-  }  
+  },
+  
+  TumblrPublish: function(photosrc, location, bitly) {
+    $("#tumblr-button")[0].href = "http://www.tumblr.com/share/photo?source=" + encodeURIComponent(photosrc) + "&amp;caption=" + encodeURIComponent(location) + "&amp;click_thru=" + encodeURIComponent(bitly);
+  }
 
 }
