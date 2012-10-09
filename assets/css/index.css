@@ -1,2 +1,4 @@
-@import "h5bp.css";
-@import "style.css";
+/* Only import stylesheets here. Make sure to also add them to grunt.js */
+@import "bootstrap.css";
+@import "main.css";
+@import "bootstrap-responsive.css";
