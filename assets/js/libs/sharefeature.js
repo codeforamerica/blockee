@@ -30,7 +30,6 @@ var ShareFeature = {
           }
       }else{
         // using custom image: share now
-        // TumblrPublish( "", "", sf.shortUrl );
         GIFs.startGeneration({shorturl: sf.shortUrl, callback: sf.TumblrPublish });
       }
      });
@@ -72,7 +71,6 @@ var ShareFeature = {
           }
         }
         var locationName = ((locationp1 || locationp4) || "") + ", " + ((locationp2 || locationp3) || "");
-        // TumblrPublish( "", locationName, ShareFeature.shortUrl );
         GIFs.startGeneration({
           shorturl:  ShareFeature.shortUrl,
           location: locationName,
@@ -123,7 +121,9 @@ var ShareFeature = {
   },
   
   TumblrPublish: function(photosrc, location, bitly) {
-    $("#tumblr-button")[0].href = "http://www.tumblr.com/share/photo?source=" + encodeURIComponent(photosrc) + "&amp;caption=" + encodeURIComponent(location) + "&amp;click_thru=" + encodeURIComponent(bitly);
+    //$("#tumblr-button")[0].href = "http://www.tumblr.com/share/photo?source=" + encodeURIComponent(photosrc) + "&amp;caption=" + encodeURIComponent(location) + "&amp;click_thru=" + encodeURIComponent(bitly);
+    $("#tumblr-button")[0].href = "http://www.tumblr.com/share/link?description=" + encodeURIComponent("<img src='" + photosrc + "'/><br/>via Blockee.org") + "&name=" + encodeURIComponent(location) + "&url=" + encodeURIComponent(bitly);
+
   }
 
 }
