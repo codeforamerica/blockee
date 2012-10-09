@@ -1,1 +1,1 @@
-web: bbb release monolithic:release
+web: bbb monolithic:release

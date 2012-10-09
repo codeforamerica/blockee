@@ -58,16 +58,13 @@ If you do, that's a good thing! Because, now you can go to [http://localhost:800
 
 ### Hosting on Heroku
 
-Blockee is actually ready to host on your own Heroku instance. The Procfile defines a web worker that assumes you've created a release distribution of Blockee. To create a release run the following grunt command:
-
-    $ bbb clean
-    $ bbb release
-
-This will remove/update the dist/release files with any changes you might have made. Now you can do the typical heroku create, git push heroku master steps to push the site to your heroku app.
+Blockee is already ready to host on your own Heroku instance. When deploying to Heroku, your javascript and css will be automatically concatenated/compiled for faster loading. You can do the typical heroku create, git push heroku master steps to push the site to your heroku app.
     
-To test your release locally, run the site via the Procfile (this assumes you are somewhat familiar with heroku and have foreman installed). Specifically, run:
+To test this concatenated/compilation release locally, run:
 
-    $ foreman start
+    $ bbb clean release monolithic:release
+    
+This will remove any previously compiled static assets, re-compile static assets, then start your local testing server (but using compiled assets, not development ones). Now visit [http://localhost:8000/](http://localhost:8000/).
 
 ### Thanks!
 
