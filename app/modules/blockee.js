@@ -1289,7 +1289,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
     },
 
     cyclePreview: function(options) {
-      if (previewOn || ( options && options.preview !== true)) {
+       if (( !options && previewOn ) || ( options && options.preview !== true )) {
         previewOn = false;
         displayedBlingCollection.forEach(function(bling) {
           var group = bling.group;
