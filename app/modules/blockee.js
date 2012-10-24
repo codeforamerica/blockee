@@ -1107,7 +1107,10 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       this.$el.html(tmpl());
 
       var googleImagePickerTmpl = app.fetchTemplate("app/templates/_helpful-tips-modal");
-      $(this.el).append(googleImagePickerTmpl);      
+      $(this.el).append(googleImagePickerTmpl);    
+
+      var teamTempl = app.fetchTemplate("app/templates/_team-blockee-modal.html");
+      $(this.el).append(teamTempl); 
       
       return this;
     }
@@ -1190,6 +1193,9 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       
       var filePickerTmpl = app.fetchTemplate("app/templates/_file-picker-modal");
       $(this.el).append(filePickerTmpl);
+
+      var teamTmpl = app.fetchTemplate("app/templates/_team-blockee-modal");
+      $(this.el).append(teamTmpl); 
       
       return this;
     },
