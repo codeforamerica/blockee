@@ -1109,7 +1109,7 @@ function(app, Backbone, Kinetic, Googlylogo, Models, GooglyStreetView, ShareFeat
       var googleImagePickerTmpl = app.fetchTemplate("app/templates/_helpful-tips-modal");
       $(this.el).append(googleImagePickerTmpl);    
 
-      var teamTempl = app.fetchTemplate("app/templates/_team-blockee-modal.html");
+      var teamTempl = app.fetchTemplate("app/templates/_team-blockee-modal");
       $(this.el).append(teamTempl); 
       
       return this;
