@@ -30,10 +30,12 @@ body .row-fluid {
     text-decoration: underline;
 }
 
+
+#teamModal h1 { padding-top: 0;}
+
 #tipsModal a:hover { 
     color: #ffc0cb; 
 }
-
 
 #tipsModal a { 
     color: #000;
