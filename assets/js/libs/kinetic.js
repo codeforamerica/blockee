@@ -4102,7 +4102,7 @@ Kinetic.Shape = Kinetic.Node.extend({
             // color fill
             if(Kinetic.Type._isString(fill)) {
                 context.fillStyle = fill;
-                context.fill(context);
+                context.fill();
             }
             // pattern
             else if(fill.image) {
@@ -4115,7 +4115,7 @@ Kinetic.Shape = Kinetic.Node.extend({
                 }
 
                 context.fillStyle = context.createPattern(fill.image, repeat);
-                context.fill(context);
+                context.fill();
             }
             // linear gradient
             else if(!s.radius && !e.radius) {
@@ -4127,7 +4127,7 @@ Kinetic.Shape = Kinetic.Node.extend({
                     grd.addColorStop(colorStops[n], colorStops[n + 1]);
                 }
                 context.fillStyle = grd;
-                context.fill(context);
+                context.fill();
             }
             // radial gradient
             else if((s.radius || s.radius === 0) && (e.radius || e.radius === 0)) {
@@ -4139,11 +4139,11 @@ Kinetic.Shape = Kinetic.Node.extend({
                     grd.addColorStop(colorStops[n], colorStops[n + 1]);
                 }
                 context.fillStyle = grd;
-                context.fill(context);
+                context.fill();
             }
             else {
                 context.fillStyle = 'black';
-                context.fill(context);
+                context.fill();
             }
             context.restore();
         }
