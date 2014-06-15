@@ -26,6 +26,16 @@
  * THE SOFTWARE.
  */
 
+function fixStroke(ctx, ctx2) {
+  // fix error with context.stroke(context) in Chrome
+  try {
+    ctx.stroke(ctx2);
+  }
+  catch(e) {
+    ctx.stroke();
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////
 //  Global
 ///////////////////////////////////////////////////////////////////////
@@ -4072,11 +4082,11 @@ Kinetic.Shape = Kinetic.Node.extend({
 
             context.lineWidth = strokeWidth || 2;
             context.strokeStyle = stroke || 'black';
-            context.stroke(context);
+            fixStroke(context, context);
             context.restore();
 
             if(appliedShadow) {
-                this.stroke(context);
+                fixStroke(this, context);
             }
         }
     },
@@ -4465,7 +4475,7 @@ Kinetic.Rect = Kinetic.Shape.extend({
         context.closePath();
 
         this.fill(context);
-        this.stroke(context);
+        fixStroke(this, context);
     },
     /**
      * set width and height
@@ -4570,7 +4580,7 @@ Kinetic.Ellipse = Kinetic.Shape.extend({
         context.restore();
         context.closePath();
         this.fill(context);
-        this.stroke(context);
+        fixStroke(this, context);
     },
     /**
      * converts numeric radius into an object
@@ -4644,7 +4654,7 @@ Kinetic.Image = Kinetic.Shape.extend({
             context.rect(0, 0, width, height);
             context.closePath();
             this.fill(context);
-            this.stroke(context);
+            fixStroke(this, context);
 
             // if cropping
             if(this.attrs.crop && this.attrs.crop.width && this.attrs.crop.height) {
@@ -4823,7 +4833,7 @@ Kinetic.Polygon = Kinetic.Shape.extend({
         }
         context.closePath();
         this.fill(context);
-        this.stroke(context);
+        fixStroke(this, context);
     }
 });
 
@@ -4910,7 +4920,7 @@ Kinetic.Text = Kinetic.Shape.extend({
         context.closePath();
 
         this.fill(context);
-        this.stroke(context);
+        fixStroke(this, context);
         /*
          * draw text
          */
@@ -5277,7 +5287,7 @@ Kinetic.Line = Kinetic.Shape.extend({
             context.lineCap = this.attrs.lineCap;
         }
 
-        this.stroke(context);
+        fixStroke(this, context);
     },
     /**
      * draw dashed line.  Written by Phrogz
@@ -5559,7 +5569,7 @@ Kinetic.Star = Kinetic.Shape.extend({
         context.closePath();
 
         this.fill(context);
-        this.stroke(context);
+        fixStroke(this, context);
     }
 });
 
@@ -5636,7 +5646,7 @@ Kinetic.RegularPolygon = Kinetic.Shape.extend({
         }
         context.closePath();
         this.fill(context);
-        this.stroke(context);
+        fixStroke(this, context);
     }
 });
 
@@ -5733,7 +5743,7 @@ Kinetic.Path = Kinetic.Shape.extend({
             }
         }
         this.fill(context);
-        this.stroke(context);
+        fixStroke(this, context);
     }
 });
 
