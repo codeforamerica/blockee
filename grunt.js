@@ -70,8 +70,9 @@ module.exports = function(grunt) {
     // only want to load one stylesheet in index.html.
     mincss: {
       "dist/release/index.css": [
-        "assets/css/h5bp.css",
-        "assets/css/style.css"
+        "assets/css/bootstrap.css",
+        "assets/css/main.css",
+        "assets/css/bootstrap-responsive.css"
       ]
     },
 
@@ -253,13 +254,17 @@ module.exports = function(grunt) {
 
     site.use(express.bodyParser());
 
-    // Serve static files
+    // Serve grunt.js specified static file routes.
+    // Because these come first, they will override the default routes below.
+    if (typeof options.folders !== 'undefined') {
+      for (var path in options.folders) {
+        site.use('/' + path, express.static(__dirname + '/' + options.folders[path]));
+      }
+    }
+
+    // Serve default static file routes
     site.use("/app", express.static(__dirname + '/app'));
-    site.use("/assets/js/libs", express.static(__dirname + '/assets/js/libs'));
-    site.use("/assets/js/plugins", express.static(__dirname + '/assets/js/plugins')); 
-    site.use("/assets/css", express.static(__dirname + '/assets/css'));
-    site.use("/assets/img", express.static(__dirname + '/assets/img'));
-    site.use("/dist", express.static(__dirname + '/dist'));
+    site.use("/assets", express.static(__dirname + '/assets'));
     site.use("/tmp", express.static(__dirname + '/tmp'));
 
     // Serve favicon.ico
