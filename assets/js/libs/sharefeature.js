@@ -113,6 +113,9 @@ var ShareFeature = {
       description: ''
     };
 
+    var fbButton = $('<div class="fb-share-button" data-href="' + obj.link + '" data-layout="button" data-size="small" data-mobile-iframe="false"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + escape(obj.link) + '&amp;src=sdkpreparse">Share</a></div>');
+    $('#fb-button').html('').append(fbButton);
+
     var callback = function(response){
       console.log(response);
     };
