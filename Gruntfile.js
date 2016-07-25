@@ -12,7 +12,6 @@ module.exports = function(grunt) {
   var log = grunt.log;
 
   grunt.initConfig({
-
     // The clean task ensures all files are removed from the dist/ directory so
     // that no files linger from previous builds.
     clean: ["dist/"],
@@ -180,7 +179,6 @@ module.exports = function(grunt) {
       // Do not wrap everything in an IIFE
       wrap: false
     }
-
   });
 
   // The default task will remove all contents inside the dist/ folder, lint
@@ -218,7 +216,7 @@ module.exports = function(grunt) {
     });
 
     // Run the server
-    grunt.helper("monolithic", options);
+    monohelp(options);
 
     // Fail task if errors were logged
     if (grunt.errors) { return false; }
@@ -226,7 +224,7 @@ module.exports = function(grunt) {
     log.writeln("Doing that listening on http://" + options.host + ":" + options.port);
   });
 
-  grunt.registerHelper("monolithic", function(options) {
+  function monohelp(options) {
     // Require libraries.
     var fs = require("fs");
     var path = require("path");
@@ -497,6 +495,6 @@ module.exports = function(grunt) {
 
     // Actually listen
     site.listen(options.port, options.host);
-  });
+  }
 
 };
